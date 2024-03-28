@@ -65,7 +65,7 @@ export class QnaDocumentVersionValidator extends BaseValidator {
                 StorageUrl     : joi.string().optional(),
                 DownloadUrl    : joi.string().optional(),
                 FileResourceId : joi.string().optional(),
-                Keywords       : joi.string().optional(),
+                keywords       : joi.string().optional(),
             });
 
             await schema.validateAsync(request.query);
@@ -100,9 +100,9 @@ export class QnaDocumentVersionValidator extends BaseValidator {
             filters['FileResourceId'] = FileResourceId;
         }
 
-        var Keywords = query.Keywords ? query.Keywords : null;
-        if (Keywords != null) {
-            filters['Keywords'] = Keywords;
+        var keywords = query.keywords ? query.keywords : null;
+        if (keywords != null) {
+            filters['Keywords'] = keywords;
         }
 
         var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : 25;

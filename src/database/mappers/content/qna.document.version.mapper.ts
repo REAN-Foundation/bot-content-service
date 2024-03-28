@@ -8,13 +8,19 @@ export class QnaDocumentVersionMapper {
         if (qnaDocumentVersion == null) {
             return null;
         }
+
+        var keywords = [];
+        if (qnaDocumentVersion.Keywords !== null && qnaDocumentVersion.Keywords !== undefined) {
+            keywords = JSON.parse(qnaDocumentVersion.Keywords);
+        }
+
         const dto: QnaDocumentVersionResponseDto = {
             id             : qnaDocumentVersion.id,
             VersionNumber  : qnaDocumentVersion.VersionNumber,
             StorageUrl     : qnaDocumentVersion.StorageUrl,
             DownloadUrl    : qnaDocumentVersion.DownloadUrl,
             FileResourceId : qnaDocumentVersion.FileResourceId,
-            Keywords       : qnaDocumentVersion.Keywords,
+            Keywords       : keywords,
             CreatedAt      : qnaDocumentVersion.CreatedAt,
             UpdatedAt      : qnaDocumentVersion.UpdatedAt,
             QnaDocumentId  : qnaDocumentVersion.Qna_Documents
@@ -28,7 +34,7 @@ export class QnaDocumentVersionMapper {
                     ParentDocument        : qnaDocumentVersion.Qna_Documents.ParentDocument,
                     ParentDocumentVersion : qnaDocumentVersion.Qna_Documents.ParentDocumentVersion,
                     ChunkingStrategy      : qnaDocumentVersion.Qna_Documents.ChunkingStrategy,
-                    ChunkingLenght        : qnaDocumentVersion.Qna_Documents.ChunkingLenght,
+                    ChunkingLenght        : qnaDocumentVersion.Qna_Documents.ChunkingLength,
                     ChunkOverlap          : qnaDocumentVersion.Qna_Documents.ChunkOverlap,
                     Splitter              : qnaDocumentVersion.Qna_Documents.Splitter,
                     IsActive              : qnaDocumentVersion.Qna_Documents.IsActive,

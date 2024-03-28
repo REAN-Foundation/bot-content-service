@@ -46,7 +46,7 @@ export class QnaDocument extends BaseEntity {
     ChunkingStrategy: string;
 
     @Column()
-    ChunkingLenght: number;
+    ChunkingLength: number;
 
     @Column()
     ChunkOverlap: number;
@@ -72,5 +72,5 @@ export class QnaDocument extends BaseEntity {
     @ManyToMany(() => QnaDocumentGroup, (qnaDocumentGroup) => qnaDocumentGroup.QnaDocuments)
     @JoinTable()
     QnaDocumentGroups: QnaDocumentGroup[];
-    
+
 }

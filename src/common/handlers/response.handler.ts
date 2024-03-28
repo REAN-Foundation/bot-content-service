@@ -26,7 +26,7 @@ export class ResponseHandler {
         const trace_path = tmp?.map(x => x.trim());
 
         const responseObject: ResponseDto = {
-            Status   : 'success',
+            Status   : 'failure',
             Message  : msg,
             HttpCode : httpErrorCode ? httpErrorCode : 500,
             Trace    : trace_path,

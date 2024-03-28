@@ -8,7 +8,7 @@ export interface QnaDocumentVersionCreateModel {
     StorageUrl: string;
     DownloadUrl: string;
     FileResourceId: string;
-    Keywords: string;
+    Keywords: string[];
     QnaDocumentId: string;
 }
 
@@ -17,7 +17,7 @@ export interface QnaDocumentVersionUpdateModel {
     StorageUrl?: string;
     DownloadUrl?: string;
     FileResourceId?: string;
-    Keywords?: string;
+    Keywords?: string[];
     QnaDocumentId: string;
 }
 
@@ -27,7 +27,7 @@ export interface QnaDocumentVersionResponseDto {
     StorageUrl: string;
     DownloadUrl: string;
     FileResourceId: string;
-    Keywords: string;
+    Keywords: string[];
     CreatedAt: Date;
     UpdatedAt: Date;
     QnaDocumentId: {
@@ -52,7 +52,7 @@ export interface QnaDocumentVersionSearchFilters extends BaseSearchFilters {
     StorageUrl?: string;
     DownloadUrl?: string;
     FileResourceId?: string;
-    Keywords?: string;
+    keywords?: string[];
     QnaDocumentId?: string;
 }
 
@@ -66,7 +66,7 @@ export interface QnaDocumentVersionSearchResponseDto {
     StorageUrl: string;
     DownloadUrl: string;
     FileResourceId: string;
-    Keywords: string;
+    Keywords: string[];
     CreatedAt: Date;
     UpdatedAt: Date;
 }

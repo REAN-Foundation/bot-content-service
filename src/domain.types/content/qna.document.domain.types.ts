@@ -13,7 +13,7 @@ export interface QnaDocumentCreateModel {
     ParentDocument: string;
     ParentDocumentVersion: string;
     ChunkingStrategy: string;
-    ChunkingLenght: decimal;
+    ChunkingLength: decimal;
     ChunkOverlap: decimal;
     Splitter: string;
     IsActive: boolean;
@@ -28,7 +28,7 @@ export interface QnaDocumentUpdateModel {
     ParentDocument?: string;
     ParentDocumentVersion?: string;
     ChunkingStrategy?: string;
-    ChunkingLenght?: decimal;
+    ChunkingLength?: decimal;
     ChunkOverlap?: decimal;
     Splitter?: string;
     IsActive?: boolean;
@@ -45,7 +45,7 @@ export interface QnaDocumentResponseDto {
     ParentDocument: string;
     ParentDocumentVersion: string;
     ChunkingStrategy: string;
-    ChunkingLenght: decimal;
+    ChunkingLength: decimal;
     ChunkOverlap: decimal;
     Splitter: string;
     IsActive: boolean;
@@ -61,7 +61,7 @@ export interface QnaDocumentSearchFilters extends BaseSearchFilters {
     ParentDocument?: string;
     ParentDocumentVersion?: string;
     ChunkingStrategy?: string;
-    ChunkingLenght?: decimal;
+    ChunkingLength?: decimal;
     ChunkOverlap?: decimal;
     Splitter?: string;
     IsActive?: boolean;

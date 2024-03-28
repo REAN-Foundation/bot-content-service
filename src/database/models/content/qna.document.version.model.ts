@@ -29,7 +29,7 @@ export class QnaDocumentVersion extends BaseEntity {
     @Column({ type: 'varchar', length: 256, nullable: false })
     FileResourceId: string;
 
-    @Column({ nullable: false })
+    @Column({nullable: false})
     Keywords: string;
 
     @CreateDateColumn()

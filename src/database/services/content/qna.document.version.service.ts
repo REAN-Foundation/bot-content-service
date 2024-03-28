@@ -39,7 +39,8 @@ export class QnaDocumentVersionService extends BaseService {
                 DownloadUrl    : createModel.DownloadUrl,
                 FileResourceId : createModel.FileResourceId,
                 Keywords       : JSON.stringify(createModel.Keywords),
-                Qna_Documents  : document,
+
+                Qna_Documents : document,
             });
             var record = await this._qnaDocumentVersionRepository.save(version);
             return QnaDocumentVersionMapper.toResponseDto(record);
@@ -202,10 +203,10 @@ export class QnaDocumentVersionService extends BaseService {
             search.where['FileResourceId'] = filters.FileResourceId;
         }
 
-        if (filters.Keywords) {
-            search.where['Keywords'] = filters.Keywords;
+        if (filters.keywords) {
+            search.where['Keywords'] = filters.keywords;
         }
         return search;
     };
-    
+
 }

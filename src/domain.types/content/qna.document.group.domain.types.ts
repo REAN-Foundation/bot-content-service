@@ -28,7 +28,7 @@ export interface QnaDocumentGroupResponseDto {
         ParentDocument: string;
         ParentDocumentVersion: string;
         ChunkingStrategy: string;
-        ChunkingLenght: decimal;
+        ChunkingLength: decimal;
         ChunkOverlap: decimal;
         Splitter: string;
         IsActive: boolean;

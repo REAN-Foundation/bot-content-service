@@ -25,7 +25,7 @@ export class QnaDocumentValidator extends BaseValidator {
                     .string()
                     .valid(...Object.values(ChunkingStrategy))
                     .required(),
-                ChunkingLenght : joi.number().required(),
+                ChunkingLength : joi.number().required(),
                 ChunkOverlap   : joi.number().required(),
                 Splitter       : joi.string().required(),
                 IsActive       : joi.boolean().required(),

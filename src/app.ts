@@ -76,7 +76,7 @@ export default class Application {
             await this.listen();
         }
         catch (error){
-            logger.error('An error occurred while starting reancare-api service.' + error.message);
+            logger.error('An error occurred while starting bot-content-api service.' + error.message);
         }
     };
 
