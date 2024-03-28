@@ -1,6 +1,7 @@
 import { BaseSearchFilters, BaseSearchResults } from '../miscellaneous/base.search.types';
 import { decimal  } from '../miscellaneous/system.types';
 
+
 //////////////////////////////////////////////////////////////
 
 export interface QnaDocumentVersionCreateModel {
