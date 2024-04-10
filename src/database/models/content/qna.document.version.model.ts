@@ -43,8 +43,8 @@ export class QnaDocumentVersion extends BaseEntity {
 
     @ManyToOne(
         ()=>QnaDocument,
-        Qna_Documents=> Qna_Documents.Qna_Document_versions
-    )
+        Qna_Documents=> Qna_Documents.Qna_Document_versions,
+        { cascade: true , eager: true})
     @JoinColumn({
         name : 'QnaDocumentId'
     })

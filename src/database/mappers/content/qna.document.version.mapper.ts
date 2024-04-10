@@ -34,7 +34,7 @@ export class QnaDocumentVersionMapper {
                     ParentDocument        : qnaDocumentVersion.Qna_Documents.ParentDocument,
                     ParentDocumentVersion : qnaDocumentVersion.Qna_Documents.ParentDocumentVersion,
                     ChunkingStrategy      : qnaDocumentVersion.Qna_Documents.ChunkingStrategy,
-                    ChunkingLenght        : qnaDocumentVersion.Qna_Documents.ChunkingLength,
+                    ChunkingLength        : qnaDocumentVersion.Qna_Documents.ChunkingLength,
                     ChunkOverlap          : qnaDocumentVersion.Qna_Documents.ChunkOverlap,
                     Splitter              : qnaDocumentVersion.Qna_Documents.Splitter,
                     IsActive              : qnaDocumentVersion.Qna_Documents.IsActive,

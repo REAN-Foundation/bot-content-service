@@ -1,6 +1,5 @@
 import { BaseSearchFilters, BaseSearchResults } from '../miscellaneous/base.search.types';
-import { decimal  } from '../miscellaneous/system.types';
-
+import { decimal } from '../miscellaneous/system.types';
 
 //////////////////////////////////////////////////////////////
 
@@ -40,7 +39,7 @@ export interface QnaDocumentVersionResponseDto {
         ParentDocument: string;
         ParentDocumentVersion: string;
         ChunkingStrategy: string;
-        ChunkingLenght: decimal;
+        ChunkingLength: decimal;
         ChunkOverlap: decimal;
         Splitter: string;
         IsActive: boolean;

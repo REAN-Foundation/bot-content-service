@@ -30,7 +30,7 @@
         "src/**/*",
         "tests/api-tests/tests/*"
     ],
-    "exclude":[ 
+    "exclude":[
         "node_modules"
     ],
 }

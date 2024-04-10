@@ -2,7 +2,7 @@ import { QnaDocumentGroup } from '../../models/content/qna.document.groups.model
 import { logger } from '../../../logger/logger';
 import { ErrorHandler } from '../../../common/handlers/error.handler';
 import { Source } from '../../database.connector';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
 import { BaseService } from '../base.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import {
@@ -124,12 +124,66 @@ export class QnaDocumentGroupsService extends BaseService {
         }
     };
 
-    public search = async (filters: QnaDocumentGroupSearchFilters): Promise<QnaDocumentGroupSearchFilters> => {
-        try {
-            var search = this.getSearchModel(filters);
-            var { search, pageIndex, limit, order, orderByColumn } = this.addSortingAndPagination(search, filters);
-            const [list, count] = await this._qnaDocumentGroupsRepository.findAndCount(search);
+    _selectAll = {
+        id          : true,
+        Name        : true,
+        Description : true,
+        CreatedAt   : true,
 
+        QnaDocuments : {
+            id                    : true,
+            Name                  : true,
+            Description           : true,
+            FileName              : true,
+            Source                : true,
+            CreatedBy             : true,
+            ParentDocument        : true,
+            ParentDocumentVersion : true,
+            ChunkingStrategy      : true,
+            ChunkingLength        : true,
+            ChunkOverlap          : true,
+            Splitter              : true,
+            IsActive              : true,
+        },
+    };
+
+    search = async (filters: QnaDocumentGroupSearchFilters): Promise<QnaDocumentGroupSearchFilters> => {
+        try {
+            var search: FindManyOptions<QnaDocumentGroup> = {
+                relations : ['QnaDocuments'],
+                where     : {} as any,
+                select    : this._selectAll,
+            };
+
+            if (filters.Name) {
+                search.where['Name'] = filters.Name;
+            }
+
+            //Sorting
+            let orderByColumn = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColumn = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search['order'] = {};
+            search['order'][orderByColumn] = order;
+            //Pagination
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['take'] = limit;
+            search['skip'] = offset;
+            const [list, count] = await this._qnaDocumentGroupsRepository.findAndCount(search);
             const searchResults = {
                 TotalCount     : count,
                 RetrievedCount : list.length,
@@ -141,27 +195,8 @@ export class QnaDocumentGroupsService extends BaseService {
             };
             return searchResults;
         } catch (error) {
-            logger.error(error.message);
             ErrorHandler.throwDbAccessError('DB Error: Unable to search records!', error);
         }
     };
 
-    private getSearchModel = (filters: QnaDocumentGroupSearchFilters) => {
-        var search: FindManyOptions<QnaDocumentGroup> = {
-            relations : {},
-            where     : {},
-            select    : {
-                id          : true,
-                Name        : true,
-                Description : true,
-            },
-        };
-
-        if (filters.Name) {
-            search.where['Name'] = Like(`%${filters.Name}%`);
-        }
-
-        return search;
-    };
-    
 }
