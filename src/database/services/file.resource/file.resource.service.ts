@@ -8,7 +8,8 @@ import {
     FileResourceSearchResults
 } from '../../../domain.types/general/file.resource.domain.types';
 import { Source } from '../../../database/database.connector';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, Like} from 'typeorm';
+import { Repository } from 'typeorm/repository/Repository';
 import { FileResourceMapper } from '../../mappers/file.resource/file.resource.mapper';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import { logger } from '../../../logger/logger';
