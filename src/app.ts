@@ -1,4 +1,4 @@
-//import cors from 'cors';
+import cors from 'cors';
 import "reflect-metadata";
 import express from 'express';
 import fileUpload from 'express-fileupload';
@@ -76,7 +76,7 @@ export default class Application {
             await this.listen();
         }
         catch (error){
-            logger.error('An error occurred while starting reancare-api service.' + error.message);
+            logger.error('An error occurred while starting Bot-content-service.' + error.message);
         }
     };
 
@@ -87,7 +87,7 @@ export default class Application {
                 this._app.use(express.urlencoded({ extended: true }));
                 this._app.use(express.json());
                 this._app.use(helmet());
-                //this._app.use(cors());
+                this._app.use(cors());
                 if (ConfigurationManager.UseHTTPLogging) {
                     HttpLogger.use(this._app);
                 }

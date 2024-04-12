@@ -30,12 +30,12 @@ class Logger {
                 logger_ = new BunyanProdLogger();
             }
         }
-        // if (provider === 'Pino') {
-        //     // logger_ = new PinoDebugLogger();
-        //     if (process.env.NODE_ENV === 'production') {
-        //         // logger_ = new PinoProdLogger();
-        //     }
-        // }
+        if (provider === 'Pino') {
+            // logger_ = new PinoDebugLogger();
+            if (process.env.NODE_ENV === 'production') {
+                // logger_ = new PinoProdLogger();
+            }
+        }
         if (provider === 'Custom') {
             logger_ = new CustomDebugLogger();
             if (process.env.NODE_ENV === 'production') {

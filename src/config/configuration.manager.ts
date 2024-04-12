@@ -83,6 +83,9 @@ export class ConfigurationManager {
     public static get FileStorageProvider(): FileStorageProvider {
         return ConfigurationManager._config.FileStorage.Provider;
     }
+    // public static FileStorageProvider = (): FileStorageProvider => {
+    //     return ConfigurationManager._config.FileStorage.Provider;
+    // };
 
     public static get UploadTemporaryFolder(): string {
         var location = ConfigurationManager._config.TemporaryFolders.Upload;

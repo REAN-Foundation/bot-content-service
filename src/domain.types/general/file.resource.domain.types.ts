@@ -6,7 +6,7 @@ export interface FileResourceCreateModel {
     MimeType         ?: string;
     Metadata         ?: any;
     OriginalFilename ?: string;
-    UserId           ?: uuid;
+    DocumentId           ?: uuid;
     Size             ?: number;
     Public           ?: boolean;
     DownloadCount    ?: number;
@@ -22,14 +22,13 @@ export interface FileResourceResponseDto {
     Public          : boolean;
     DownloadCount   : number;
     Tags            : string[];
-    UploadedBy      : uuid;
     CreatedAt       : Date;
     UpdatedAt       : Date;
 }
 
 export interface FileResourceSearchFilters extends BaseSearchFilters {
     Filename?: string;
-    UserId?  : uuid;
+    DocumentId?  : uuid;
     Tags?    : string;
 }
 

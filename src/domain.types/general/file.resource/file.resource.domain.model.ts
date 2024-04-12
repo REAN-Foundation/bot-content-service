@@ -3,7 +3,7 @@ import { FileResourceMetadata, ResourceReference } from "./file.resource.types";
 export interface FileResourceUploadDomainModel {
     FileMetadata            : FileResourceMetadata;
     OwnerUserId?            : string;
-    UploadedByUserId?       : string;
+    DocumentId?       : string;
     Public?                 : boolean;
     IsMultiResolutionImage? : boolean;
     MimeType?               : string;

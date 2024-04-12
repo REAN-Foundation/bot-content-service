@@ -3,8 +3,8 @@ import { FileResourceDto } from "./file.resource.dto";
 //////////////////////////////////////////////////////////////////////
 
 export interface FileResourceSearchFilters {
-    OwnerUserId?      : string,
-    UploadedByUserId? : string,
+    
+    DocumentId? : string,
     IsPublicResource? : boolean;
     ReferenceId?      : string;
     ReferenceType?    : string;
