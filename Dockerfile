@@ -58,6 +58,6 @@ RUN npm install pm2 -g
 RUN npm install sharp
 COPY --from=builder ./app/dist/ ./app/dist/
 
-# RUN chmod +x /app/entrypoint.sh
-# ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
-CMD ["node", "./dist/src/index.js"]
+RUN chmod +x /app/entrypoint.sh
+ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
+# CMD ["node", "./dist/src/index.js"]
