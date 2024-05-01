@@ -7,4 +7,4 @@ cd /app/dist
 # Add any other scripts here...
 # Start the service
 # npm run start
-pm2-runtime src/index.js
+pm2-runtime src/index.ts
