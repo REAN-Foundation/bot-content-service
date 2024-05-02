@@ -56,7 +56,7 @@ WORKDIR /app
 COPY package*.json /app/
 RUN npm install pm2 -g
 RUN npm install sharp
-COPY --from=builder ./app/dist/ ./app/dist/
+COPY --from=builder ./app/dist/ .
 
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
