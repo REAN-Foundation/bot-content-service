@@ -9,6 +9,8 @@ import { register as registerQnaDocument } from '../api/content/qna.document/qna
 import { register as registerQnaDocumentVersion } from '../api/content/qna.document.version/qna.document.version.routes';
 import { register as registerQnaDocumentLibrary } from '../api/content/qna.document.library/qna.document.library.routes';
 import { register as registerFileResourceRoutes } from '../api/file.resource/file.resource.routes';
+
+import { register as registerVectorStoreRoutes } from '../api/vectorstore/vectorstore.routes';
 ////////////////////////////////////////////////////////////////////////////////////
 
 export class Router {
@@ -37,6 +39,7 @@ export class Router {
                 registerQnaDocumentVersion(this._app);
                 registerQnaDocumentLibrary(this._app);
                 registerFileResourceRoutes(this._app);
+                registerVectorStoreRoutes(this._app);
                 resolve(true);
 
             } catch (error) {

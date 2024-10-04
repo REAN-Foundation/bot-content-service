@@ -7,6 +7,9 @@
     "FileStorage" : {
         "Provider": "AWS-S3"
     },
+    "Vectorstore": {
+        "Provider": "PINECONE"
+    },
     "Processor" : {
         "Provider": "Custom"
     },

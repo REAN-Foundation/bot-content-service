@@ -7,6 +7,9 @@
     "FileStorage" : {
         "Provider": "Custom"
     },
+    "Vectorstore": {
+        "Provider": "PINECONE"
+    },
     "Communication" : {
         "SMS": {
             "Provider": "Mock"
