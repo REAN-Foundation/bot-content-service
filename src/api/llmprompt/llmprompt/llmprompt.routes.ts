@@ -15,5 +15,8 @@ export const register = (app: express.Application): void => {
     router.put('/:id', controller.update);
     router.delete('/:id', controller.delete);
 
+    // This is a temp route
+    router.get('/tempget', controller.tempget);
+
     app.use('/api/v1/llm-prompts', router);
 };

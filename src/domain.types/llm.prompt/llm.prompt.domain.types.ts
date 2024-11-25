@@ -62,6 +62,26 @@ export interface LlmPromptSearchFilters extends BaseSearchFilters {
     PresencePenalty?    : decimal;
     IsActive?           : boolean;
 }
+export interface LlmPromptInputStructure {
+    introduction:   string,
+    instruction?:   string,
+    guidelines?:    string
+}
+export interface LlmPromptTemplateStructure {
+    introduction?:  string,
+    userQuery?:     string,
+    responseFormat?: string,
+    instruction?:   string,
+    guidelines?:    string,
+    chatHistory?:   string,
+    similarDocs?:   string
+}
+export interface LlmOutputSchema {
+    answer: string,
+    intent: string,
+    detectedLanguage: string,
+    sourceOfInfo: string
+}
 export interface LlmPromptSearchResults extends BaseSearchResults {
     Items: LlmPromptDto[];
 }

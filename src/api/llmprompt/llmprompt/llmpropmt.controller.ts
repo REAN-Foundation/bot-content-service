@@ -7,6 +7,7 @@ import { LlmpromptService } from "../../../database/services/llmprompt.service";
 import { uuid } from "../../../domain.types/miscellaneous/system.types";
 import { LlmPromptVersionCreateModel } from "../../../domain.types/llm.prompt/llm.prompt.version.domain.types";
 import { LlmpromptVersionService } from "../../../database/services/llmpromptversion.service";
+import { PromptManager } from "../../../modules/prompt.management/prompt.manager";
 
 export class LlmPromptController {
 
@@ -17,6 +18,8 @@ export class LlmPromptController {
     _promptService: LlmpromptVersionService = new LlmpromptVersionService();
 
     _validator: LlmPromptValidator = new LlmPromptValidator();
+
+    _promptManager = new PromptManager('');
 
     create = async (request: express.Request, response: express.Response) => {
         try {
@@ -127,6 +130,14 @@ export class LlmPromptController {
             const searchResults = await this._service.search(filters);
             const message = 'Llm prompt records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    tempget = async (request: express.Request, response: express.Response) => {
+        try {
+            await this._promptManager.getPrompt([], '');
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
