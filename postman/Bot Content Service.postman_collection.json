@@ -1,0 +1,2058 @@
+{
+	"info": {
+		"_postman_id": "1f6430b5-1649-4942-aee8-d8f961ff2bf6",
+		"name": "Bot Content Service",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "22334730",
+		"_collection_link": "https://galactic-firefly-272197.postman.co/workspace/Award-Service~07dd48ab-522a-4ebd-a3ba-517867d75976/collection/22334730-1f6430b5-1649-4942-aee8-d8f961ff2bf6?action=share&source=collection_link&creator=22334730"
+	},
+	"item": [
+		{
+			"name": "Health check",
+			"item": [
+				{
+					"name": "Health Check Request",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{BASE_URL}}",
+							"host": [
+								"{{BASE_URL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "File Resource CURD",
+			"item": [
+				{
+					"name": "Create file resource",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"try {\r",
+									"    var jsonRes = pm.response.json();\r",
+									"    pm.environment.set(\"FILE_RESOURCE_ID\", jsonRes.Data.id);\r",
+									"}\r",
+									"catch (error) {\r",
+									"    console.log(error.message);\r",
+									"}\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "filename",
+								"value": "pan.png"
+							},
+							{
+								"key": "public",
+								"value": "true"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/91920/Pictures/pan.jpg"
+								},
+								{
+									"key": "public",
+									"value": "true",
+									"type": "text",
+									"disabled": true
+								},
+								{
+									"key": "filename",
+									"value": "Pan.png",
+									"type": "text",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/upload",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"upload"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "GetById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "filename",
+								"value": "ss db.png"
+							},
+							{
+								"key": "public",
+								"value": "true"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/C:/Users/nisha/Pictures/ss db.png",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{FILE_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{FILE_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "DownloadById",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "filename",
+								"value": "demo.png"
+							},
+							{
+								"key": "public",
+								"value": "true"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/C:/Users/mayur/Downloads/demo.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/download/{{FILE_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"download",
+								"{{FILE_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete by id",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "filename",
+								"value": "ss db.png"
+							},
+							{
+								"key": "public",
+								"value": "true"
+							},
+							{
+								"key": "",
+								"value": "",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "File",
+									"type": "file",
+									"src": "/C:/Users/nisha/Pictures/ss db.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{FILE_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{FILE_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Llm Prompt Service CURD",
+			"item": [
+				{
+					"name": "Llm Prompt",
+					"item": [
+						{
+							"name": "Create Llm Prompt",
+							"event": [
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											"\r",
+											"// pm.environment.set(\"PHONE_NUMBER\", phonenumber);\r",
+											"// pm.environment.set(\"EMAIL\", `client.${rand}@nodomain.com`);"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								},
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PROMPT_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Llm prompt added successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('UseCaseType');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('GroupName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ModelName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ModelVersion');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('UserId');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Temperature');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FrequencyPenality');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('TopP');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PresencePenalty');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('IsActive');\r",
+											"\r",
+											"    pm.expect(jsonRes.Data.Name).equals(\"BI\");\r",
+											"    pm.expect(jsonRes.Data.Description).equals(\"Business Inteligence\");\r",
+											"    pm.expect(jsonRes.Data.UseCaseType).equals(\"Chat\");\r",
+											"    pm.expect(jsonRes.Data.GroupName).equals('Miscellaneous');\r",
+											"    pm.expect(jsonRes.Data.ModelName).equals('Gpt 1.00');\r",
+											"    pm.expect(jsonRes.Data.ModelVersion).equals('1.00');\r",
+											"    pm.expect(jsonRes.Data.UserId).equals('abc');\r",
+											"    pm.expect(jsonRes.Data.Temperature).equals(8.1);\r",
+											"     pm.expect(jsonRes.Data.FrequencyPenality).equals(1.5);\r",
+											"      pm.expect(jsonRes.Data.TopP).equals(1.5);\r",
+											"       pm.expect(jsonRes.Data.PresencePenalty).equals(2);\r",
+											"    pm.expect(jsonRes.Data.IsActive).equals(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"BI\",\r\n    \"Description\": \"Artificial Inteligence\",\r\n    \"UseCaseType\": \"Chat\",\r\n    \"Group\": \"Miscellaneous\",\r\n    \"Model\": \"Gpt 1.00\",\r\n    \"Prompt\": \"This is demo prompt {query}\",\r\n    \"Variables\": \"query\",\r\n    \"CreatedByUserId\": \"5a7668ec-263e-41fe-a939-59ff0dd6ab9f\",\r\n    \"Temperature\": \"3\",\r\n    \"FrequencyPenalty\": \"1.5\",\r\n    \"TopP\": \"1\",\r\n    \"PresencePenalty\": \"2.7\",\r\n    \"IsActive\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompts/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompts",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Llm Prompt",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Llm prompt updated successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('UseCaseType');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('GroupName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ModelName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ModelVersion');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('UserId');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Temperature');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FrequencyPenality');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('TopP');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PresencePenalty');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('IsActive');\r",
+											"\r",
+											"    // pm.expect(jsonRes.Data.Name).equals(\"ML2\");\r",
+											"    // pm.expect(jsonRes.Data.Description).equals(\"Machine Learning\");\r",
+											"    // pm.expect(jsonRes.Data.UseCaseType).equals(\"Chat\");\r",
+											"    // pm.expect(jsonRes.Data.GroupName).equals('Miscellaneous');\r",
+											"    // pm.expect(jsonRes.Data.ModelName).equals('Gpt 1.00');\r",
+											"    // pm.expect(jsonRes.Data.ModelVersion).equals('1.00');\r",
+											"    // pm.expect(jsonRes.Data.UserId).equals('abc');\r",
+											"    // pm.expect(jsonRes.Data.Temperature).equals(8.1);\r",
+											"    //  pm.expect(jsonRes.Data.FrequencyPenality).equals(1.5);\r",
+											"    //   pm.expect(jsonRes.Data.TopP).equals(1.5);\r",
+											"    //    pm.expect(jsonRes.Data.PresencePenalty).equals(2);\r",
+											"    // pm.expect(jsonRes.Data.IsActive).equals(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"BI1\",\r\n    \"Description\": \"Artificial Inteligence1\",\r\n    \"UseCaseType\": \"Chat\",\r\n    \"Group\": \"Miscellaneous\",\r\n    \"Model\": \"Gpt 2.00\",\r\n    \"Prompt\": \"This is demo prompt {query} updated\",\r\n    \"Variables\": \"query1\",\r\n    \"CreatedByUserId\": \"5a7668ec-263e-41fe-a939-59ff0dd6ab9f\",\r\n    \"Temperature\": \"3.5\",\r\n    \"FrequencyPenalty\": \"2.5\",\r\n    \"TopP\": \"1.\",\r\n    \"PresencePenalty\": \"3.7\",\r\n    \"IsActive\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompts/{{PROMPT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompts",
+										"{{PROMPT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get By Id Llm Prompt",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"LlmPrompt retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('UseCaseType');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('GroupName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ModelName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ModelVersion');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('UserId');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Temperature');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FrequencyPenality');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('TopP');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PresencePenalty');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('IsActive');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompts/{{PROMPT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompts",
+										"{{PROMPT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Llm Prompt",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Prompt deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompts/{{PROMPT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompts",
+										"{{PROMPT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Prompt User Id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Prompt userId records retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data.Items.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompts/search?isActive=true",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompts",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "X",
+											"disabled": true
+										},
+										{
+											"key": "useCaseType",
+											"value": "Chat",
+											"disabled": true
+										},
+										{
+											"key": "group",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "model",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "prompt",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "varaibles",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "temperature",
+											"value": "3.50",
+											"disabled": true
+										},
+										{
+											"key": "frequencyPenalty",
+											"value": "2.50",
+											"disabled": true
+										},
+										{
+											"key": "topP",
+											"value": "2",
+											"disabled": true
+										},
+										{
+											"key": "presencePenalty",
+											"value": null,
+											"disabled": true
+										},
+										{
+											"key": "isActive",
+											"value": "true"
+										},
+										{
+											"key": "createdByUserId",
+											"value": "aa969366-9e58-4968-a944-585c809376d0",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Llm Prompt Group",
+					"item": [
+						{
+							"name": "Create Prompt Group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PROMPT_GROUP_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Generic\",\r\n    \"Description\": \"Programming Languages\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-groups/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-groups",
+										""
+									]
+								},
+								"description": "\n### Create Prompt Group\nThis endpoint allows the creation of a new prompt group.\n\n- Method: POST\n- URL: `{{BASE_URL}}/llmpromptgroups/`\n\n#### Request Body\n- Type: JSON\n    - `Name`: (string) The name of the prompt group.\n    - `Description`: (string) A brief description of the prompt group.\n\n#### Response\nThe response of this request is a JSON schema representing the structure of the created prompt group.\n\nExample:\n```json\n{\n    \"type\": \"object\",\n    \"properties\": {\n        \"id\": {\n            \"type\": \"string\"\n        },\n        \"Name\": {\n            \"type\": \"string\"\n        },\n        \"Description\": {\n            \"type\": \"string\"\n        },\n        \"createdAt\": {\n            \"type\": \"string\",\n            \"format\": \"date-time\"\n        },\n        \"updatedAt\": {\n            \"type\": \"string\",\n            \"format\": \"date-time\"\n        }\n    }\n}\n```\n"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Prompt Group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Llm prompt Group Updated successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    // pm.expect(jsonRes.Data).to.have.property('LlmPromptId_1');\r",
+											"   \r",
+											"    pm.expect(jsonRes.Data.Name).equals(\"Chat Default\");\r",
+											"    pm.expect(jsonRes.Data.Description).equals(\"Llm Prompt Group\");\r",
+											"    \r",
+											"    \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Chat Default\",\r\n    \"Description\": \"Llm Prompt Group\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-groups/{{PROMPT_GROUP_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-groups",
+										"{{PROMPT_GROUP_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get By Id Prompt Group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Llm prompt Group added successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-groups/{{PROMPT_GROUP_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-groups",
+										"{{PROMPT_GROUP_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Prompt Group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"PromptGroup deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llmpromptgroups/{{PROMPT_GROUP_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llmpromptgroups",
+										"{{PROMPT_GROUP_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Prompt Group Name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Prompt By Name retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data.Items.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-groups/search?name=Generic1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-groups",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "Generic1"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Llm Prompt Version",
+					"item": [
+						{
+							"name": "Create Prompt Version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"PROMPT_VERSION_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"BI\",\r\n    \"PromptId\": \"{{PROMPT_ID}}\",\r\n    \"Score\": 2.5,\r\n    \"Description\": \"Artificial Inteligence\",\r\n    \"UseCaseType\": \"Chat\",\r\n    \"Group\": \"Miscellaneous\",\r\n    \"Model\": \"Gpt 1.00\",\r\n    \"Prompt\": \"This is demo prompt {query}\",\r\n    \"Variables\": \"query\",\r\n    \"CreatedByUserId\": \"5a7668ec-263e-41fe-a939-59ff0dd6ab9f\",\r\n    \"Temperature\": 3,\r\n    \"FrequencyPenalty\": 1.5,\r\n    \"TopP\": 1,\r\n    \"PresencePenalty\": 2.7,\r\n    \"IsActive\": true\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-versions/",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-versions",
+										""
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Prompt Version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Llm prompt Version added successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    // pm.expect(jsonRes.Data).to.have.property('LlmPromptId_1');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('VersionNumber');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Prompt');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Variables');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Score');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PublishedAt');\r",
+											"   \r",
+											"    \r",
+											"    pm.expect(jsonRes.Data.Prompt).equals(\"Hotel Management\");\r",
+											"    pm.expect(jsonRes.Data.Variables).equals(\"Management22\");\r",
+											"    pm.expect(jsonRes.Data.Score).equals(\"5.9\");\r",
+											"    pm.expect(jsonRes.Data.PublishedAt).equals(\"2024-03-12\");\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \r\n    \"Prompt\": \"Hotel Management\",\r\n    \"Variables\": \"Management22\",\r\n    \"Score\": 5.9\r\n}\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/llmpromptversions/{{PROMPT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llmpromptversions",
+										"{{PROMPT_VERSION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get By Id Prompt Version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Llm prompt Version retrived successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"//    pm.expect(jsonRes.Data).to.have.property('LlmPromptId_1');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('VersionNumber');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Prompt');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Variables');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Score');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('PublishedAt');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llmpromptversions/{{PROMPT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llmpromptversions",
+										"{{PROMPT_VERSION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Prompt Version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Prompt version deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-versions/{{PROMPT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-versions",
+										"{{PROMPT_VERSION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search Prompt Version By Prompt ID",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"PromptVersion By PromptId retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data.Items.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/llm-prompt-versions/search",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"llm-prompt-versions",
+										"search"
+									],
+									"query": [
+										{
+											"key": "promptId",
+											"value": "{{PROMPT_ID}}",
+											"disabled": true
+										},
+										{
+											"key": "version",
+											"value": "1",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "B",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Content Service CURD",
+			"item": [
+				{
+					"name": "Qna document",
+					"item": [
+						{
+							"name": "Create document",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"DOCUMENT_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Cholesterol\",\r\n    \"Description\": \"This is demo description\",\r\n    \"ResourceId\": \"{{FILE_RESOURCE_ID}}\",\r\n    \"Keyword\": \"Demo keyword list\",\r\n    \"DocumentType\":\"JSON\",\r\n    \"ChunkingStrategy\": \"Content Aware Splitting\",\r\n    \"ChunkingLength\": 58,\r\n    \"ChunkOverlap\": 46,\r\n    \"Splitter\": \"\\n\",\r\n    \"IsActive\": true,\r\n    \"CreatedByUserId\": \"bf60306c-539c-4002-8eaf-5e37c98b87c5\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:2345/api/v1/documents",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "2345",
+									"path": [
+										"api",
+										"v1",
+										"documents"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update document",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document updated successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FileName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Source');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ParentDocument');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ParentDocumentVersion');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ChunkingStrategy');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ChunkingLenght');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ChunkOverlap');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Splitter');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('IsActive');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('CreatedBy');\r",
+											"\r",
+											"    // pm.expect(jsonRes.Data.Name).equals(\"ML2\");\r",
+											"    // pm.expect(jsonRes.Data.Description).equals(\"Machine Learning\");\r",
+											"    // pm.expect(jsonRes.Data.UseCaseType).equals(\"Chat\");\r",
+											"    // pm.expect(jsonRes.Data.GroupName).equals('Miscellaneous');\r",
+											"    // pm.expect(jsonRes.Data.ModelName).equals('Gpt 1.00');\r",
+											"    // pm.expect(jsonRes.Data.ModelVersion).equals('1.00');\r",
+											"    // pm.expect(jsonRes.Data.UserId).equals('abc');\r",
+											"    // pm.expect(jsonRes.Data.Temperature).equals(8.1);\r",
+											"    //  pm.expect(jsonRes.Data.FrequencyPenality).equals(1.5);\r",
+											"    //   pm.expect(jsonRes.Data.TopP).equals(1.5);\r",
+											"    //    pm.expect(jsonRes.Data.PresencePenalty).equals(2);\r",
+											"    // pm.expect(jsonRes.Data.IsActive).equals(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Cholesterol Updated\",\r\n     \"Description\": \"This is demo description updated\",\r\n     \"Keyword\": \"Demo keyword list updated\",\r\n      \"IsActive\": false,\r\n      \"ChunkingLength\": 68\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/documents/{{DOCUMENT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"documents",
+										"{{DOCUMENT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FileName');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Source');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ParentDocument');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ParentDocumentVersion');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ChunkingStrategy');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ChunkingLenght');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('ChunkOverlap');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Splitter');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('IsActive');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('CreatedBy');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/documents/{{DOCUMENT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"documents",
+										"{{DOCUMENT_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search document by name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Document by name retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data.Items.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/documents/search?name=Cholesterol1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"documents",
+										"search"
+									],
+									"query": [
+										{
+											"key": "Source",
+											"value": "College",
+											"disabled": true
+										},
+										{
+											"key": "ParentDocument",
+											"value": "Living certificate",
+											"disabled": true
+										},
+										{
+											"key": "name",
+											"value": "Cholesterol1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete document",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/documents/{{DOCUMENT_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"documents",
+										"{{DOCUMENT_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Qna document version",
+					"item": [
+						{
+							"name": "Create document version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"DOCUMENT_VERSION_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Cholesterol\",\r\n    \"Description\": \"This is demo description\",\r\n    \"ResourceId\": \"{{FILE_RESOURCE_ID}}\",\r\n    \"Keyword\": \"Demo keyword list\",\r\n    \"DocumentType\": \"JSON\",\r\n    \"ChunkingStrategy\": \"Content Aware Splitting\",\r\n    \"ChunkingLength\": 58,\r\n    \"ChunkOverlap\": 46,\r\n    \"Splitter\": \"\\n\",\r\n    \"IsActive\": true,\r\n    \"CreatedByUserId\": \"bf60306c-539c-4002-8eaf-5e37c98b87c5\",\r\n    \"QnaDocumentId\": \"{{DOCUMENT_ID}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/document-versions",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-versions"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update document version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document version updated successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('VersionNumber');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('StorageUrl');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DownloadUrl');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FileResourceId');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Keywords');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('qnaDocumentsId');\r",
+											"    \r",
+											"\r",
+											"    // pm.expect(jsonRes.Data.Name).equals(\"ML2\");\r",
+											"    // pm.expect(jsonRes.Data.Description).equals(\"Machine Learning\");\r",
+											"    // pm.expect(jsonRes.Data.UseCaseType).equals(\"Chat\");\r",
+											"    // pm.expect(jsonRes.Data.GroupName).equals('Miscellaneous');\r",
+											"    // pm.expect(jsonRes.Data.ModelName).equals('Gpt 1.00');\r",
+											"    // pm.expect(jsonRes.Data.ModelVersion).equals('1.00');\r",
+											"    // pm.expect(jsonRes.Data.UserId).equals('abc');\r",
+											"    // pm.expect(jsonRes.Data.Temperature).equals(8.1);\r",
+											"    //  pm.expect(jsonRes.Data.FrequencyPenality).equals(1.5);\r",
+											"    //   pm.expect(jsonRes.Data.TopP).equals(1.5);\r",
+											"    //    pm.expect(jsonRes.Data.PresencePenalty).equals(2);\r",
+											"    // pm.expect(jsonRes.Data.IsActive).equals(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Cholesterol Version\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/document-versions/{{DOCUMENT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-versions",
+										"{{DOCUMENT_VERSION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document version retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('VersionNumber');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('StorageUrl');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DownloadUrl');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('FileResourceId');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Keywords');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('qnaDocumentsId');\r",
+											"   \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-versions/{{DOCUMENT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-versions",
+										"{{DOCUMENT_VERSION_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search document version by keywords",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Document version by keywords retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data.Items.length).to.be.greaterThan(0);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-versions/search?keywords=xyz",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-versions",
+										"search"
+									],
+									"query": [
+										{
+											"key": "keywords",
+											"value": "xyz"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete document version",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document group deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-versions/{{DOCUMENT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-versions",
+										"{{DOCUMENT_VERSION_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Qna document group",
+					"item": [
+						{
+							"name": "Create document group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"DOCUMENT_GROUP_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"Text\",\r\n    \"Description\": \"Hi\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/document-groups",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-groups"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update document group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document group updated successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"    \r",
+											"\r",
+											"    // pm.expect(jsonRes.Data.Name).equals(\"ML2\");\r",
+											"    // pm.expect(jsonRes.Data.Description).equals(\"Machine Learning\");\r",
+											"    // pm.expect(jsonRes.Data.UseCaseType).equals(\"Chat\");\r",
+											"    // pm.expect(jsonRes.Data.GroupName).equals('Miscellaneous');\r",
+											"    // pm.expect(jsonRes.Data.ModelName).equals('Gpt 1.00');\r",
+											"    // pm.expect(jsonRes.Data.ModelVersion).equals('1.00');\r",
+											"    // pm.expect(jsonRes.Data.UserId).equals('abc');\r",
+											"    // pm.expect(jsonRes.Data.Temperature).equals(8.1);\r",
+											"    //  pm.expect(jsonRes.Data.FrequencyPenality).equals(1.5);\r",
+											"    //   pm.expect(jsonRes.Data.TopP).equals(1.5);\r",
+											"    //    pm.expect(jsonRes.Data.PresencePenalty).equals(2);\r",
+											"    // pm.expect(jsonRes.Data.IsActive).equals(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"Name\": \"PNG\",\r\n    \"Description\": \"Hello\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/document-groups/{{DOCUMENT_GROUP_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-groups",
+										"{{DOCUMENT_GROUP_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document group retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Name');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('Description');\r",
+											"   \r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-groups/{{DOCUMENT_GROUP_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-groups",
+										"{{DOCUMENT_GROUP_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search group by name",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-groups/search?name=PNG1",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-groups",
+										"search"
+									],
+									"query": [
+										{
+											"key": "name",
+											"value": "PNG1"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete document group",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document group deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-groups/{{DOCUMENT_GROUP_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-groups",
+										"{{DOCUMENT_GROUP_ID}}"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Qna document library",
+					"item": [
+						{
+							"name": "Create document library",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"try {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.environment.set(\"DOCUMENT_LIBRARY_ID\", jsonRes.Data.id);\r",
+											"}\r",
+											"catch (error) {\r",
+											"    console.log(error.message);\r",
+											"}\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"DocumentVersionId\":\"{{DOCUMENT_VERSION_ID}}\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/document-librarys",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-librarys"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update document library",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document library updated successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DocumentId');\r",
+											"\r",
+											"    // pm.expect(jsonRes.Data.Name).equals(\"ML2\");\r",
+											"    // pm.expect(jsonRes.Data.Description).equals(\"Machine Learning\");\r",
+											"    // pm.expect(jsonRes.Data.UseCaseType).equals(\"Chat\");\r",
+											"    // pm.expect(jsonRes.Data.GroupName).equals('Miscellaneous');\r",
+											"    // pm.expect(jsonRes.Data.ModelName).equals('Gpt 1.00');\r",
+											"    // pm.expect(jsonRes.Data.ModelVersion).equals('1.00');\r",
+											"    // pm.expect(jsonRes.Data.UserId).equals('abc');\r",
+											"    // pm.expect(jsonRes.Data.Temperature).equals(8.1);\r",
+											"    //  pm.expect(jsonRes.Data.FrequencyPenality).equals(1.5);\r",
+											"    //   pm.expect(jsonRes.Data.TopP).equals(1.5);\r",
+											"    //    pm.expect(jsonRes.Data.PresencePenalty).equals(2);\r",
+											"    // pm.expect(jsonRes.Data.IsActive).equals(true);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"DocumentId\":\"dd112ef2-5e9f-4d30-9a4b-e9c709df204a\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{BASE_URL}}/document-librarys/{{DOCUMENT_LIBRARY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-librarys",
+										"{{DOCUMENT_LIBRARY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get by id",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document library retrieved successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Data).to.have.property('id');\r",
+											"    pm.expect(jsonRes.Data).to.have.property('DocumentId');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-librarys{{DOCUMENT_LIBRARY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-librarys{{DOCUMENT_LIBRARY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete document library",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Request is successfull\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes.Status).to.eql('success');\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Qna document library deleted successfully\", function () {\r",
+											"    var jsonRes = pm.response.json();\r",
+											"    pm.expect(jsonRes).to.have.property('Status');\r",
+											"    pm.expect(jsonRes.Status).to.equal('success');\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-librarys/{{DOCUMENT_LIBRARY_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-librarys",
+										"{{DOCUMENT_LIBRARY_ID}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Search document bilrary",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{BASE_URL}}/document-librarys/search?documentVersionId={{DOCUMENT_VERSION_ID}}",
+									"host": [
+										"{{BASE_URL}}"
+									],
+									"path": [
+										"document-librarys",
+										"search"
+									],
+									"query": [
+										{
+											"key": "documentVersionId",
+											"value": "{{DOCUMENT_VERSION_ID}}"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	]
+}

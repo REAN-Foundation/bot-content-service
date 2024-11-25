@@ -6,7 +6,8 @@ import {
     AuthorizationType, Configurations,
     FileStorageProvider,
     Processor,
-    ProcessorsProvider
+    ProcessorsProvider,
+    VectorstoreProvider,
 } from './configuration.types';
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -26,11 +27,14 @@ export class ConfigurationManager {
                 Authentication : configuration.Auth.Authentication as AuthenticationType,
                 Authorization  : configuration.Auth.Authorization as AuthorizationType,
             },
-            Processor: {
-                Provider: configuration.Processor?.Provider as ProcessorsProvider,
+            Processor : {
+                Provider : configuration.Processor?.Provider as ProcessorsProvider,
             },
             FileStorage : {
                 Provider : configuration.FileStorage.Provider as FileStorageProvider,
+            },
+            Vectorstore : {
+                Provider : configuration.Vectorstore.Provider as VectorstoreProvider,
             },
             TemporaryFolders : {
                 Upload                     : configuration.TemporaryFolders.Upload as string,
@@ -83,6 +87,14 @@ export class ConfigurationManager {
     public static get FileStorageProvider(): FileStorageProvider {
         return ConfigurationManager._config.FileStorage.Provider;
     }
+
+    public static get VectorstoreProvider(): VectorstoreProvider {
+        return ConfigurationManager._config.Vectorstore.Provider;
+    }
+
+    // public static FileStorageProvider = (): FileStorageProvider => {
+    //     return ConfigurationManager._config.FileStorage.Provider;
+    // };
 
     public static get UploadTemporaryFolder(): string {
         var location = ConfigurationManager._config.TemporaryFolders.Upload;

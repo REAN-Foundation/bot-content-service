@@ -1,4 +1,4 @@
-//import cors from 'cors';
+import cors from 'cors';
 import "reflect-metadata";
 import express from 'express';
 import fileUpload from 'express-fileupload';
@@ -6,14 +6,11 @@ import helmet from 'helmet';
 import { Router } from './startup/router';
 import { logger } from './logger/logger';
 import { ConfigurationManager } from "./config/configuration.manager";
-// import { Loader } from './startup/loader';
-// import { Scheduler } from './startup/scheduler';
 import { DbClient } from './database/db.clients/db.client';
-// import { Seeder } from './startup/seeder';
 import { DBConnector } from "./database/database.connector";
-// import { FactsDBConnector } from "./modules/fact.extractors/facts.db.connector";
 import { HttpLogger } from "./logger/HttpLogger";
-// import FactsDbClient from "./modules/fact.extractors/facts.db.client";
+import { Loader } from './startup/loader';
+import { Seeder } from './startup/seeder';
 
 /////////////////////////////////////////////////////////////////////////
 
@@ -44,13 +41,18 @@ export default class Application {
 
     warmUp = async () => {
         try {
+            ConfigurationManager.loadConfigurations();
+
+            await Loader.init();
+
             await this.setupDatabaseConnection();
-            // await Loader.init();
+
             await this.setupMiddlewares();
+
             await this._router.init();
-            // const seeder = new Seeder();
-            // await seeder.seed();
-            // await Scheduler.instance().schedule();
+          
+            const seeder = new Seeder();
+            await seeder.seed();
         }
         catch (error) {
             logger.error('An error occurred while warming up.' + error.message);
@@ -59,15 +61,10 @@ export default class Application {
 
     setupDatabaseConnection = async () => {
         if (process.env.NODE_ENV === 'test') {
-            //Note: This is only for test environment
-            //Drop all tables in db
             await DbClient.dropDatabase();
         }
         await DbClient.createDatabase();
         await DBConnector.initialize();
-
-        // await FactsDbClient.createDatabase();
-        // await FactsDBConnector.initialize();
     };
 
     public start = async(): Promise<void> => {
@@ -87,7 +84,7 @@ export default class Application {
                 this._app.use(express.urlencoded({ extended: true }));
                 this._app.use(express.json());
                 this._app.use(helmet());
-                //this._app.use(cors());
+                this._app.use(cors());
                 if (ConfigurationManager.UseHTTPLogging) {
                     HttpLogger.use(this._app);
                 }
@@ -130,9 +127,9 @@ export default class Application {
 
 }
 
-// process.on('exit', () => {
-//     logger.info("process.exit() is called.");
-// });
+process.on('exit', () => {
+    logger.info("process.exit() is called.");
+});
 
 [
     `exit`,

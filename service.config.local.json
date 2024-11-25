@@ -1,11 +1,14 @@
 {
-    "SystemIdentifier": "Awards Service",
+    "SystemIdentifier": "Bot Content Service",
     "Auth" : {
         "Authentication": "Custom",
         "Authorization": "Custom"
     },
     "FileStorage" : {
         "Provider": "Custom"
+    },
+    "Vectorstore": {
+        "Provider": "PINECONE"
     },
     "Communication" : {
         "SMS": {

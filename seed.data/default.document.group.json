@@ -1,0 +1,9 @@
+{
+    "default": [
+        "JSON",
+        "PDF",
+        "DOCX",
+        "CSV",
+        "XLS"
+    ]
+}

@@ -1,0 +1,10 @@
+{
+    "default": [
+        "Chat Default",
+        "Content Generation",
+        "Generic",
+        "Miscellaneous",
+        "Evaluation and Quality",
+        "Chat Custom"
+    ]
+}

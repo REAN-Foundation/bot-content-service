@@ -4,8 +4,7 @@ export interface FileResourceDetailsDto {
     id?               : string;
     FileName?         : string;
     Url?              : string;
-    OwnerUserId?      : string;
-    UploadedByUserId? : string;
+    DocumentId?      : string;
     IsPublicResource? : boolean;
     MimeType?         : string;
     DefaultVersion?   : FileResourceMetadata;
@@ -18,7 +17,7 @@ export interface FileResourceDto {
     id?               : string;
     FileName?         : string;
     Url?              : string;
-    OwnerUserId?      : string;
+    DocumentId?      : string;
     IsPublicResource? : boolean;
     MimeType?         : string;
     DefaultVersion?   : any;

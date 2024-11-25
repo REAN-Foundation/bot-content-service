@@ -2,67 +2,78 @@ import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.sear
 import { decimal, uuid } from "../miscellaneous/system.types";
 
 export interface  LlmPromptVersionDto {
-    id              : uuid;
-    VersionNumber   : string;
-    llm_prompts?:{
-        id  : uuid;
-        Name             : string;
-        Description      : string;
-        UseCaseType       : string;
-        GroupName         : string;
-        ModelName         : string;
-        ModelVersion      : string;
-        UserId            : string;
-        Temperature       : decimal;
-        FrequencyPenality : decimal;
-        TopP              : decimal;
-        PresencePenalty   : decimal;
-        IsActive          : boolean;
-    };
-    PromptId?       : uuid;
-    Prompt          : string;
-    Variables       : string;
-    Score           : decimal;
-    PublishedAt     : Date;
-}
-export interface  LlmPromptVersionCreateModel {
-    VersionNumber   : string;
-    llm_prompts?:{
-        id  : uuid;
-        Name             : string;
-        Description      : string;
-        UseCaseType       : string;
-        GroupName         : string;
-        ModelName         : string;
-        ModelVersion      : string;
-        UserId            : string;
-        Temperature       : decimal;
-        FrequencyPenality : decimal;
-        TopP              : decimal;
-        PresencePenalty   : decimal;
-        IsActive          : boolean;
-    };
-    PromptId        : uuid;
-    Prompt          : string;
-    Variables       : string;
-    Score           : decimal;
+    id?              : uuid;
+    PromptId?: string;
+    Version?   : number;
+    Name?              : string;
+    Description?      : string;
+    UseCaseType?       : string;
+    Group?             : string;
+    Model?         : string;
+    Prompt?: string;
+    Variables?: string;
+    CreatedByUserId?            : string;
+    Temperature?       : decimal;
+    FrequencyPenalty? : decimal;
+    TopP?              : decimal;
+    PresencePenalty?   : decimal;
+    IsActive?          : boolean;
     PublishedAt?     : Date;
 }
-export interface  LlmPromptVersionUpdateModel {
-    VersionNumber?  : string;
-    PromptId        : uuid;
-    Prompt?         : string;
-    Variables?      : string;
-    Score?          : decimal;
-    PublishedAt?    : Date
+export interface  LlmPromptVersionCreateModel {
+    PromptId: string;
+    Version?   : number;
+    Score: number;
+    Name              : string;
+    Description?      : string;
+    UseCaseType       : string;
+    Group             : string;
+    Model         : string;
+    Prompt: string;
+    Variables: string;
+    CreatedByUserId            : string;
+    Temperature       : number;
+    FrequencyPenalty : number;
+    TopP              : number;
+    PresencePenalty   : decimal;
+    IsActive          : boolean;
 }
+
+export interface  LlmPromptVersionUpdateModel {
+    Score?: number;
+    Name?              : string;
+    Description?      : string;
+    UseCaseType?       : string;
+    Group?             : string;
+    Model?         : string;
+    Prompt?: string;
+    Variables?: string;
+    Temperature?       : number;
+    FrequencyPenalty? : number;
+    TopP?              : number;
+    PresencePenalty?   : decimal;
+    IsActive?          : boolean;
+    PublishedAt?: Date
+}
+
 export interface LlmPromptVersionSearchFilters extends BaseSearchFilters {
-    VersionNumber?  : string;
-    PromptId?        :uuid;
-    Prompt?         : string;
-    Variables?      : string;
-    Score?          : decimal;
-    PublishedAt?    : Date;
+    Version?            : string;
+    PromptId?           : uuid;
+    Score?              : number;
+    PublishedAt?        : Date;
+    id?                 : uuid;
+    Name?               : string;
+    UseCaseType?        : string;
+    Group?              : string;
+    Model?              : string;
+    Prompt?             : string;
+    Variables?          : string;
+    CreatedByUserId?    : string;
+    Temperature?        : number;
+    FrequencyPenalty?   : number;
+    TopP?               : number;
+    PresencePenalty?    : number;
+    IsActive?           : boolean;
 }
 export interface LlmPromptVersionSearchResults extends BaseSearchResults {
     Items: LlmPromptVersionDto[];

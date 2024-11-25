@@ -1,11 +1,14 @@
 {
-    "SystemIdentifier": "Awards Service",
+    "SystemIdentifier": "Bot Content Service",
     "Auth" : {
         "Authentication": "Custom",
         "Authorization": "Custom"
     },
     "FileStorage" : {
         "Provider": "AWS-S3"
+    },
+    "Vectorstore": {
+        "Provider": "PINECONE"
     },
     "Processor" : {
         "Provider": "Custom"

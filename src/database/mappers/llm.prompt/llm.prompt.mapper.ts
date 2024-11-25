@@ -1,4 +1,3 @@
-/* eslint-disable indent */
 import { LlmPrompt } from "../../models/llm.prompt/llm.prompts.model";
 import { LlmPromptDto } from "../../../domain.types/llm.prompt/llm.prompt.domain.types";
 
@@ -9,19 +8,20 @@ export class LlmPromptMapper {
             return null;
         }
         const dto: LlmPromptDto = {
-            id                : llmprompts.id,
-            Name              : llmprompts.Name,
-            Description       : llmprompts.Description,
-            UseCaseType       : llmprompts.UseCaseType,
-            GroupName         : llmprompts.GroupName,
-            ModelName         : llmprompts.ModelName,
-            ModelVersion      : llmprompts.ModelVersion,
-            UserId            : llmprompts.UserId,
-            Temperature       : llmprompts.Temperature,
-            FrequencyPenality : llmprompts.FrequencyPenality,
-            TopP              : llmprompts.TopP,
-            PresencePenalty   : llmprompts.PresencePenalty,
-            IsActive          : llmprompts.IsActive
+            id               : llmprompts.id,
+            Name             : llmprompts.Name,
+            Description      : llmprompts.Description,
+            UseCaseType      : llmprompts.UseCaseType,
+            Group            : llmprompts.Group,
+            Model            : llmprompts.Model,
+            Prompt           : llmprompts.Prompt,
+            Variables        : llmprompts.Variables,
+            CreatedByUserId  : llmprompts.CreatedByUserId,
+            Temperature      : llmprompts.Temperature,
+            FrequencyPenalty : llmprompts.FrequencyPenalty,
+            TopP             : llmprompts.TopP,
+            PresencePenalty  : llmprompts.PresencePenalty,
+            IsActive         : llmprompts.IsActive
         };
         return dto;
     };
@@ -35,19 +35,20 @@ export class LlmPromptMapper {
 
         llmprompts.forEach((element) => {
             dto.push({
-                id                : element.id,
-            Name              : element.Name,
-            Description       : element.Description,
-            UseCaseType       : element.UseCaseType,
-            GroupName         : element.GroupName,
-            ModelName         : element.ModelName,
-            ModelVersion      : element.ModelVersion,
-            UserId            : element.UserId,
-            Temperature       : element.Temperature,
-            FrequencyPenality : element.FrequencyPenality,
-            TopP              : element.TopP,
-            PresencePenalty   : element.PresencePenalty,
-            IsActive          : element.IsActive
+                id               : element.id,
+                Name             : element.Name,
+                Description      : element.Description,
+                UseCaseType      : element.UseCaseType,
+                Group            : element.Group,
+                Model            : element.Model,
+                Prompt           : element.Prompt,
+                Variables        : element.Variables,
+                CreatedByUserId  : element.CreatedByUserId,
+                Temperature      : element.Temperature,
+                FrequencyPenalty : element.FrequencyPenalty,
+                TopP             : element.TopP,
+                PresencePenalty  : element.PresencePenalty,
+                IsActive         : element.IsActive
             });
         });
         return dto;
