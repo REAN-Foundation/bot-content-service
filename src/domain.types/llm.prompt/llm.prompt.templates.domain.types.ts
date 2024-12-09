@@ -1,3 +1,4 @@
+import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.search.types";
 import { decimal, uuid } from "../miscellaneous/system.types";
 
 export interface LlmPromptCreateTemplateModel {
@@ -54,4 +55,22 @@ export interface QnAPromptTemplateInputStructure {
     Introduction : string,
     Instruction? : string,
     Guidelines? : string
+}
+
+export interface LlmPromptTemplateSearchFilters extends BaseSearchFilters {
+    id?: uuid;
+    Name?: string;
+    Description?: string;
+    Content?: string;
+    Version?: decimal;
+    TenantId?: decimal;
+    Type?: string;
+    Category?: string;
+    SubGroup?: string;
+    IsActive?: boolean;
+    CreatedByUserId: string;
+}
+
+export interface LlmPromptTemplateSearchResults extends BaseSearchResults {
+    Items: LlmPromptTemplateDto[];
 }
