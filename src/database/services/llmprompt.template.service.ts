@@ -25,6 +25,7 @@ export class LlmPromptTemplateService extends BaseService {
                 Name            : createModel.Name,
                 Description     : createModel.Description,
                 Content         : createModel.Content,
+                Variables       : createModel.Variables,
                 Version         : createModel.Version,
                 TenantId        : createModel.TenantId,
                 Type            : createModel.Type,
@@ -74,6 +75,9 @@ export class LlmPromptTemplateService extends BaseService {
             }
             if (model.Content) {
                 updateData.Content = model.Content;
+            }
+            if (model.Variables) {
+                updateData.Variables = model.Variables;
             }
             if (model.Version) {
                 updateData.Version = model.Version;

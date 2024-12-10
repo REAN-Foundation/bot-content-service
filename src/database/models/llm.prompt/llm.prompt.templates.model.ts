@@ -15,6 +15,9 @@ export class LlmPromptTemplates extends BaseEntity {
     @Column(({ type: 'varchar', length: 1024, nullable: false}))
     Content: string;
 
+    @Column(({ type: 'varchar', length: 256, nullable: true}))
+    Variables: string;
+
     @Column(({ type: 'int', nullable: true }))
     Version: number;
 

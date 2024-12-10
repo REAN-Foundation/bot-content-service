@@ -15,6 +15,7 @@ export interface  LlmPromptCreateModel {
     TopP              : decimal;
     PresencePenalty   : decimal;
     IsActive          : boolean;
+    Templates : string;
 }
 export interface LlmPromptUpdateModel {
     Name?              : string;
@@ -30,6 +31,7 @@ export interface LlmPromptUpdateModel {
     TopP?              : decimal;
     PresencePenalty?   : decimal;
     IsActive?          : boolean;
+    Templates?: string;
 }
 export interface LlmPromptDto {
     id                : uuid;
@@ -46,6 +48,7 @@ export interface LlmPromptDto {
     TopP              : decimal;
     PresencePenalty   : decimal;
     IsActive          : boolean;
+    Templates : string;
 }
 export interface LlmPromptSearchFilters extends BaseSearchFilters {
     id?                : uuid;

@@ -5,6 +5,7 @@ export interface LlmPromptCreateTemplateModel {
     Name : string;
     Description? : string;
     Content: string;
+    Variables: string;
     Version : decimal;
     TenantId? : decimal;
     Type? : string;
@@ -18,6 +19,7 @@ export interface LlmPromptUpdateTemplateModel {
     Name?: string;
     Description?: string;
     Content?: string;
+    Variables?: string;
     Version?: decimal;
     TenantId?: decimal;
     Type?: string;
@@ -32,6 +34,7 @@ export interface LlmPromptTemplateDto {
     Name : string;
     Description? : string;
     Content: string;
+    Variables?: string;
     Version : decimal;
     TenantId? : decimal;
     Type? : string;

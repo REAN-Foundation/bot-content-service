@@ -8,6 +8,13 @@ import { PromptGroup } from '../../../domain.types/promptgroup.domain.types';
 
 export class LlmPromptValidator extends BaseValidator {
 
+    private templates = joi.object().keys({
+        TemplateId : joi.string().required(),
+        Category   : joi.string().optional(),
+        TenantId   : joi.number().required(),
+        Version    : joi.number().optional(),
+    });
+
     public validateCreateRequest = async (request: express.Request) => {
         try {
             const schema = joi.object({
@@ -24,6 +31,7 @@ export class LlmPromptValidator extends BaseValidator {
                 TopP             : joi.number(),
                 PresencePenalty  : joi.number(),
                 IsActive         : joi.boolean(),
+                Templates        : joi.array().items(this.templates)
             });
             return await schema.validateAsync(request.body);
             
@@ -60,6 +68,7 @@ export class LlmPromptValidator extends BaseValidator {
                 TopP             : joi.number().optional(),
                 PresencePenalty  : joi.number().optional(),
                 IsActive         : joi.boolean().optional(),
+                Templates        : joi.array().items(this.templates),
             });
             return await schema.validateAsync(request.body);
         } catch (error) {
