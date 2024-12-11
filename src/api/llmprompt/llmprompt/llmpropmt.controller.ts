@@ -20,6 +20,8 @@ export class LlmPromptController {
 
     create = async (request: express.Request, response: express.Response) => {
         try {
+            console.log("Inside the create request");
+            console.log(request.body.Group);
             var model: LlmPromptCreateModel = await this._validator.validateCreateRequest(request);
             const record = await this._service.create(model);
             if (record === null) {

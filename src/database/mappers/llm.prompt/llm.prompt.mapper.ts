@@ -1,5 +1,6 @@
 import { LlmPrompt } from "../../models/llm.prompt/llm.prompts.model";
 import { LlmPromptDto } from "../../../domain.types/llm.prompt/llm.prompt.domain.types";
+import { Templates } from "../../../domain.types/llm.prompt/llm.prompt.domain.types";
 
 export class LlmPromptMapper {
 
@@ -21,7 +22,7 @@ export class LlmPromptMapper {
             FrequencyPenalty : llmprompts.FrequencyPenalty,
             TopP             : llmprompts.TopP,
             PresencePenalty  : llmprompts.PresencePenalty,
-            IsActive         : llmprompts.IsActive
+            IsActive         : llmprompts.IsActive,
         };
         return dto;
     };

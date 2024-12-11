@@ -8,11 +8,19 @@ import { PromptGroup } from '../../../domain.types/promptgroup.domain.types';
 
 export class LlmPromptValidator extends BaseValidator {
 
-    private templates = joi.object().keys({
+    private templateVariables = joi.object({
+        VariableName    : joi.string().optional(),
+        VariableContent : joi.string().optional()
+    });
+
+
+    private templates = joi.object({
         TemplateId : joi.string().required(),
         Category   : joi.string().optional(),
         TenantId   : joi.number().required(),
         Version    : joi.number().optional(),
+        Content    : joi.string().required(),
+        Variables  : joi.array().items(this.templateVariables).min(1).optional(),
     });
 
     public validateCreateRequest = async (request: express.Request) => {
@@ -31,7 +39,7 @@ export class LlmPromptValidator extends BaseValidator {
                 TopP             : joi.number(),
                 PresencePenalty  : joi.number(),
                 IsActive         : joi.boolean(),
-                Templates        : joi.array().items(this.templates)
+                Templates        : joi.array().items(this.templates).optional()
             });
             return await schema.validateAsync(request.body);
             
