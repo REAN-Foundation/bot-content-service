@@ -10,6 +10,7 @@ import { QnaDocument } from "./models/content/qna.document.model";
 import { QnaDocumentVersion } from "./models/content/qna.document.version.model";
 import { DBLogger } from "./database.logger";
 import { LlmPromptVersion } from "./models/llm.prompt/llm.prompt.versions.model";
+import { LlmPromptTemplates } from "./models/llm.prompt/llm.prompt.templates.model";
 import { LlmPromptGroup } from "./models/llm.prompt/llm.prompt.groups.model";
 import { LlmPrompt } from "./models/llm.prompt/llm.prompts.model";
 import { QnaDocumentLibrary } from "./models/content/qna.document.library.model";
@@ -41,6 +42,7 @@ class DatabaseConnector {
             QnaDocument,
             LlmPromptGroup,
             LlmPrompt,
+            LlmPromptTemplates,
             LlmPromptVersion,
             QnaDocumentLibrary,
             FileResource,

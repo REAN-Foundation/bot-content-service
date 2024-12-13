@@ -16,13 +16,28 @@ export class LlmpromptService extends BaseService {
     public create = async (createModel: LlmPromptCreateModel)
         : Promise<LlmPromptDto> => {
         try {
+            const templates = createModel.Templates;
+            var finalPrompt = "";
+
+            for (const template of templates) {
+                let content = template.Content;
+            
+                for (const { VariableName, VariableContent } of template.Variables) {
+                    const placeholder = new RegExp(`{{${VariableName}}}`, "g");
+                    content = content.replace(placeholder, VariableContent);
+                }
+            
+                // Append the processed template to the finalPrompt
+                finalPrompt += content + " ";
+            }
+
             const data = this._llmPromptRepository.create({
                 Name             : createModel.Name,
                 Description      : createModel.Description ?? null,
                 UseCaseType      : createModel.UseCaseType,
                 Group            : createModel.Group,
                 Model            : createModel.Model,
-                Prompt           : createModel.Prompt,
+                Prompt           : finalPrompt,
                 Variables        : createModel.Variables,
                 CreatedByUserId  : createModel.CreatedByUserId,
                 Temperature      : createModel.Temperature,
