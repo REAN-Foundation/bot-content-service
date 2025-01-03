@@ -1,6 +1,7 @@
 import express from "express";
 import { logger } from "../logger/logger";
 import { register as registerLlmPromptRoutes } from "../api/llmprompt/llmprompt/llmprompt.routes";
+import { register as registerLlmPromptTemplateRoutes } from "../api/llmprompt/llmprompt.templates/llmprompt.templates.routes";
 import { register as registerLlmPromptVersionRoutes } from "../api/llmprompt/llmprompt.version/llmprompt.version.routes";
 import { register as registerLlmPromptGroupRoutes } from "../api/llmprompt/llmprompt.group/llmprompt.group.routes";
 
@@ -32,6 +33,7 @@ export class Router {
                 });
 
                 registerLlmPromptRoutes(this._app);
+                registerLlmPromptTemplateRoutes(this._app);
                 registerLlmPromptVersionRoutes(this._app);
                 registerLlmPromptGroupRoutes(this._app);
                 registerQnaDocumentGroup(this._app);

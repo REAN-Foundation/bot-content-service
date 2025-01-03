@@ -19,6 +19,8 @@ export class LlmPromptTemplatesController {
             if (record === null) {
                 ErrorHandler.throwInternalServerError('Unable to create llm template prompt!');
             }
+            const message = "Prompt Template created successfully.";
+            ResponseHandler.success(request, response, message, 200, record);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

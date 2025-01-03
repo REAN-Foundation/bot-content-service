@@ -4,6 +4,7 @@ import { LlmPromptMapper } from '../mappers/llm.prompt/llm.prompt.mapper';
 import { logger } from '../../logger/logger';
 import { ErrorHandler } from '../../common/handlers/error.handler';
 import { LlmPromptCreateModel, LlmPromptDto, LlmPromptSearchFilters, LlmPromptSearchResults, LlmPromptUpdateModel } from '../../domain.types/llm.prompt/llm.prompt.domain.types';
+import { LlmPromptTemplateService } from './llmprompt.template.service';
 import { Source } from '../database.connector';
 import { Repository } from 'typeorm/repository/Repository';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
@@ -13,19 +14,25 @@ export class LlmpromptService extends BaseService {
 
     _llmPromptRepository: Repository<LlmPrompt> = Source.getRepository(LlmPrompt);
 
+    _templateService: LlmPromptTemplateService = new LlmPromptTemplateService();
+
     public create = async (createModel: LlmPromptCreateModel)
         : Promise<LlmPromptDto> => {
         try {
             const templates = createModel.Templates;
             var finalPrompt = "";
+            const variables = [];
 
             for (const template of templates) {
-                let content = template.Content;
-            
-                for (const { VariableName, VariableContent } of template.Variables) {
-                    const placeholder = new RegExp(`{{${VariableName}}}`, "g");
-                    content = content.replace(placeholder, VariableContent);
-                }
+                const templateContent = await this._templateService.getById(template.TemplateId);
+                const content = templateContent.Content;
+
+                // let content = template.Content;
+                variables.push(template.Variables);
+                // for (const { VariableName, VariableContent } of template.Variables) {
+                //     const placeholder = new RegExp(`{{${VariableName}}}`, "g");
+                //     content = content.replace(placeholder, VariableContent);
+                // }
             
                 // Append the processed template to the finalPrompt
                 finalPrompt += content + " ";
@@ -38,7 +45,7 @@ export class LlmpromptService extends BaseService {
                 Group            : createModel.Group,
                 Model            : createModel.Model,
                 Prompt           : finalPrompt,
-                Variables        : createModel.Variables,
+                Variables        : JSON.stringify(variables),
                 CreatedByUserId  : createModel.CreatedByUserId,
                 Temperature      : createModel.Temperature,
                 FrequencyPenalty : createModel.FrequencyPenalty,

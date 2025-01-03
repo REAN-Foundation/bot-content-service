@@ -17,9 +17,9 @@ export class LlmPromptValidator extends BaseValidator {
     private templates = joi.object({
         TemplateId : joi.string().required(),
         Category   : joi.string().optional(),
-        TenantId   : joi.number().required(),
+        TenantId   : joi.number().optional(),
         Version    : joi.number().optional(),
-        Content    : joi.string().required(),
+        Content    : joi.string().optional(),
         Variables  : joi.array().items(this.templateVariables).min(1).optional(),
     });
 
@@ -29,15 +29,15 @@ export class LlmPromptValidator extends BaseValidator {
                 Name             : joi.string().required(),
                 Description      : joi.string().optional(),
                 UseCaseType      : joi.string().valid(...Object.values(PromptUsecase)).optional(),
-                Group            : joi.string().required(),
+                Group            : joi.string().optional(),
                 Model            : joi.string(),
                 Prompt           : joi.string().required(),
                 Variables        : joi.string().optional(),
                 CreatedByUserId  : joi.string().uuid(),
                 Temperature      : joi.number(),
-                FrequencyPenalty : joi.number(),
-                TopP             : joi.number(),
-                PresencePenalty  : joi.number(),
+                FrequencyPenalty : joi.number().optional(),
+                TopP             : joi.number().optional(),
+                PresencePenalty  : joi.number().optional(),
                 IsActive         : joi.boolean(),
                 Templates        : joi.array().items(this.templates).optional()
             });
