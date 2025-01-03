@@ -31,7 +31,7 @@ export class LlmPromptTemplateValidator extends BaseValidator {
     public validateGetRequest = async (request: express.Request) => {
         try {
             const schema = joi.object({
-                id: joi.string().required(),
+                id : joi.string().required(),
             });
             return await schema.validateAsync(request.query);
         } catch (error) {

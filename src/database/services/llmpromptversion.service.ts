@@ -37,7 +37,7 @@ export class LlmpromptVersionService extends BaseService {
                 Name             : createModel.Name,
                 Description      : createModel.Description ?? null,
                 UseCaseType      : createModel.UseCaseType,
-                Group            : createModel.Group,
+                Group            : createModel.Group ?? 'Default',
                 Model            : createModel.Model,
                 Prompt           : createModel.Prompt,
                 Variables        : createModel.Variables,
