@@ -15,6 +15,7 @@ export interface  LlmPromptCreateModel {
     TopP              : decimal;
     PresencePenalty   : decimal;
     IsActive          : boolean;
+    TenantId          : string;
     Templates?        : Templates[];
 }
 export interface LlmPromptUpdateModel {
@@ -31,6 +32,7 @@ export interface LlmPromptUpdateModel {
     TopP?              : decimal;
     PresencePenalty?   : decimal;
     IsActive?          : boolean;
+    TenantId?          : string;
     Templates?         : Templates[];
 }
 export interface LlmPromptDto {
@@ -48,6 +50,7 @@ export interface LlmPromptDto {
     TopP              : decimal;
     PresencePenalty   : decimal;
     IsActive          : boolean;
+    TenantId          : string;
     Templates?        : Templates[];
 }
 export interface LlmPromptSearchFilters extends BaseSearchFilters {
@@ -64,6 +67,7 @@ export interface LlmPromptSearchFilters extends BaseSearchFilters {
     TopP?              : decimal;
     PresencePenalty?   : decimal;
     IsActive?          : boolean;
+    TenantId?          : string;
 }
 export interface LlmPromptInputStructure {
     introduction    :   string,

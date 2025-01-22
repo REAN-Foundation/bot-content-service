@@ -52,6 +52,7 @@ export class LlmpromptService extends BaseService {
                 TopP             : createModel.TopP,
                 PresencePenalty  : createModel.PresencePenalty,
                 IsActive         : createModel.IsActive,
+                TenantId         : createModel.TenantId
             });
             var record = await this._llmPromptRepository.save(data);
             return LlmPromptMapper.toResponseDto(record);
