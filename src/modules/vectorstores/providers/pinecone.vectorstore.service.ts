@@ -3,6 +3,7 @@ import { Document } from "@langchain/core/documents";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { logger } from '../../../logger/logger';
 
 export class PineconeVectorStore implements IVectorStoreService {
 
@@ -38,6 +39,7 @@ export class PineconeVectorStore implements IVectorStoreService {
             await vectorStore.addDocuments(data);
             return "Docuemnts added successfully";
         } catch (error) {
+            logger.error(error);
             return error.message;
         }
     };
