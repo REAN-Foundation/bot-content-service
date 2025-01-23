@@ -75,6 +75,8 @@ export class LlmPromptController {
                 ErrorHandler.throwNotFoundError(message);
             }
             else {
+                const promptContent = await this.getFinalPrompt(record);
+                record["PromptContent"] = promptContent;
                 const message = 'LLm prompt retrieved successfully!';
                 return ResponseHandler.success(request, response, message, 200, record);
             }
@@ -132,6 +134,23 @@ export class LlmPromptController {
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
+    };
+
+    getFinalPrompt = async (data) => {
+        let content = data.Prompt;
+        const variables = JSON.parse(data.Variables);
+        // let finalPrompt = '';
+        for (let i = 0; i < variables.length; i++){
+            const innerArray = variables[i];
+            const innerObject = innerArray[0];
+            const { VariableName, VariableContent } = innerObject;
+
+            if (VariableName && VariableContent) {
+                const placeholder = new RegExp(`{${VariableName}}`, "g");
+                content = content.replace(placeholder, VariableContent);
+            }
+        }
+        return content;
     };
 
 }
