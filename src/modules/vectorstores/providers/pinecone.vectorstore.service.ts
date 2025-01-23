@@ -3,6 +3,7 @@ import { Document } from "@langchain/core/documents";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
 import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { logger } from '../../../logger/logger';
 
 export class PineconeVectorStore implements IVectorStoreService {
 
@@ -32,22 +33,23 @@ export class PineconeVectorStore implements IVectorStoreService {
         //method does not exist for pinecone
     }
 
-    insertData = async (clientName: string, projectName: string, data: any): Promise<string> => {
+    insertData = async (tenantId: string, data: any): Promise<string> => {
         try {
-            const vectorStore = await this.loadVectorStore(clientName, projectName, "default");
+            const vectorStore = await this.loadVectorStore(tenantId, "default");
             await vectorStore.addDocuments(data);
             return "Docuemnts added successfully";
         } catch (error) {
+            logger.error(error);
             return error.message;
         }
     };
 
-    clientIndex = async (clientName: string, projectName: string) => {
+    clientIndex = async (tenantId: string) => {
         const env = process.env.ENVIRONMENT;
-        return `${env}-${clientName}-${projectName}`;
+        return `${env}-${tenantId}`;
     };
 
-    loadVectorStore = async (clientName: string, projectName: string, collectionName: string) => {
+    loadVectorStore = async (tenantId: string, collectionName: string) => {
 
         await this.createConnection();
         // const pineconeIndex = await this.clientIndex(clientName, projectName);
@@ -60,10 +62,11 @@ export class PineconeVectorStore implements IVectorStoreService {
         return vectorStore;
     };
 
-    similaritySearch = async (clientName: string, projectName:string, userQuery: string) => {
+    similaritySearch = async (tenantId: string, userQuery: string) => {
         const k = 3;
         const filter = {};
-        const vectorDB = await this.loadVectorStore(clientName, projectName, "default");
+        // CHANGE THIS BELOW LINE
+        const vectorDB = await this.loadVectorStore("", "default");
         const similaritySearch = vectorDB.similaritySearch(
             userQuery,
             k,

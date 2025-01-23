@@ -7,9 +7,9 @@ export const register = (app: express.Application): void => {
     const router = express.Router();
     const controller = new VectorstoreController();
 
-    router.post('/:client/:project/create', controller.create);
-    router.post('/:client/:project/update', controller.update);
-    router.post('/:client/:project/search', controller.search);
+    router.post('/', controller.create);
+    router.post('/update', controller.update);
+    router.post('/similarity-search', controller.search);
 
     app.use('/api/v1/vectorstore', router);
 };

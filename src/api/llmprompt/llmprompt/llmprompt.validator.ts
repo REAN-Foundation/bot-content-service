@@ -39,6 +39,7 @@ export class LlmPromptValidator extends BaseValidator {
                 TopP             : joi.number().optional(),
                 PresencePenalty  : joi.number().optional(),
                 IsActive         : joi.boolean(),
+                TenantId         : joi.string().optional,
                 Templates        : joi.array().items(this.templates).optional()
             });
             return await schema.validateAsync(request.body);

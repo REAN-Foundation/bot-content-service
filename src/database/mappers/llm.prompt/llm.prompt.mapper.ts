@@ -23,6 +23,7 @@ export class LlmPromptMapper {
             TopP             : llmprompts.TopP,
             PresencePenalty  : llmprompts.PresencePenalty,
             IsActive         : llmprompts.IsActive,
+            TenantId         : llmprompts.TenantId,
         };
         return dto;
     };
@@ -49,7 +50,8 @@ export class LlmPromptMapper {
                 FrequencyPenalty : element.FrequencyPenalty,
                 TopP             : element.TopP,
                 PresencePenalty  : element.PresencePenalty,
-                IsActive         : element.IsActive
+                IsActive         : element.IsActive,
+                TenantId         : element.TenantId
             });
         });
         return dto;

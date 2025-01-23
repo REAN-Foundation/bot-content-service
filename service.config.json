@@ -8,7 +8,7 @@
         "Provider": "AWS-S3"
     },
     "Vectorstore": {
-        "Provider": "PINECONE"
+        "Provider": "FAISS"
     },
     "Processor" : {
         "Provider": "Custom"

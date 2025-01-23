@@ -26,8 +26,8 @@ export class VectorstoreService {
         return await this._vectorstoreService.deleteCollection(clientName, projectName, collectionName);
     };
 
-    insertData = async (clientName: string, projectName: string, data: any) => {
-        return await this._vectorstoreService.insertData(clientName, projectName, data);
+    insertData = async (tenantId: string, data: any) => {
+        return await this._vectorstoreService.insertData(tenantId, data);
     };
 
     clientIndex = async (clientName: string, projectName: string) => {
@@ -38,7 +38,7 @@ export class VectorstoreService {
         return await this._vectorstoreService.loadVectorStore(clientName, projectName, collectionName);
     };
 
-    similaritySearch = async (clientName:string, projectName: string, userQuery: string) => {
-        return await this._vectorstoreService.similaritySearch(clientName, projectName, userQuery);
+    similaritySearch = async (tenantId: string, userQuery: string) => {
+        return await this._vectorstoreService.similaritySearch(tenantId, userQuery);
     };
 }

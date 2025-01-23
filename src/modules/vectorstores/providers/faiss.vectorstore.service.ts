@@ -1,6 +1,7 @@
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { logger } from '../../../logger/logger';
 
 export class FaissVectorStore implements IVectorStoreService {
 
@@ -27,17 +28,19 @@ export class FaissVectorStore implements IVectorStoreService {
         return "Method Not Implemented for FAISS";
     };
 
-    insertData = async (clientName: string, projectName: string, data: any): Promise<string> => {
+    insertData = async (tenantId: string, data: any): Promise<string> => {
         try {
             const vectorStore = await FaissStore.fromDocuments(
                 data,
                 new OpenAIEmbeddings({model: "text-embedding-ada-002"})
             );
-            const indexName = await this.clientIndex(clientName, projectName);
+            // const indexName = await this.clientIndex(clientName, projectName);
+            const indexName = tenantId;
             const directory = `./localstore/${indexName}`;
             await vectorStore.save(directory);
             return "Faiss Vectorstore saved successfully";
         } catch (error) {
+            logger.error(error);
             return "Error saving Faiss Vectorstore";
         }
     };
@@ -46,8 +49,9 @@ export class FaissVectorStore implements IVectorStoreService {
         return `${clientName}/${projectName}`;
     };
 
-    loadVectorStore = async (clientName: string, projectName: string, collectionName: string) => {
-        const indexName = this.clientIndex(clientName, projectName);
+    loadVectorStore = async (tenantId: string, collectionName: string) => {
+        // const indexName = this.clientIndex(clientName, projectName);
+        const indexName = tenantId;
         const vectorStoreLocation = `./localstore/${indexName}`;
         const loadVectorStore = await FaissStore.load(
             vectorStoreLocation, 
@@ -56,11 +60,16 @@ export class FaissVectorStore implements IVectorStoreService {
         return loadVectorStore;
     };
 
-    similaritySearch = async (clientName: string, projectName: string, userQuery: string) => {
-        const vectorDB = await this.loadVectorStore(clientName, projectName, "default");
-        const k = 3;
-        const similarDocs = await vectorDB.similaritySearch(userQuery, k);
-        return similarDocs;
+    similaritySearch = async (tenantId: string, userQuery: string) => {
+        try {
+            const vectorDB = await this.loadVectorStore(tenantId, "default");
+            const k = 3;
+            const similarDocs = await vectorDB.similaritySearch(userQuery, k);
+            return similarDocs;
+        } catch (error) {
+            logger.error(error);
+            return null;
+        }
     };
 
 }
