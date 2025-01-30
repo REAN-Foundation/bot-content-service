@@ -8,7 +8,7 @@
         "Provider": "Custom"
     },
     "Vectorstore": {
-        "Provider": "FAISS"
+        "Provider": "PGVECTOR"
     },
     "Communication" : {
         "SMS": {
