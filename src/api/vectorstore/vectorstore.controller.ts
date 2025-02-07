@@ -4,6 +4,7 @@ import path from 'path';
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { ErrorHandler } from '../../common/handlers/error.handler';
 import { VectorstoreService } from '../../modules/vectorstores/vectorstore.service';
+import { KeywordService } from '../../modules/vectorstores/keywords.service';
 import { VectorStoreValidator } from './vectorstore.validator';
 import { Loader } from '../../startup/loader';
 import { DocumentProcessor } from '../../modules/document.processors/document.processor';
@@ -20,6 +21,8 @@ export class VectorstoreController {
 
     _vectorstoreService: VectorstoreService = Loader.Container.resolve(VectorstoreService);
 
+    _keywordService: KeywordService = Loader.Container.resolve(KeywordService);
+
     _fileResourceService: FileResourceService = new FileResourceService();
 
     _storageService: StorageService = Loader.Container.resolve(StorageService);
@@ -32,7 +35,6 @@ export class VectorstoreController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: VectorStoreCreateModel = await this._validator.validateCreateRequest(request);
-            // var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
             const record = await this._fileResourceService.getById(model.id);
             if (!record) {
                 ErrorHandler.throwNotFoundError('File does not exist to create vectorstore.');
@@ -40,15 +42,15 @@ export class VectorstoreController {
 
             var storageKey = record.StorageKey;
             var originalFilename = record.OriginalFilename;
+            var tags = record.Tags;
             var mimeType = mime.lookup(originalFilename);
             var tenantId = model.TenantId;
+
+            await this._keywordService.addKeywords(tenantId, tags, originalFilename);
 
             var downloadFolderPath = await this.generateDownloadFolderPath();
             var localFilePath = path.join(downloadFolderPath, originalFilename);
             var localDestination = await this._storageService.download(storageKey, localFilePath);
-            // const clientName = request.params.client;
-            // const projectName = request.params.project;
-            // const filepath = request.body.filepath;
 
             const data = await this._documentProcessor.processDocument(localDestination);
             const result = await this._vectorstoreService.insertData(tenantId, data);

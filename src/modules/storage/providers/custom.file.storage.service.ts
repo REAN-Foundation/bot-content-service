@@ -107,37 +107,37 @@ export class CustomFileStorageService implements IFileStorageService {
         }
     };
 
-    // download = async (storageKey: string): Promise<any> => {
-    //     try {
-    //         var storagePath = FileUtils.getStoragePath();
-    //         const fileLocation = path.join(storagePath, storageKey);
-    //         const stream = fs.createReadStream(fileLocation);
-    //         return stream;
-    //     }
-    //     catch (error) {
-    //         logger.error(error.message);
-    //         return null;
-    //     }
-    // };
-
-    download = async (storageKey: string, localFilePath: string): Promise<string> => {
+    download = async (storageKey: string): Promise<any> => {
         try {
-            // const location = path.join(this._storagePath, storageKey);
             var storagePath = FileUtils.getStoragePath();
             const fileLocation = path.join(storagePath, storageKey);
-            const fileContent = fs.readFileSync(fileLocation);
-
-            const directory = path.dirname(localFilePath);
-            await fs.promises.mkdir(directory, { recursive: true });
-
-            fs.writeFileSync(localFilePath, fileContent, { flag: 'w' });
-            return localFilePath;
+            const stream = fs.createReadStream(fileLocation);
+            return stream;
         }
         catch (error) {
-            // Logger.instance().log(error.message);
+            logger.error(error.message);
             return null;
         }
     };
+
+    // download = async (storageKey: string, localFilePath: string): Promise<string> => {
+    //     try {
+    //         // const location = path.join(this._storagePath, storageKey);
+    //         var storagePath = FileUtils.getStoragePath();
+    //         const fileLocation = path.join(storagePath, storageKey);
+    //         const fileContent = fs.readFileSync(fileLocation);
+
+    //         const directory = path.dirname(localFilePath);
+    //         await fs.promises.mkdir(directory, { recursive: true });
+
+    //         fs.writeFileSync(localFilePath, fileContent, { flag: 'w' });
+    //         return localFilePath;
+    //     }
+    //     catch (error) {
+    //         // Logger.instance().log(error.message);
+    //         return null;
+    //     }
+    // };
 
     downloadLocally = async (storageKey: string, localFilePath: string): Promise<string> => {
         try {

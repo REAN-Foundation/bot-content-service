@@ -1,6 +1,9 @@
 import express from "express";
 import { ErrorHandler } from "../../common/handlers/error.handler";
 import BaseValidator from "../base.validator";
+import { FileResourceUploadDomainModel } from "../../domain.types/general/file.resource/file.resource.domain.model";
+import { TimeHelper } from "../../common/time.helper";
+import { ConfigurationManager } from "../../config/configuration.manager";
 
 export class FileResourceValidator extends BaseValidator {
 
