@@ -1,6 +1,7 @@
 import { PGVectorStore, DistanceStrategy } from "@langchain/community/vectorstores/pgvector";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { VectorstoreUtils } from "../../../common/utilities/vectorstore.utils";
 import { logger } from "../../../logger/logger";
 import { PoolConfig, Pool } from "pg";
 import * as pg from 'pg';
@@ -44,7 +45,7 @@ export class PgVectorStore implements IVectorStoreService {
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
         this.pool = new pg.Pool(postgresConnectionOptions);
-        await this.ensureDatabaseSchema(config);
+        await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {
             pool : this.pool,
             tableName,
@@ -101,26 +102,26 @@ export class PgVectorStore implements IVectorStoreService {
         return similaritySearch;
     };
 
-    ensureDatabaseSchema = async (config) => {
+    // ensureDatabaseSchema = async (config) => {
 
-        // This function creates a connection and checks if the table already exists.
-        // If not it will be created with the vector extension on postgres tables.
+    //     // This function creates a connection and checks if the table already exists.
+    //     // If not it will be created with the vector extension on postgres tables.
         
-        const client = await this.pool.connect();
-        try {
-            const query = `
-            CREATE TABLE IF NOT EXISTS ${config.tableName} (
-                ${config.columns.idColumnName} UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-                ${config.columns.vectorColumnName} VECTOR,
-                ${config.columns.contentColumnName} TEXT,
-                ${config.columns.metadataColumnName} JSONB
-            );
-            `;
-            await client.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
-            await client.query('CREATE EXTENSION IF NOT EXISTS vector');
-            await client.query(query);
-        } finally {
-            client.release();
-        }
-    };
+    //     const client = await this.pool.connect();
+    //     try {
+    //         const query = `
+    //         CREATE TABLE IF NOT EXISTS ${config.tableName} (
+    //             ${config.columns.idColumnName} UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    //             ${config.columns.vectorColumnName} VECTOR,
+    //             ${config.columns.contentColumnName} TEXT,
+    //             ${config.columns.metadataColumnName} JSONB
+    //         );
+    //         `;
+    //         await client.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
+    //         await client.query('CREATE EXTENSION IF NOT EXISTS vector');
+    //         await client.query(query);
+    //     } finally {
+    //         client.release();
+    //     }
+    // };
 }
