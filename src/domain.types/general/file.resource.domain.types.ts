@@ -2,11 +2,12 @@ import { BaseSearchFilters, BaseSearchResults } from "../miscellaneous/base.sear
 import { uuid } from "../miscellaneous/system.types";
 
 export interface FileResourceCreateModel {
+    TenantId          : string;
     StorageKey       ?: string;
     MimeType         ?: string;
     Metadata         ?: any;
     OriginalFilename ?: string;
-    DocumentId           ?: uuid;
+    DocumentId       ?: uuid;
     Size             ?: number;
     Public           ?: boolean;
     DownloadCount    ?: number;
@@ -21,6 +22,7 @@ export interface FileResourceResponseDto {
     Size            : number;
     Public          : boolean;
     DownloadCount   : number;
+    TenantId        : string;
     Tags            : string[];
     UploadedBy      : uuid;
     CreatedAt       : Date;
@@ -31,6 +33,7 @@ export interface FileResourceSearchFilters extends BaseSearchFilters {
     Filename?: string;
     DocumentId?  : uuid;
     Tags?    : string;
+    TenantId?: string
 }
 
 export interface FileResourceSearchResults extends BaseSearchResults {

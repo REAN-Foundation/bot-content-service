@@ -52,6 +52,8 @@ export class FileResourceController extends BaseController {
             filename = filename + '_' + timestamp + '.' + ext;
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
+            const tenantId = request.body.TenantId;
+
             var key = await this._storageService.upload(storageKey, request);
             if (!key) {
                 ErrorHandler.throwInternalServerError(`Unable to upload the file!`);
@@ -63,6 +65,7 @@ export class FileResourceController extends BaseController {
                 OriginalFilename : originalFilename,
                 Tags             : request.body.Tags ? request.body.Tags : [],
                 Size             : contentLength ? parseInt(contentLength) : null,
+                TenantId         : tenantId
             };
             var record = await this._service.create(model);
             if (record === null) {

@@ -23,4 +23,17 @@ export class VectorstoreUtils {
             client.release();
         }
     };
+
+    public static getAllIds = async (pool: pg.Pool, tableName: string) => {
+        const client = await pool.connect();
+        try {
+            const query = `
+            SELECT id FROM ${tableName};
+            `;
+            const idList = await client.query(query);
+            return idList;
+        } finally {
+            client.release();
+        }
+    };
 }

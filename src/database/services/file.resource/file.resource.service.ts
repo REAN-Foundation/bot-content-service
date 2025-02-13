@@ -158,6 +158,7 @@ export class FileResourceService {
                     Size             : true,
                     StorageKey       : true,
                     Tags             : true,
+                    TenantId         : true,
                     // UploadedBy       : {
                     //     id     : true,
                     //     Client : {

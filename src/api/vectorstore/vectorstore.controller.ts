@@ -46,7 +46,7 @@ export class VectorstoreController {
             var mimeType = mime.lookup(originalFilename);
             var tenantId = model.TenantId;
 
-            await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+            // await this._keywordService.addKeywords(tenantId, tags, originalFilename);
 
             var downloadFolderPath = await this.generateDownloadFolderPath();
             var localFilePath = path.join(downloadFolderPath, originalFilename);
@@ -61,16 +61,15 @@ export class VectorstoreController {
         }
     };
 
-    update = async (request: express.Request, response: express.Response): Promise<void> => {
+    refresh = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            const clientName = request.params.client;
-            const projectName = request.params.project;
-            const filepath = request.body.filepath;
 
-            const data = await this._documentProcessor.processDocument(filepath);
-            // const result = await this._vectorstoreService.insertData(clientName, projectName, data);
+            const tenantId = request.body["TenantId"];
+
+            // const data = await this._documentProcessor.processDocument(filepath);
+            const result = await this._vectorstoreService.refreshData(tenantId);
             const message = "Data updated in Vectorstore.";
-            // ResponseHandler.success(request, response, message, 200, result);
+            ResponseHandler.success(request, response, message, 200, result);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

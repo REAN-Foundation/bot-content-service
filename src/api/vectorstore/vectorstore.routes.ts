@@ -8,7 +8,8 @@ export const register = (app: express.Application): void => {
     const controller = new VectorstoreController();
 
     router.post('/', controller.create);
-    router.post('/update', controller.update);
+    // router.post('/update', controller.update);
+    router.post('/refresh', controller.refresh);
     router.post('/similarity-search', controller.search);
 
     app.use('/api/v1/vectorstore', router);

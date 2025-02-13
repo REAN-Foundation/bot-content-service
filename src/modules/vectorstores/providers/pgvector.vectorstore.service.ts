@@ -15,6 +15,8 @@ export class PgVectorStore implements IVectorStoreService {
     private pool: pg.Pool;
     
     private tenantId;
+    
+    private tableName;
 
     constructor() {
         this.embeddingModel = "text-embedding-ada-002";
@@ -44,6 +46,7 @@ export class PgVectorStore implements IVectorStoreService {
         };
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
+        this.tableName = tableName;
         this.pool = new pg.Pool(postgresConnectionOptions);
         await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {
@@ -61,13 +64,38 @@ export class PgVectorStore implements IVectorStoreService {
         //method not implemented
     }
 
-    createCollection(clientName: string, projectName: string, collectionName: string) {
+    createCollection(tenantId: string) {
         //method does not exist for pgvector
     }
 
-    deleteCollection(clientName: string, projectName: string, collectionName: string) {
-        //method not implemented for pinecone
-    }
+    deleteCollection = async (tenantId: string): Promise<string> => {
+        try {
+            this.tenantId = tenantId;
+            await this.createConnection();
+            const idList = await VectorstoreUtils.getAllIds(this.pool, this.tableName);
+            const ids = idList.rows.map(row => row.id);
+            await this._pgConnection.delete({ ids });
+            return "Deleted the entries in vectorstore";
+        } catch (error) {
+            logger.error(error);
+            throw new Error("Unable to delete the vectorstore entries");
+        }
+
+    };
+
+    refreshData = async (tenantId: string): Promise<string> => {
+        try {
+
+            await this.deleteCollection(tenantId);
+
+            await this.createCollection(tenantId);
+
+            return "PG VECTOR CLEARED";
+        } catch (error) {
+            logger.error(error);
+            throw new Error("Unable to delete the vectorstore");
+        }
+    };
 
     insertData = async (tenantId: string, data: any): Promise<string> => {
         try {

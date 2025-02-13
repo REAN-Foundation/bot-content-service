@@ -18,16 +18,20 @@ export class VectorstoreService {
         return await this._vectorstoreService.disconnect();
     };
 
-    createCollection = async (clientName: string, projectName: string, collectionName: string) => {
-        return await this._vectorstoreService.createCollection(clientName, projectName, collectionName);
+    createCollection = async (tenantId: string) => {
+        return await this._vectorstoreService.createCollection(tenantId);
     };
 
-    deleteCollection = async (clientName: string, projectName:string, collectionName: string) => {
-        return await this._vectorstoreService.deleteCollection(clientName, projectName, collectionName);
+    deleteCollection = async (tenantId: string) => {
+        return await this._vectorstoreService.deleteCollection(tenantId);
     };
 
     insertData = async (tenantId: string, data: any) => {
         return await this._vectorstoreService.insertData(tenantId, data);
+    };
+
+    refreshData = async (tenantId: string) => {
+        return await this._vectorstoreService.refreshData(tenantId);
     };
 
     clientIndex = async (clientName: string, projectName: string) => {
