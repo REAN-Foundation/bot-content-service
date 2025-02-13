@@ -25,12 +25,16 @@ export class PineconeVectorStore implements IVectorStoreService {
         //method not implemented
     }
 
-    createCollection(clientName: string, projectName: string, collectionName: string) {
+    createCollection(tenantId: string) {
         //method does not exist for pinecone
     }
 
-    deleteCollection(clientName: string, projectName: string, collectionName: string) {
+    deleteCollection(tenantId: string) {
         //method does not exist for pinecone
+    }
+
+    refreshData(tenantId: string) {
+        //method not implemented yet
     }
 
     insertData = async (tenantId: string, data: any): Promise<string> => {

@@ -20,6 +20,7 @@ export class FileResourceMapper {
             Public           : fileResource.Public,
             Size             : fileResource.Size,
             Tags             : fileResource.Tags,
+            TenantId         : fileResource.TenantId,
             UploadedBy       : null,
             CreatedAt        : fileResource.CreatedAt,
             UpdatedAt        : fileResource.UpdatedAt,

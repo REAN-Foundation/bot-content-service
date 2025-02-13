@@ -44,6 +44,9 @@ export class FileResource {
     @Column({ type: 'integer', nullable: false, default: 0 })
     DownloadCount: number;
 
+    @Column({ type: 'varchar', length: 80, nullable: true})
+    TenantId: string;
+
     // @Column({ type: 'uuid', nullable: true })
     // UploadedBy : User;
 

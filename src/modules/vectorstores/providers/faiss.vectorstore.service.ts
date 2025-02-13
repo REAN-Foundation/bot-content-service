@@ -20,13 +20,17 @@ export class FaissVectorStore implements IVectorStoreService {
         //method not applicable for FAISS
     };
 
-    createCollection = async (clientName: string, projectName: string, collectionName: string): Promise<string> => {
+    createCollection = async (tenantId: string): Promise<string> => {
         return "Method Not Implemented for FAISS";
     };
 
-    deleteCollection = async (clientName: string, projectName: string, collectionName: string): Promise<string> => {
+    deleteCollection = async (tenantId: string): Promise<string> => {
         return "Method Not Implemented for FAISS";
     };
+
+    refreshData(tenantId: string) {
+        // method not implemented yet
+    }
 
     insertData = async (tenantId: string, data: any): Promise<string> => {
         try {

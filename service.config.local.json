@@ -5,10 +5,10 @@
         "Authorization": "Custom"
     },
     "FileStorage" : {
-        "Provider": "Custom"
+        "Provider": "AWS-S3"
     },
     "Vectorstore": {
-        "Provider": "FAISS"
+        "Provider": "PGVECTOR"
     },
     "Communication" : {
         "SMS": {
