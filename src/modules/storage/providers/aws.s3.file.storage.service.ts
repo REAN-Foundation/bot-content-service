@@ -45,6 +45,7 @@ export class AWSS3FileStorageService  {
             };
             const command = new aws.PutObjectCommand(params);
             const response = await s3.send(command);
+            // const response = await s3.upload(params).promise();
             // Logger.instance().log(JSON.stringify(result, null, 2));
             logger.info(JSON.stringify(response, null, 2));
 
@@ -78,6 +79,20 @@ export class AWSS3FileStorageService  {
         catch (error) {
             logger.error(error.message);
         }
+    };
+
+    downloadStream = async (storageKey: string): Promise<Readable> => {
+
+        const s3 = this.getS3Client();
+        const params = {
+            Bucket : process.env.STORAGE_BUCKET,
+            Key    : storageKey,
+        };
+
+        const command = new GetObjectCommand(params);
+        const response = await s3.send(command);
+        const stream = response.Body as Readable;
+        return stream;
     };
 
     download = async (storageKey: string, localFilePath: string): Promise<string> => {
@@ -183,11 +198,11 @@ export class AWSS3FileStorageService  {
 
     //#region Privates
 
-    getS3Client = (): aws.S3 => {
-        return new aws.S3({
+    getS3Client = (): aws.S3Client => {
+        return new aws.S3Client({
             credentials : {
                 accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
-                secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET
+                secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET,
             },
             region : process.env.STORAGE_CLOUD_REGION
         });

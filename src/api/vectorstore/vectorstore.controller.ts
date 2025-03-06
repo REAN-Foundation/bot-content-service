@@ -35,27 +35,32 @@ export class VectorstoreController {
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: VectorStoreCreateModel = await this._validator.validateCreateRequest(request);
-            const record = await this._fileResourceService.getById(model.id);
-            if (!record) {
+            // const record = await this._fileResourceService.getById(model.id);
+            const tenantId = model.TenantId;
+            const records = await this._fileResourceService.getByTenantId(tenantId);
+            if (!records) {
                 ErrorHandler.throwNotFoundError('File does not exist to create vectorstore.');
             }
 
-            var storageKey = record.StorageKey;
-            var originalFilename = record.OriginalFilename;
-            var tags = record.Tags;
-            var mimeType = mime.lookup(originalFilename);
-            var tenantId = model.TenantId;
+            for ( const record of records ) {
+                var storageKey = record.StorageKey;
+                var originalFilename = record.OriginalFilename;
+                var tags = record.Tags;
+                var mimeType = mime.lookup(originalFilename);
 
-            // await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+                await this._keywordService.addKeywords(tenantId, tags, originalFilename);
 
-            var downloadFolderPath = await this.generateDownloadFolderPath();
-            var localFilePath = path.join(downloadFolderPath, originalFilename);
-            var localDestination = await this._storageService.download(storageKey, localFilePath);
+                var downloadFolderPath = await this.generateDownloadFolderPath();
+                var localFilePath = path.join(downloadFolderPath, originalFilename);
+                var localDestination = await this._storageService.download(storageKey, localFilePath);
 
-            const data = await this._documentProcessor.processDocument(localDestination);
-            const result = await this._vectorstoreService.insertData(tenantId, data);
+                const data = await this._documentProcessor.processDocument('', localDestination);
+                const result = await this._vectorstoreService.insertData(tenantId, data);
+
+                this.cleanupFiles(localDestination);
+            }
             const message = "Data inserted into Vectorstore.";
-            ResponseHandler.success(request, response, message, 200, result);
+            ResponseHandler.success(request, response, message, 200, '');
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -98,6 +103,14 @@ export class VectorstoreController {
         await fs.promises.mkdir(downloadFolderPath, { recursive: true });
 
         return downloadFolderPath;
+    };
+
+    private cleanupFiles = async (localFilePath: string) => {
+        try {
+            await fs.promises.unlink(localFilePath);
+        } catch (error) {
+            ErrorHandler.throwInternalServerError('Unable to delete downloaded file', error);
+        }
     };
 
 }

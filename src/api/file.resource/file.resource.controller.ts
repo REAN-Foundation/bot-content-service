@@ -16,6 +16,8 @@ import { DownloadDisposition } from '../../domain.types/general/file.resource/fi
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from './file.resource.validator';
+import { Readable } from 'stream';
+import { UploadedFile } from 'express-fileupload';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
@@ -37,7 +39,7 @@ export class FileResourceController extends BaseController {
 
     upload = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this._validator.upload(request);
+            // await this._validator.upload(request);
             var dateFolder = new Date().toISOString().split('T')[0];
             var originalFilename: string = request.headers['filename'] as string;
             var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
@@ -53,8 +55,11 @@ export class FileResourceController extends BaseController {
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
             const tenantId = request.body.TenantId;
+            // const fileStream = Readable.from(request);
+            // const uploadedFile = request.files.file as UploadedFile;
 
-            var key = await this._storageService.upload(storageKey, request);
+
+            var key = await this._storageService.uploadStream(storageKey, request);
             if (!key) {
                 ErrorHandler.throwInternalServerError(`Unable to upload the file!`);
             }
@@ -100,16 +105,16 @@ export class FileResourceController extends BaseController {
             this.setResponseHeaders(response, originalFilename, disposition);
             var downloadFolderPath = await this.generateDownloadFolderPath();
             var localFilePath = path.join(downloadFolderPath, originalFilename);
-            var localDestination = await this._storageService.download(storageKey, localFilePath);
+            var localDestination = await this._storageService.downloadStream(storageKey);
             
             if (!localDestination) {
                 ErrorHandler.throwInternalServerError(`Unable to download the file!`);
             }
 
-            this.streamToResponse(localDestination, response, {
-                MimeType    : mimeType,
-                Disposition : disposition
-            });
+            // this.streamToResponse(localDestination, response, {
+            //     MimeType    : mimeType,
+            //     Disposition : disposition
+            // });
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

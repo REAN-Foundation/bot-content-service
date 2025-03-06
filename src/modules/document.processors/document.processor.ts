@@ -3,8 +3,10 @@ import { CSVLoader } from "@langchain/community/document_loaders/fs/csv";
 import { PDFLoader } from "@langchain/community/document_loaders/fs/pdf";
 import { JSONLoader } from "langchain/document_loaders/fs/json";
 import { Document } from "@langchain/core/documents";
+import { S3Loader } from "@langchain/community/document_loaders/web/s3";
 import { logger } from '../../logger/logger';
 import * as fs from "fs";
+import * as mime from 'mime-types';
 
 //////////////////////////////////////////////////////////////////////////
 export class DocumentProcessor {
@@ -18,9 +20,11 @@ export class DocumentProcessor {
         });
     }
 
-    processDocument = async (filePath: string): Promise< Document[] > => {
+    processDocument = async (filestream: any, filePath: string): Promise< Document[] > => {
         try {
-            const extension = filePath.split(".").pop()?.toLowerCase();
+            // const extension = filePath.split(".").pop()?.toLowerCase();
+
+            const extension = mime.lookup(filePath);
 
             if (extension === "csv") {
                 const loader = new CSVLoader(filePath);

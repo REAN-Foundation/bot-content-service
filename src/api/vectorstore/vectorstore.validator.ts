@@ -9,7 +9,7 @@ export class VectorStoreValidator extends BaseValidator {
     public validateCreateRequest = async (request: express.Request) => {
         try {
             const schema = joi.object({
-                id       : joi.string(),
+                // id       : joi.string(),
                 TenantId : joi.string().required(),
                 Version  : joi.number().required()
             });

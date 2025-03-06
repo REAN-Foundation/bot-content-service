@@ -5,7 +5,7 @@ import { logger } from '../../../logger/logger';
 import { IFileStorageService } from '../interfaces/file.storage.service.interface';
 import { FileUtils } from '../../../common/utilities/file.utils';
 import { UploadedFile } from 'express-fileupload';
-import { Stream } from 'stream';
+import { Readable, Stream } from 'stream';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -118,6 +118,13 @@ export class CustomFileStorageService implements IFileStorageService {
             logger.error(error.message);
             return null;
         }
+    };
+
+    downloadStream = async (storageKey: string): Promise<Readable> => {
+        var storagePath = FileUtils.getStoragePath();
+        const fileLocation = path.join(storagePath, storageKey);
+        const stream = fs.createReadStream(fileLocation);
+        return stream;
     };
 
     // download = async (storageKey: string, localFilePath: string): Promise<string> => {
