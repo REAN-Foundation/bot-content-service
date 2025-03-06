@@ -9,6 +9,7 @@ export const register = (app: express.Application): void => {
     const controller = new FileResourceController();
 
     router.post('/upload', controller.upload);
+    router.post('/upload-binary', controller.uploadBinary);
     router.get('/download/:id', controller.download);
     router.get('/:id', controller.getById);
     router.delete('/:id', controller.delete);

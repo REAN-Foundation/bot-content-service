@@ -27,8 +27,8 @@ export class StorageService {
         return await this._storageService.downloadStream(storageKey);
     };
     
-    uploadStream = async (storageKey: string, inputStream) => {
-        return await this._storageService.uploadStream(storageKey, inputStream);
+    uploadStream = async (storageKey: string, inputStream: Readable, contentType?: string) => {
+        return await this._storageService.uploadStream(storageKey, inputStream, contentType);
     };
     // uploadLocally = async (storageKey: string, localFilePath?: string): Promise<string|null|undefined> => {
     //     return await this._storageService.uploadLocally(storageKey, localFilePath);

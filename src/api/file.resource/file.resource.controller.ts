@@ -16,9 +16,11 @@ import { DownloadDisposition } from '../../domain.types/general/file.resource/fi
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from './file.resource.validator';
-import { Readable } from 'stream';
 import { UploadedFile } from 'express-fileupload';
-
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { Readable } from "stream";
+import { StreamReader } from "./stream.reader";
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class FileResourceController extends BaseController {
@@ -39,9 +41,9 @@ export class FileResourceController extends BaseController {
 
     upload = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            // await this._validator.upload(request);
+
             var dateFolder = new Date().toISOString().split('T')[0];
-            var originalFilename: string = request.headers['filename'] as string;
+            var originalFilename: string = request.headers['x-file-name'] as string;
             var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
 
             var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
@@ -55,11 +57,11 @@ export class FileResourceController extends BaseController {
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
             const tenantId = request.body.TenantId;
-            // const fileStream = Readable.from(request);
-            // const uploadedFile = request.files.file as UploadedFile;
+            const contentType = request.headers["content-type"] || "application/octet-stream";
 
+            const reader = new StreamReader(request);
+            var key = await this._storageService.uploadStream(storageKey, reader.getStream(), contentType);
 
-            var key = await this._storageService.uploadStream(storageKey, request);
             if (!key) {
                 ErrorHandler.throwInternalServerError(`Unable to upload the file!`);
             }
@@ -80,6 +82,14 @@ export class FileResourceController extends BaseController {
             const message = 'File resource uploaded successfully!';
             ResponseHandler.success(request, response, message, 201, record);
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    uploadBinary = async ( request: express.Request, response: express.Response ): Promise< void > => {
+        try {
+            //
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -111,10 +121,11 @@ export class FileResourceController extends BaseController {
                 ErrorHandler.throwInternalServerError(`Unable to download the file!`);
             }
 
-            // this.streamToResponse(localDestination, response, {
-            //     MimeType    : mimeType,
-            //     Disposition : disposition
-            // });
+            this.streamToResponse(localFilePath, response, {
+                MimeType    : mimeType,
+                Disposition : disposition
+            }, localDestination);
+            // ResponseHandler.success(request, localDestination.pipe(response), '', 200, '');
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -174,7 +185,7 @@ export class FileResourceController extends BaseController {
     private streamToResponse(
         localDestination: string,
         response: express.Response<any, Record<string, any>>,
-        metadata) {
+        metadata, stream?) {
 
         if (localDestination == null) {
             throw new ApiError(404, 'File resource not found.');
@@ -188,8 +199,12 @@ export class FileResourceController extends BaseController {
 
         this.setDownloadResponseHeaders(response, metadata.Disposition, mimetype, filename);
 
-        var filestream = fs.createReadStream(localDestination);
-        filestream.pipe(response);
+        if (stream) {
+            stream.pipe(response);
+        } else {
+            var filestream = fs.createReadStream(localDestination);
+            filestream.pipe(response);
+        }
     }
 
     private setDownloadResponseHeaders(
