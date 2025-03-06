@@ -16,9 +16,11 @@ import { DownloadDisposition } from '../../domain.types/general/file.resource/fi
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from './file.resource.validator';
-import { Readable } from 'stream';
 import { UploadedFile } from 'express-fileupload';
-
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { Readable } from "stream";
+import { StreamReader } from './stream.reader';
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class FileResourceController extends BaseController {
@@ -39,9 +41,9 @@ export class FileResourceController extends BaseController {
 
     upload = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            // await this._validator.upload(request);
+
             var dateFolder = new Date().toISOString().split('T')[0];
-            var originalFilename: string = request.headers['filename'] as string;
+            var originalFilename: string = request.headers['x-file-name'] as string;
             var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
 
             var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
@@ -55,11 +57,10 @@ export class FileResourceController extends BaseController {
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
             const tenantId = request.body.TenantId;
-            // const fileStream = Readable.from(request);
-            // const uploadedFile = request.files.file as UploadedFile;
+            const contentType = request.headers["content-type"] || "application/octet-stream";
 
-
-            var key = await this._storageService.uploadStream(storageKey, request);
+            const reader = new StreamReader(request);
+            var key = await this._storageService.uploadStream(storageKey, reader.getStream(), contentType);
             if (!key) {
                 ErrorHandler.throwInternalServerError(`Unable to upload the file!`);
             }
@@ -80,6 +81,14 @@ export class FileResourceController extends BaseController {
             const message = 'File resource uploaded successfully!';
             ResponseHandler.success(request, response, message, 201, record);
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    uploadBinary = async (request: express.Request, response: express.Response): Promise < void > => {
+        try {
+                  
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

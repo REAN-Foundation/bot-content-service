@@ -7,7 +7,7 @@ export interface IFileStorageService {
 
     upload(storageKey: string, sourceFilePath: string): Promise<string>;
 
-    uploadStream(storageKey: string, stream): Promise<string>;
+    uploadStream(storageKey: string, stream, contentType?: string): Promise<string>;
 
     download(storageKey: string, localFilePath: string): Promise<string>;
 

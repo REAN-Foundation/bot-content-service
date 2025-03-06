@@ -30,7 +30,7 @@ export class CustomFileStorageService implements IFileStorageService {
         }
     };
 
-    uploadStream = async (storageKey: string, stream: Stream): Promise<string> => {
+    uploadStream = async (storageKey: string, stream: Stream, contentType?: string): Promise<string> => {
         return new Promise( (resolve, reject) => {
             try {
                 const location = path.join(this._storagePath, storageKey);
