@@ -50,7 +50,8 @@ RUN /venv/bin/pip install --upgrade pip && \
     /venv/bin/pip install awscli
 RUN apk update
 RUN apk upgrade
-ADD . /app
+# ADD . /app
+
 WORKDIR /app
 
 COPY package*.json /app/
@@ -58,6 +59,8 @@ RUN npm install pm2 -g
 RUN npm install sharp
 COPY --from=builder ./app/dist/ .
 
+COPY . .
+
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
-# CMD ["node", "./dist/src/index.js"]
+# CMD ["node", "./src/index.js"]
