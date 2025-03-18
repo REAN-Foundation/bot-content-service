@@ -38,8 +38,8 @@ export class VectorstoreController {
             // const record = await this._fileResourceService.getById(model.id);
             const tenantId = model.TenantId;
             const records = await this._fileResourceService.getByTenantId(tenantId);
-            if (!records) {
-                ErrorHandler.throwNotFoundError('File does not exist to create vectorstore.');
+            if (!records || records.length === 0) {
+                ErrorHandler.throwNotFoundError('Files do not exist to create vectorstore.');
             }
 
             for ( const record of records ) {
@@ -52,12 +52,15 @@ export class VectorstoreController {
 
                 var downloadFolderPath = await this.generateDownloadFolderPath();
                 var localFilePath = path.join(downloadFolderPath, originalFilename);
-                var localDestination = await this._storageService.download(storageKey, localFilePath);
+                var localDestination = await this._storageService.downloadStream(storageKey);
 
-                const data = await this._documentProcessor.processDocument('', localDestination);
-                const result = await this._vectorstoreService.insertData(tenantId, data);
+                const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
+                await this._vectorstoreService.insertData(tenantId, data);
 
-                this.cleanupFiles(localDestination);
+                // THIS is temporary and needs to be switched to a more robust logic
+                if (typeof(localDestination) === "string") {
+                    this.cleanupFiles(localDestination);
+                }
             }
             const message = "Data inserted into Vectorstore.";
             ResponseHandler.success(request, response, message, 200, '');
@@ -66,15 +69,94 @@ export class VectorstoreController {
         }
     };
 
-    refresh = async (request: express.Request, response: express.Response): Promise<void> => {
+    createById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            const model: VectorStoreCreateModel = await this._validator.validateCreateRequest(request);
+            const record = await this._fileResourceService.getById(model.id);
+            const tenantId = model.TenantId;
+            const records = await this._fileResourceService.getById(model.id);
+
+            if (!records) {
+                ErrorHandler.throwNotFoundError("File does not exist with the provided id");
+            }
+
+            var storageKey = record.StorageKey;
+            var originalFilename = record.OriginalFilename;
+            var tags = record.Tags;
+
+            await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+
+            var fileStream = await this._storageService.downloadStream(storageKey);
+
+            const data = await this._documentProcessor.processDocument(fileStream, '', originalFilename);
+            await this._vectorstoreService.insertData(tenantId, data);
+
+            const message = "Data added into Vectorstore";
+            ResponseHandler.success(request, response, message, 200, '');
+
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    refreshAll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
 
             const tenantId = request.body["TenantId"];
 
             // const data = await this._documentProcessor.processDocument(filepath);
-            const result = await this._vectorstoreService.refreshData(tenantId);
+            const dataDeleted = await this._vectorstoreService.deleteCollection(tenantId);
+
+            if (dataDeleted !== "deleted") {
+                ErrorHandler.throwFailedPreconditionError("Vector store was not deleted successfully");
+            }
+
+            const records = await this._fileResourceService.getByTenantId(tenantId);
+            if (!records || records.length === 0) {
+                ErrorHandler.throwNotFoundError('Files do not exist to create vectorstore.');
+            }
+
+            for ( const record of records ) {
+                var storageKey = record.StorageKey;
+                var originalFilename = record.OriginalFilename;
+                var tags = record.Tags;
+
+                await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+
+                var localDestination = await this._storageService.downloadStream(storageKey);
+
+                const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
+                await this._vectorstoreService.insertData(tenantId, data);
+            }
             const message = "Data updated in Vectorstore.";
-            ResponseHandler.success(request, response, message, 200, result);
+            ResponseHandler.success(request, response, message, 200, '');
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    refreshById = async (request: express.Request, response: express.Response): Promise<void> => {
+        try {
+            
+            const tenantId = request.body["TenantId"];
+            const record = await this._fileResourceService.getById(request.body["id"]);
+            const originalFilename = record.OriginalFilename;
+            const dataDeleted = await this._vectorstoreService.deleteByFileName(originalFilename, tenantId);
+            if (dataDeleted !== 'deleted') {
+                ErrorHandler.throwFailedPreconditionError('Vector store was not deleted successfully');
+            }
+
+            // Keywords need to be implemented
+            var storageKey = record.StorageKey;
+            var fileStream = await this._storageService.downloadStream(storageKey);
+
+            const data = await this._documentProcessor.processDocument(fileStream, '', originalFilename);
+
+            await this._vectorstoreService.insertData(tenantId, data);
+            const message = "File has been refereshed in vectorstore successfully";
+
+            ResponseHandler.success(request, response, message, 200, '');
+
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

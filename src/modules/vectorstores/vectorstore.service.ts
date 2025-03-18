@@ -26,6 +26,10 @@ export class VectorstoreService {
         return await this._vectorstoreService.deleteCollection(tenantId);
     };
 
+    deleteByFileName = async (fileName: string, tenantId: string) => {
+        return await this._vectorstoreService.deleteByFileName(fileName, tenantId);
+    };
+
     insertData = async (tenantId: string, data: any) => {
         return await this._vectorstoreService.insertData(tenantId, data);
     };

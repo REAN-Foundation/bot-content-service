@@ -75,12 +75,26 @@ export class PgVectorStore implements IVectorStoreService {
             const idList = await VectorstoreUtils.getAllIds(this.pool, this.tableName);
             const ids = idList.rows.map(row => row.id);
             await this._pgConnection.delete({ ids });
-            return "Deleted the entries in vectorstore";
+            return "deleted";
         } catch (error) {
             logger.error(error);
             throw new Error("Unable to delete the vectorstore entries");
         }
 
+    };
+
+    deleteByFileName = async (fileName: string, tenantId: string): Promise<string> => {
+        try {
+            this.tenantId = tenantId;
+            await this.createConnection();
+            const idList = await VectorstoreUtils.getIdsByFileName(this.pool, this.tableName, fileName);
+            const ids = idList.rows.map(row => row.id);
+            await this._pgConnection.delete({ ids });
+            return "deleted";
+        } catch (error) {
+            logger.error(error);
+            throw new Error("Unable to delete the vectorstore entries");
+        }
     };
 
     refreshData = async (tenantId: string): Promise<string> => {

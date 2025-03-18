@@ -33,6 +33,10 @@ export class PineconeVectorStore implements IVectorStoreService {
         //method does not exist for pinecone
     }
 
+    deleteByFileName(fileName: string, tenantId: string) {
+        // method not implemented yet for pinecone
+    }
+
     refreshData(tenantId: string) {
         //method not implemented yet
     }

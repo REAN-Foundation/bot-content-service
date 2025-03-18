@@ -56,8 +56,16 @@ export class FileResourceController extends BaseController {
             filename = filename + '_' + timestamp + '.' + ext;
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
-            const tenantId = request.body.TenantId;
-            const contentType = request.headers["content-type"] || "application/octet-stream";
+            let contentType = "application/octet-stream";
+            const tenantId = request.body.TenantId ?? request.headers['tenantid'];
+            if (request.headers["content-type"]) {
+                if (request.headers["content-type"] === "application/json") {
+                    contentType = "application/octet-stream";
+                } else {
+                    contentType = request.headers["content-type"];
+                }
+            }
+            // const contentType = request.headers["content-type"] || "application/octet-stream";
 
             const reader = new StreamReader(request);
             var key = await this._storageService.uploadStream(storageKey, reader.getStream(), contentType);

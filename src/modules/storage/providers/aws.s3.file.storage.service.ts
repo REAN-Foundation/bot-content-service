@@ -103,20 +103,14 @@ export class AWSS3FileStorageService  {
 
     download = async (storageKey: string, localFilePath: string): Promise<string> => {
 
-        const s3 = this.getS3Client();
+        const s3Client = this.getS3Client();
         const params = {
             Bucket : process.env.STORAGE_BUCKET,
             Key    : storageKey,
         };
-        //var s3Path = storageKey;
-        // var tokens = s3Path.split('/');
-        // var localFile = tokens[tokens.length - 1];
-        // var folderPath = path.join(TEMP_DOWNLOAD_FOLDER, localFolder);
-        // var localDestination = path.join(folderPath, localFile);
-
         const file = fs.createWriteStream(localFilePath);
         const command = new GetObjectCommand(params);
-        const response = await s3.send(command);
+        const response = await s3Client.send(command);
         const stream = response.Body as Readable;
         return new Promise((resolve, reject) => {
             stream.on('end', () => {
@@ -210,7 +204,8 @@ export class AWSS3FileStorageService  {
                 credentials : {
                     accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
                     secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET,
-                }
+                },
+                region : process.env.STORAGE_CLOUD_REGION
             });
             return client;
         } catch (error) {

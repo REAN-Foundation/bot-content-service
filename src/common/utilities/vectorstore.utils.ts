@@ -36,4 +36,19 @@ export class VectorstoreUtils {
             client.release();
         }
     };
+
+    public static getIdsByFileName = async (pool: pg.Pool, tableName: string, fileName: string) => {
+        const client = await pool.connect();
+        try {
+            const query = `
+            SELECT id
+            FROM ${tableName}
+            WHERE metadata->>'source' = '${fileName}'
+            `;
+            const idList = await client.query(query);
+            return idList;
+        } finally {
+            client.release();
+        }
+    };
 }

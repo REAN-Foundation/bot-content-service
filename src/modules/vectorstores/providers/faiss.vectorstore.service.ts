@@ -28,6 +28,10 @@ export class FaissVectorStore implements IVectorStoreService {
         return "Method Not Implemented for FAISS";
     };
 
+    deleteByFileName(fileName: string, tenantId: string) {
+        // method not implemented for FAISS
+    }
+
     refreshData(tenantId: string) {
         // method not implemented yet
     }
