@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "1f6430b5-1649-4942-aee8-d8f961ff2bf6",
+		"_postman_id": "326cf0e5-99e6-42c5-8d31-2aff543e208b",
 		"name": "Bot Content Service",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "22334730",
-		"_collection_link": "https://galactic-firefly-272197.postman.co/workspace/Award-Service~07dd48ab-522a-4ebd-a3ba-517867d75976/collection/22334730-1f6430b5-1649-4942-aee8-d8f961ff2bf6?action=share&source=collection_link&creator=22334730"
+		"_exporter_id": "26099901"
 	},
 	"item": [
 		{
@@ -55,7 +54,7 @@
 						"header": [
 							{
 								"key": "filename",
-								"value": "pan.png"
+								"value": "dechi_htf_diabetes.txt"
 							},
 							{
 								"key": "public",
@@ -73,7 +72,7 @@
 								{
 									"key": "file",
 									"type": "file",
-									"src": "/C:/Users/91920/Pictures/pan.jpg"
+									"src": "/C:/Users/rocky/Documents/Rean Client Documents/Documentation/Dechi HTF Files/dechi_htf_diabetes.txt"
 								},
 								{
 									"key": "public",
@@ -83,9 +82,14 @@
 								},
 								{
 									"key": "filename",
-									"value": "Pan.png",
+									"value": "love_matters_paragraphs.txt",
 									"type": "text",
 									"disabled": true
+								},
+								{
+									"key": "TenantId",
+									"value": "test",
+									"type": "text"
 								}
 							]
 						},
@@ -158,11 +162,13 @@
 						"header": [
 							{
 								"key": "filename",
-								"value": "demo.png"
+								"value": "demo.png",
+								"disabled": true
 							},
 							{
 								"key": "public",
-								"value": "true"
+								"value": "true",
+								"disabled": true
 							},
 							{
 								"key": "",
@@ -316,7 +322,7 @@
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\r\n    \"Name\": \"BI\",\r\n    \"Description\": \"Artificial Inteligence\",\r\n    \"UseCaseType\": \"Chat\",\r\n    \"Group\": \"Miscellaneous\",\r\n    \"Model\": \"Gpt 1.00\",\r\n    \"Prompt\": \"This is demo prompt {query}\",\r\n    \"Variables\": \"query\",\r\n    \"CreatedByUserId\": \"5a7668ec-263e-41fe-a939-59ff0dd6ab9f\",\r\n    \"Temperature\": \"3\",\r\n    \"FrequencyPenalty\": \"1.5\",\r\n    \"TopP\": \"1\",\r\n    \"PresencePenalty\": \"2.7\",\r\n    \"IsActive\": true\r\n}",
+									"raw": "{\r\n    \"Name\": \"test-prompt1\",\r\n    \"Description\": \"example test prompt\",\r\n    \"UseCaseType\": \"Chat\",\r\n    \"Model\": \"gpt4omini\",\r\n    \"Prompt\": \"test prompt\",\r\n    \"CreatedByUserId\":\"c2a60e20-af23-4cb6-b79a-dcb4d8ed3161\",\r\n    \"Temperature\": 1,\r\n    \"FrequencyPenalty\": 0,\r\n    \"TopP\": 3,\r\n    \"PresencePenalty\": 1,\r\n    \"IsActive\": true,\r\n    \"Templates\" : [\r\n        {\r\n            \"TemplateId\": \"b759d1fd-a5a8-44ff-bf11-8aed3f383b02\",\r\n            \"Category\": \"Template1\",\r\n            \"TenantId\": 1,\r\n            \"Version\": 1,\r\n            \"Content\": \"You are an expert in {variable1}.\",\r\n            \"Variables\": [\r\n                {\r\n                    \"VariableName\": \"variable1\",\r\n                    \"VariableContent\": \"diabetes\"\r\n                }\r\n            ]\r\n        },\r\n                {\r\n            \"TemplateId\": \"60349ccc-7228-4534-8649-15348313311f\",\r\n            \"Category\": \"Template1\",\r\n            \"TenantId\": 1,\r\n            \"Version\": 1,\r\n            \"Content\": \"You are an expert in {variable2}.\",\r\n            \"Variables\": [\r\n                {\r\n                    \"VariableName\": \"variable2\",\r\n                    \"VariableContent\": \"hypertension\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -596,6 +602,28 @@
 											"value": "aa969366-9e58-4968-a944-585c809376d0",
 											"disabled": true
 										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Get All Prompts",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:2345/api/v1/llm-prompts/records",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "2345",
+									"path": [
+										"api",
+										"v1",
+										"llm-prompts",
+										"records"
 									]
 								}
 							},
@@ -2051,6 +2079,204 @@
 							"response": []
 						}
 					]
+				}
+			]
+		},
+		{
+			"name": "Prompts",
+			"item": [
+				{
+					"name": "Create Prompt",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Name\": \"test-prompt1\",\r\n    \"Description\": \"example test prompt\",\r\n    \"UseCaseType\": \"Chat\",\r\n    \"Model\": \"gpt4omini\",\r\n    \"Prompt\": \"test prompt\",\r\n    \"CreatedByUserId\":\"c2a60e20-af23-4cb6-b79a-dcb4d8ed3161\",\r\n    \"Temperature\": 1,\r\n    \"FrequencyPenalty\": 0,\r\n    \"TopP\": 3,\r\n    \"PresencePenalty\": 1,\r\n    \"IsActive\": true,\r\n    \"Templates\" : [\r\n        {\r\n            \"TemplateId\": \"fe840dc7-91b7-4280-9f84-3e59484228b3\",\r\n            \"Category\": \"Template1\",\r\n            \"TenantId\": 1,\r\n            \"Version\": 1,\r\n            \"Content\": \"You are an expert in {{variable1}}.\",\r\n            \"Variables\": [\r\n                {\r\n                    \"VariableName\": \"variable1\",\r\n                    \"VariableContent\": \"diabetes\"\r\n                }\r\n            ]\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:2345/api/v1/llm-prompts/",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "2345",
+							"path": [
+								"api",
+								"v1",
+								"llm-prompts",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Prompts",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:2345/api/v1/llm-prompts/records",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "2345",
+							"path": [
+								"api",
+								"v1",
+								"llm-prompts",
+								"records"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "VectorStore",
+			"item": [
+				{
+					"name": "Create Vectorstore",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TenantId\": \"test\",\r\n    \"Version\": 1.0\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/vectorstore/",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"vectorstore",
+								""
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Similarity Search",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TenantId\" : \"TEST\",\r\n    \"Query\": \"What is an IUD?\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/vectorstore/similarity-search",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"vectorstore",
+								"similarity-search"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh Vectorstore",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TenantId\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/vectorstore/refresh",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"vectorstore",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh All",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"TenantId\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/vectorstore/refresh",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"vectorstore",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refresh by File ID",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id\": \"d4827498-812c-4c99-9f58-f715276ef98e\",\r\n    \"TenantId\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/vectorstore/refreshbyid",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"vectorstore",
+								"refreshbyid"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		}
