@@ -1,6 +1,6 @@
 import { PGVectorStore, DistanceStrategy } from "@langchain/community/vectorstores/pgvector";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { IVectorStoreService } from "../interfaces/vectorstore.service.interface";
 import { VectorstoreUtils } from "../../../common/utilities/vectorstore.utils";
 import { logger } from "../../../logger/logger";
 import { PoolConfig, Pool } from "pg";

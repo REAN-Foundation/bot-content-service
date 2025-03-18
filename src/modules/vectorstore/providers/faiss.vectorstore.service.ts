@@ -1,6 +1,6 @@
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { IVectorStoreService } from "../interfaces/vectorstore.service.interface";
 import { logger } from '../../../logger/logger';
 
 export class FaissVectorStore implements IVectorStoreService {

@@ -4,7 +4,6 @@ import { DependencyContainer } from 'tsyringe';
 import { PineconeVectorStore } from './providers/pinecone.vectorstore.service';
 import { FaissVectorStore } from './providers/faiss.vectorstore.service';
 import { PgVectorStore } from './providers/pgvector.vectorstore.service';
-import { PgKeywordService } from './providers/pgvector.keyword.service';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -25,12 +24,4 @@ export class VectorstoreInjector {
     }
 }
 
-export class KeywordInjector {
-    
-    static registerInjection(container: DependencyContainer) {
-        const provider = ConfigurationManager.VectorstoreProvider;
-        if (provider === 'PGVECTOR') {
-            container.register('IKeywordService', PgKeywordService);
-        }
-    }
-}
+

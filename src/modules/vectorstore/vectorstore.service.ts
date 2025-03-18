@@ -1,4 +1,4 @@
-import { IVectorStoreService } from '../../modules/vectorstores/interfaces/vectorstore.interface';
+import { IVectorStoreService } from './interfaces/vectorstore.service.interface';
 import { inject, injectable } from 'tsyringe';
 
 ///////////////////////////////////////////////////////////////////////////

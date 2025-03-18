@@ -2,7 +2,7 @@ import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { Document } from "@langchain/core/documents";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { IVectorStoreService } from "../interfaces/vectorstore.service.interface";
 import { logger } from '../../../logger/logger';
 
 export class PineconeVectorStore implements IVectorStoreService {

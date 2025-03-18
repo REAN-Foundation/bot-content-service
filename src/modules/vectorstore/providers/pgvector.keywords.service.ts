@@ -1,13 +1,13 @@
 import { PGVectorStore, DistanceStrategy } from "@langchain/community/vectorstores/pgvector";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { IKeywordService } from "../interfaces/vectorstore.interface";
+import { IKeywordsService } from "../interfaces/keywords.service.interface";
 import { VectorstoreUtils } from "../../../common/utilities/vectorstore.utils";
 import { Document } from "@langchain/core/documents";
 import { logger } from "../../../logger/logger";
 import { PoolConfig } from 'pg';
 import * as pg from 'pg';
 
-export class PgKeywordService implements IKeywordService {
+export class PgKeywordsService implements IKeywordsService {
 
     private tenantId: string;
 
@@ -55,7 +55,6 @@ export class PgKeywordService implements IKeywordService {
     }
 
     addKeywords = async (tenantId, tags, fileName): Promise<string>  =>{
-        // method to be implemented
         try {
             const final_documents = [];
             if (tags.length !== 0) {
