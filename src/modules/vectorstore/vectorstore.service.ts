@@ -6,7 +6,9 @@ import { inject, injectable } from 'tsyringe';
 @injectable()
 export class VectorstoreService {
 
-    constructor(@inject('IVectorstoreService') private _vectorstoreService: IVectorStoreService) {
+    constructor(
+        @inject('IVectorstoreService') private _vectorstoreService: IVectorStoreService
+    ) {
 
     }
 
@@ -46,7 +48,7 @@ export class VectorstoreService {
         return await this._vectorstoreService.loadVectorStore(clientName, projectName, collectionName);
     };
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
-        return await this._vectorstoreService.similaritySearch(tenantId, userQuery);
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
+        return await this._vectorstoreService.similaritySearch(tenantId, userQuery, filter);
     };
 }

@@ -68,7 +68,7 @@ export class FaissVectorStore implements IVectorStoreService {
         return loadVectorStore;
     };
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
         try {
             const vectorDB = await this.loadVectorStore(tenantId, "default");
             const k = 3;

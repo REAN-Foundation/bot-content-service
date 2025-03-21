@@ -70,9 +70,8 @@ export class PineconeVectorStore implements IVectorStoreService {
         return vectorStore;
     };
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
         const k = 3;
-        const filter = {};
         // CHANGE THIS BELOW LINE
         const vectorDB = await this.loadVectorStore("", "default");
         const similaritySearch = vectorDB.similaritySearch(

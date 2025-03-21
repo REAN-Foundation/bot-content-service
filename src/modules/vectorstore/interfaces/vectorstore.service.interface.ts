@@ -8,5 +8,5 @@ export interface IVectorStoreService {
     refreshData(tenantId: string);
     clientIndex(clientName: string, projectName: string);
     loadVectorStore(clientName: string, projectName: string, collectionName: string);
-    similaritySearch(tenantId: string, userQuery: string);
+    similaritySearch(tenantId: string, userQuery: string, filter: any);
 }

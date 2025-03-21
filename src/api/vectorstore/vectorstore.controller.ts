@@ -4,7 +4,7 @@ import path from 'path';
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { ErrorHandler } from '../../common/handlers/error.handler';
 import { VectorstoreService } from '../../modules/vectorstore/vectorstore.service';
-import { KeywordService } from '../../modules/vectorstore/keywords.service';
+import { KeywordsService } from '../../modules/vectorstore/keywords.service';
 import { VectorStoreValidator } from './vectorstore.validator';
 import { Loader } from '../../startup/loader';
 import { DocumentProcessor } from '../../modules/document.processors/document.processor';
@@ -21,7 +21,7 @@ export class VectorstoreController {
 
     _vectorstoreService: VectorstoreService = Loader.Container.resolve(VectorstoreService);
 
-    _keywordService: KeywordService = Loader.Container.resolve(KeywordService);
+    _keywordsService: KeywordsService = Loader.Container.resolve(KeywordsService);
 
     _fileResourceService: FileResourceService = new FileResourceService();
 
@@ -48,7 +48,7 @@ export class VectorstoreController {
                 var tags = record.Tags;
                 var mimeType = mime.lookup(originalFilename);
 
-                await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+                await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
 
                 var downloadFolderPath = await this.generateDownloadFolderPath();
                 var localFilePath = path.join(downloadFolderPath, originalFilename);
@@ -84,7 +84,7 @@ export class VectorstoreController {
             var originalFilename = record.OriginalFilename;
             var tags = record.Tags;
 
-            await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+            await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
 
             var fileStream = await this._storageService.downloadStream(storageKey);
 
@@ -121,7 +121,7 @@ export class VectorstoreController {
                 var originalFilename = record.OriginalFilename;
                 var tags = record.Tags;
 
-                await this._keywordService.addKeywords(tenantId, tags, originalFilename);
+                await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
 
                 var localDestination = await this._storageService.downloadStream(storageKey);
 
@@ -168,7 +168,22 @@ export class VectorstoreController {
             const query = model.Query;
             const tenantId = model.TenantId;
 
-            const result = await this._vectorstoreService.similaritySearch(tenantId, query);
+            const filter = {};
+
+            const keywords = await this._keywordsService.searchKeywords(tenantId, query);
+
+            if (keywords.length !== 0) {
+                const arrayContains = [];
+
+                for (const keyword of keywords) {
+                    arrayContains.push(keyword["metadata"]["fileName"]);
+                }
+                filter["source"] = {
+                    "arrayContains" : arrayContains
+                };
+            }
+
+            const result = await this._vectorstoreService.similaritySearch(tenantId, query, filter);
             ResponseHandler.success(request, response, result, 200);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);

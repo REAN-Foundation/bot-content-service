@@ -132,38 +132,27 @@ export class PgVectorStore implements IVectorStoreService {
         // method not implemented yet;
     }
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
-        this.tenantId = tenantId;
-        await this.createConnection();
-        const k = 3;
-        const filter = {};
-        const similaritySearch = this._pgConnection.similaritySearch(
-            userQuery,
-            k,
-        );
-        return similaritySearch;
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
+        try {
+            this.tenantId = tenantId;
+            await this.createConnection();
+            const k = 3;
+            let similaritySearch = await this._pgConnection.similaritySearchWithScore(
+                userQuery,
+                k + 2,
+                filter
+            );
+
+            if (!similaritySearch.some(([_ , score]) => score <= 0.20)) {
+                similaritySearch = await this._pgConnection.similaritySearch(
+                    userQuery,
+                    k
+                );
+            }
+            return similaritySearch;
+        } catch (error) {
+            logger.error(error);
+            throw new Error("Issue while fetching the similar documents");
+        }
     };
-
-    // ensureDatabaseSchema = async (config) => {
-
-    //     // This function creates a connection and checks if the table already exists.
-    //     // If not it will be created with the vector extension on postgres tables.
-        
-    //     const client = await this.pool.connect();
-    //     try {
-    //         const query = `
-    //         CREATE TABLE IF NOT EXISTS ${config.tableName} (
-    //             ${config.columns.idColumnName} UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    //             ${config.columns.vectorColumnName} VECTOR,
-    //             ${config.columns.contentColumnName} TEXT,
-    //             ${config.columns.metadataColumnName} JSONB
-    //         );
-    //         `;
-    //         await client.query('CREATE EXTENSION IF NOT EXISTS "uuid-ossp"');
-    //         await client.query('CREATE EXTENSION IF NOT EXISTS vector');
-    //         await client.query(query);
-    //     } finally {
-    //         client.release();
-    //     }
-    // };
 }

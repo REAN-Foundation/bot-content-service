@@ -90,13 +90,20 @@ export class PgKeywordsService implements IKeywordsService {
     }
 
     searchKeywords = async(tenantId, userQuery) => {
-        this.tenantId=tenantId;
-        await this.connectKeywordVectorStore();
-        const k = 3;
-        const similarKeywords = this._pgConnection.similaritySearch(
-            userQuery,
-            k,
-        );
-        return similarKeywords;
+        try {
+            this.tenantId = tenantId;
+            await this.connectKeywordVectorStore();
+            const k = 3;
+            const similarKeywords = await this._pgConnection.similaritySearchWithScore(
+                userQuery,
+                k,
+            );
+            const filteredResults = similarKeywords.filter(([_, score]) => score <= 0.20).sort((a,b) => b[1] - a[1]);
+            const finalKeywords = filteredResults.map(([doc, _]) => doc);
+            return finalKeywords;
+        } catch (error) {
+            logger.error(error);
+            throw new Error("Issue while fetching similar keywords");
+        }
     };
 }

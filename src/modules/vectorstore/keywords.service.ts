@@ -2,7 +2,7 @@ import { IKeywordsService } from "./interfaces/keywords.service.interface";
 import { inject, injectable } from "tsyringe";
 
 @injectable()
-export class KeywordService {
+export class KeywordsService {
 
     constructor(@inject('IKeywordsService') private _keywordsService: IKeywordsService) {
 
