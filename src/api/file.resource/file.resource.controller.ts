@@ -7,7 +7,7 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ApiError, ErrorHandler } from '../../common/handlers/error.handler';
 import BaseValidator from '../base.validator';
 import * as mime from 'mime-types';
-import { FileResourceCreateModel } from '../../domain.types/general/file.resource.domain.types';
+import { FileResourceCreateModel, FileResourceUpdateModel } from '../../domain.types/general/file.resource.domain.types';
 import { FileUtils } from '../../common/utilities/file.utils';
 import { StorageService } from '../../modules/storage/storage.service';
 import path from 'path';
@@ -149,6 +149,22 @@ export class FileResourceController extends BaseController {
             }
             const message = 'File resource retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateData = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+            var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
+            var model: FileResourceUpdateModel = await this._validator.validateUpdateRequest(request);
+            const record = await this._service.getById(id);
+            if (!record) {
+                ErrorHandler.throwNotFoundError("File details not found with the provided id");
+            }
+            const updatedRecord = await this._service.update(id, model);
+            const message = "File details updated in the DB";
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

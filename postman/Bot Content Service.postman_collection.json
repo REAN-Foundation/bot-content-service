@@ -241,6 +241,33 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Update File Data",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Tags\": [\"Echocardiography Definition Rheumatic Heart Disease (RHD)\",\r\n    \"Echocardiography Definition Acute Rheumatic Fever (ARF)\",\r\n    \"Echocardiography Definition Group A Streptococcus (GAS)\",\r\n    \"Echocardiography Definition Carditis\",\r\n    \"Echocardiography Definition Pericarditis\",\r\n    \"Echocardiography Definition Myocarditis\",\r\n    \"Echocardiography Definition Endocarditis\",\r\n    \"Echocardiography Definition Mitral Stenosis\",\r\n    \"Echocardiography Definition Aortic Stenosis\",\r\n    \"Echocardiography Definition Mitral Regurgitation\",\r\n    \"Echocardiography Definition Aortic Regurgitation\",\r\n    \"Echocardiography Definition Echocardiography\",\r\n    \"Echocardiography Definition Color Doppler\",\r\n    \"Echocardiography Definition Jet Length\",\r\n    \"Echocardiography Procedure Echocardiography Setup\",\r\n    \"Echocardiography Procedure Color Doppler Setup\",\r\n    \"Echocardiography Procedure Parasternal Long Axis View Acquisition\",\r\n    \"Echocardiography Procedure Measuring Regurgitation Jet Length\",\r\n    \"Echocardiography Procedure Probe Positioning and Movements\",\r\n    \"Echocardiography Procedure Image Freezing and Adjustment\",\r\n    \"Echocardiography Procedure Optimizing Image Depth\",\r\n    \"Echocardiography Cause Group A Streptococcus Infection\",\r\n    \"Echocardiography Cause Acute Rheumatic Fever\",\r\n    \"Echocardiography Symptom Joint Pain (ARF)\",\r\n    \"Echocardiography Symptom Skin Rash (ARF)\",\r\n    \"Echocardiography Symptom Shortness of Breath (RHD)\",\r\n    \"Echocardiography Symptom Fatigue (RHD)\",\r\n    \"Echocardiography Symptom Chest Pain (RHD)\",\r\n    \"Echocardiography Criteria Severe Mitral Regurgitation (Jet Length >2 cm)\",\r\n    \"Echocardiography Criteria Severe Aortic Regurgitation (Jet Length >2 cm)\",\r\n    \"Echocardiography Criteria Normal vs Abnormal Regurgitation\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{BASE_URL}}/file-resources/{{FILE_RESOURCE_ID}}",
+							"host": [
+								"{{BASE_URL}}"
+							],
+							"path": [
+								"file-resources",
+								"{{FILE_RESOURCE_ID}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -2177,7 +2204,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"TenantId\" : \"TEST\",\r\n    \"Query\": \"What is an IUD?\"\r\n}",
+							"raw": "{\r\n    \"TenantId\" : \"TEST\",\r\n    \"Query\": \"diabetes\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"

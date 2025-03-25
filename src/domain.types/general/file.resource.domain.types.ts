@@ -39,3 +39,10 @@ export interface FileResourceSearchFilters extends BaseSearchFilters {
 export interface FileResourceSearchResults extends BaseSearchResults {
     Items: FileResourceResponseDto[];
 }
+
+export interface FileResourceUpdateModel {
+    MimeType         ?: string;
+    Metadata         ?: any;
+    Public           ?: boolean;
+    Tags             ?: string[];
+}
