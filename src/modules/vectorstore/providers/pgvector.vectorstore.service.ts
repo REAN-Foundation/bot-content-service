@@ -148,6 +148,8 @@ export class PgVectorStore implements IVectorStoreService {
                     userQuery,
                     k
                 );
+            } else {
+                similaritySearch = similaritySearch.map(([doc, _ ]) => doc);
             }
             return similaritySearch;
         } catch (error) {
