@@ -8,6 +8,7 @@
         "esModuleInterop": true,
         "target": "es6",
         "listFiles":true,
+        "skipLibCheck": true,
         "noImplicitAny": false,
         "moduleResolution": "node",
         "sourceMap": true,

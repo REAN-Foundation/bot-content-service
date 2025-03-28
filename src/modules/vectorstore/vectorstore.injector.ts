@@ -3,6 +3,7 @@ import { ConfigurationManager } from '../../config/configuration.manager';
 import { DependencyContainer } from 'tsyringe';
 import { PineconeVectorStore } from './providers/pinecone.vectorstore.service';
 import { FaissVectorStore } from './providers/faiss.vectorstore.service';
+import { PgVectorStore } from './providers/pgvector.vectorstore.service';
 
 ////////////////////////////////////////////////////////////////////////////////
 
@@ -16,6 +17,9 @@ export class VectorstoreInjector {
         }
         else if (provider === 'FAISS') {
             container.register('IVectorstoreService', FaissVectorStore);
+        }
+        else if (provider === 'PGVECTOR') {
+            container.register('IVectorstoreService', PgVectorStore);
         }
     }
 }

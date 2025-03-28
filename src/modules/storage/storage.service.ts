@@ -1,6 +1,7 @@
 // import { Loader } from '../../startup/loader';
 import { IFileStorageService } from '../../modules/storage/interfaces/file.storage.service.interface';
 import { inject, injectable } from 'tsyringe';
+import { Readable } from "stream";
 
 ///////////////////////////////////////////////////////////////////////////////////////
 @injectable()
@@ -21,7 +22,14 @@ export class StorageService {
     download = async (storageKey: string, localFilePath?: string): Promise<any> => {
         return await this._storageService.download(storageKey,  localFilePath);
     };
+
+    downloadStream = async (storageKey: string): Promise<Readable> => {
+        return await this._storageService.downloadStream(storageKey);
+    };
     
+    uploadStream = async (storageKey: string, inputStream: Readable, contentType?: string) => {
+        return await this._storageService.uploadStream(storageKey, inputStream, contentType);
+    };
     // uploadLocally = async (storageKey: string, localFilePath?: string): Promise<string|null|undefined> => {
     //     return await this._storageService.uploadLocally(storageKey, localFilePath);
     // };

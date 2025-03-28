@@ -1,4 +1,4 @@
-import { IVectorStoreService } from '../../modules/vectorstores/interfaces/vectorstore.interface';
+import { IVectorStoreService } from './interfaces/vectorstore.service.interface';
 import { inject, injectable } from 'tsyringe';
 
 ///////////////////////////////////////////////////////////////////////////
@@ -6,7 +6,9 @@ import { inject, injectable } from 'tsyringe';
 @injectable()
 export class VectorstoreService {
 
-    constructor(@inject('IVectorstoreService') private _vectorstoreService: IVectorStoreService) {
+    constructor(
+        @inject('IVectorstoreService') private _vectorstoreService: IVectorStoreService
+    ) {
 
     }
 
@@ -18,16 +20,24 @@ export class VectorstoreService {
         return await this._vectorstoreService.disconnect();
     };
 
-    createCollection = async (clientName: string, projectName: string, collectionName: string) => {
-        return await this._vectorstoreService.createCollection(clientName, projectName, collectionName);
+    createCollection = async (tenantId: string) => {
+        return await this._vectorstoreService.createCollection(tenantId);
     };
 
-    deleteCollection = async (clientName: string, projectName:string, collectionName: string) => {
-        return await this._vectorstoreService.deleteCollection(clientName, projectName, collectionName);
+    deleteCollection = async (tenantId: string) => {
+        return await this._vectorstoreService.deleteCollection(tenantId);
+    };
+
+    deleteByFileName = async (fileName: string, tenantId: string) => {
+        return await this._vectorstoreService.deleteByFileName(fileName, tenantId);
     };
 
     insertData = async (tenantId: string, data: any) => {
         return await this._vectorstoreService.insertData(tenantId, data);
+    };
+
+    refreshData = async (tenantId: string) => {
+        return await this._vectorstoreService.refreshData(tenantId);
     };
 
     clientIndex = async (clientName: string, projectName: string) => {
@@ -38,7 +48,7 @@ export class VectorstoreService {
         return await this._vectorstoreService.loadVectorStore(clientName, projectName, collectionName);
     };
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
-        return await this._vectorstoreService.similaritySearch(tenantId, userQuery);
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
+        return await this._vectorstoreService.similaritySearch(tenantId, userQuery, filter);
     };
 }

@@ -2,7 +2,7 @@ import { Pinecone as PineconeClient } from "@pinecone-database/pinecone";
 import { Document } from "@langchain/core/documents";
 import { OpenAIEmbeddings } from "@langchain/openai";
 import { PineconeStore } from "@langchain/pinecone";
-import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { IVectorStoreService } from "../interfaces/vectorstore.service.interface";
 import { logger } from '../../../logger/logger';
 
 export class PineconeVectorStore implements IVectorStoreService {
@@ -25,12 +25,20 @@ export class PineconeVectorStore implements IVectorStoreService {
         //method not implemented
     }
 
-    createCollection(clientName: string, projectName: string, collectionName: string) {
+    createCollection(tenantId: string) {
         //method does not exist for pinecone
     }
 
-    deleteCollection(clientName: string, projectName: string, collectionName: string) {
+    deleteCollection(tenantId: string) {
         //method does not exist for pinecone
+    }
+
+    deleteByFileName(fileName: string, tenantId: string) {
+        // method not implemented yet for pinecone
+    }
+
+    refreshData(tenantId: string) {
+        //method not implemented yet
     }
 
     insertData = async (tenantId: string, data: any): Promise<string> => {
@@ -62,9 +70,8 @@ export class PineconeVectorStore implements IVectorStoreService {
         return vectorStore;
     };
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
         const k = 3;
-        const filter = {};
         // CHANGE THIS BELOW LINE
         const vectorDB = await this.loadVectorStore("", "default");
         const similaritySearch = vectorDB.similaritySearch(

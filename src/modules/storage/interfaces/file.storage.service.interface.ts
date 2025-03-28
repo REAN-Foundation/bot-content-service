@@ -1,4 +1,5 @@
 import { Stream } from "stream";
+import { Readable } from "stream";
 
 export interface IFileStorageService {
 
@@ -6,9 +7,11 @@ export interface IFileStorageService {
 
     upload(storageKey: string, sourceFilePath: string): Promise<string>;
 
-    uploadStream(storageKey: string, stream: Stream): Promise<string>;
+    uploadStream(storageKey: string, stream, contentType?: string): Promise<string>;
 
     download(storageKey: string, localFilePath: string): Promise<string>;
+
+    downloadStream(storageKey: string): Promise<Readable>;
 
     rename(existingStorageKey: string, newFileName: string): Promise<boolean>;
 

@@ -4,6 +4,7 @@ import fs from 'fs';
 import { GetObjectCommand } from "@aws-sdk/client-s3";
 import { Readable } from "stream";
 import { logger } from '../../../logger/logger';
+import { Upload } from "@aws-sdk/lib-storage";
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -34,19 +35,25 @@ export class AWSS3FileStorageService  {
         }
     };
 
-    uploadStream = async (storageKey: string, stream: Readable): Promise<string> => {
+    uploadStream = async (storageKey: string, stream: Readable, contentType?: string): Promise<string> => {
 
         try {
-            const s3 = this.getS3Client();
+            const s3Client = this.getS3Client();
             const params = {
                 Bucket : process.env.STORAGE_BUCKET,
                 Key    : storageKey,
-                Body   : stream.read()
+                Body   : stream
             };
-            const command = new aws.PutObjectCommand(params);
-            const response = await s3.send(command);
-            // Logger.instance().log(JSON.stringify(result, null, 2));
-            logger.info(JSON.stringify(response, null, 2));
+            if (contentType && contentType.length > 0) {
+                params['ContentType'] = contentType;
+            }
+            const upload = new Upload({
+                client : s3Client,
+                params : params,
+            });
+
+            const result = await upload.done();
+            logger.info(JSON.stringify(result, null, 2));
 
             return storageKey;
         }
@@ -80,22 +87,30 @@ export class AWSS3FileStorageService  {
         }
     };
 
-    download = async (storageKey: string, localFilePath: string): Promise<string> => {
+    downloadStream = async (storageKey: string): Promise<Readable> => {
 
         const s3 = this.getS3Client();
         const params = {
             Bucket : process.env.STORAGE_BUCKET,
             Key    : storageKey,
         };
-        //var s3Path = storageKey;
-        // var tokens = s3Path.split('/');
-        // var localFile = tokens[tokens.length - 1];
-        // var folderPath = path.join(TEMP_DOWNLOAD_FOLDER, localFolder);
-        // var localDestination = path.join(folderPath, localFile);
 
-        const file = fs.createWriteStream(localFilePath);
         const command = new GetObjectCommand(params);
         const response = await s3.send(command);
+        const stream = response.Body as Readable;
+        return stream;
+    };
+
+    download = async (storageKey: string, localFilePath: string): Promise<string> => {
+
+        const s3Client = this.getS3Client();
+        const params = {
+            Bucket : process.env.STORAGE_BUCKET,
+            Key    : storageKey,
+        };
+        const file = fs.createWriteStream(localFilePath);
+        const command = new GetObjectCommand(params);
+        const response = await s3Client.send(command);
         const stream = response.Body as Readable;
         return new Promise((resolve, reject) => {
             stream.on('end', () => {
@@ -183,14 +198,19 @@ export class AWSS3FileStorageService  {
 
     //#region Privates
 
-    getS3Client = (): aws.S3 => {
-        return new aws.S3({
-            credentials : {
-                accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
-                secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET
-            },
-            region : process.env.STORAGE_CLOUD_REGION
-        });
+    getS3Client = (): aws.S3Client => {
+        try {
+            const client = new aws.S3Client({
+                credentials : {
+                    accessKeyId     : process.env.STORAGE_BUCKET_ACCESS_KEY_ID,
+                    secretAccessKey : process.env.STORAGE_BUCKET_ACCESS_KEY_SECRET,
+                },
+                region : process.env.STORAGE_CLOUD_REGION
+            });
+            return client;
+        } catch (error) {
+            console.log(error);
+        }
     };
 
     //#endregion

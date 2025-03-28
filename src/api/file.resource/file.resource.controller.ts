@@ -7,7 +7,7 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ApiError, ErrorHandler } from '../../common/handlers/error.handler';
 import BaseValidator from '../base.validator';
 import * as mime from 'mime-types';
-import { FileResourceCreateModel } from '../../domain.types/general/file.resource.domain.types';
+import { FileResourceCreateModel, FileResourceUpdateModel } from '../../domain.types/general/file.resource.domain.types';
 import { FileUtils } from '../../common/utilities/file.utils';
 import { StorageService } from '../../modules/storage/storage.service';
 import path from 'path';
@@ -16,7 +16,11 @@ import { DownloadDisposition } from '../../domain.types/general/file.resource/fi
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { Loader } from '../../startup/loader';
 import { FileResourceValidator } from './file.resource.validator';
-
+import { UploadedFile } from 'express-fileupload';
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { Readable } from "stream";
+import { StreamReader } from "./stream.reader";
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class FileResourceController extends BaseController {
@@ -37,9 +41,9 @@ export class FileResourceController extends BaseController {
 
     upload = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            await this._validator.upload(request);
+
             var dateFolder = new Date().toISOString().split('T')[0];
-            var originalFilename: string = request.headers['filename'] as string;
+            var originalFilename: string = request.headers['x-file-name'] as string;
             var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
 
             var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
@@ -52,7 +56,20 @@ export class FileResourceController extends BaseController {
             filename = filename + '_' + timestamp + '.' + ext;
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
-            var key = await this._storageService.upload(storageKey, request);
+            let contentType = "application/octet-stream";
+            const tenantId = request.body.TenantId ?? request.headers['tenantid'];
+            if (request.headers["content-type"]) {
+                if (request.headers["content-type"] === "application/json") {
+                    contentType = "application/octet-stream";
+                } else {
+                    contentType = request.headers["content-type"];
+                }
+            }
+            // const contentType = request.headers["content-type"] || "application/octet-stream";
+
+            const reader = new StreamReader(request);
+            var key = await this._storageService.uploadStream(storageKey, reader.getStream(), contentType);
+
             if (!key) {
                 ErrorHandler.throwInternalServerError(`Unable to upload the file!`);
             }
@@ -63,6 +80,7 @@ export class FileResourceController extends BaseController {
                 OriginalFilename : originalFilename,
                 Tags             : request.body.Tags ? request.body.Tags : [],
                 Size             : contentLength ? parseInt(contentLength) : null,
+                TenantId         : tenantId
             };
             var record = await this._service.create(model);
             if (record === null) {
@@ -72,6 +90,14 @@ export class FileResourceController extends BaseController {
             const message = 'File resource uploaded successfully!';
             ResponseHandler.success(request, response, message, 201, record);
 
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    uploadBinary = async ( request: express.Request, response: express.Response ): Promise< void > => {
+        try {
+            //
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -97,16 +123,17 @@ export class FileResourceController extends BaseController {
             this.setResponseHeaders(response, originalFilename, disposition);
             var downloadFolderPath = await this.generateDownloadFolderPath();
             var localFilePath = path.join(downloadFolderPath, originalFilename);
-            var localDestination = await this._storageService.download(storageKey, localFilePath);
+            var localDestination = await this._storageService.downloadStream(storageKey);
             
             if (!localDestination) {
                 ErrorHandler.throwInternalServerError(`Unable to download the file!`);
             }
 
-            this.streamToResponse(localDestination, response, {
+            this.streamToResponse(localFilePath, response, {
                 MimeType    : mimeType,
                 Disposition : disposition
-            });
+            }, localDestination);
+            // ResponseHandler.success(request, localDestination.pipe(response), '', 200, '');
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -122,6 +149,22 @@ export class FileResourceController extends BaseController {
             }
             const message = 'File resource retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
+    updateData = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+            var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
+            var model: FileResourceUpdateModel = await this._validator.validateUpdateRequest(request);
+            const record = await this._service.getById(id);
+            if (!record) {
+                ErrorHandler.throwNotFoundError("File details not found with the provided id");
+            }
+            const updatedRecord = await this._service.update(id, model);
+            const message = "File details updated in the DB";
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -166,7 +209,7 @@ export class FileResourceController extends BaseController {
     private streamToResponse(
         localDestination: string,
         response: express.Response<any, Record<string, any>>,
-        metadata) {
+        metadata, stream?) {
 
         if (localDestination == null) {
             throw new ApiError(404, 'File resource not found.');
@@ -180,8 +223,12 @@ export class FileResourceController extends BaseController {
 
         this.setDownloadResponseHeaders(response, metadata.Disposition, mimetype, filename);
 
-        var filestream = fs.createReadStream(localDestination);
-        filestream.pipe(response);
+        if (stream) {
+            stream.pipe(response);
+        } else {
+            var filestream = fs.createReadStream(localDestination);
+            filestream.pipe(response);
+        }
     }
 
     private setDownloadResponseHeaders(

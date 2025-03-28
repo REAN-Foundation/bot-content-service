@@ -1,6 +1,6 @@
 import { FaissStore } from "@langchain/community/vectorstores/faiss";
 import { OpenAIEmbeddings } from "@langchain/openai";
-import { IVectorStoreService } from "../interfaces/vectorstore.interface";
+import { IVectorStoreService } from "../interfaces/vectorstore.service.interface";
 import { logger } from '../../../logger/logger';
 
 export class FaissVectorStore implements IVectorStoreService {
@@ -20,13 +20,21 @@ export class FaissVectorStore implements IVectorStoreService {
         //method not applicable for FAISS
     };
 
-    createCollection = async (clientName: string, projectName: string, collectionName: string): Promise<string> => {
+    createCollection = async (tenantId: string): Promise<string> => {
         return "Method Not Implemented for FAISS";
     };
 
-    deleteCollection = async (clientName: string, projectName: string, collectionName: string): Promise<string> => {
+    deleteCollection = async (tenantId: string): Promise<string> => {
         return "Method Not Implemented for FAISS";
     };
+
+    deleteByFileName(fileName: string, tenantId: string) {
+        // method not implemented for FAISS
+    }
+
+    refreshData(tenantId: string) {
+        // method not implemented yet
+    }
 
     insertData = async (tenantId: string, data: any): Promise<string> => {
         try {
@@ -60,7 +68,7 @@ export class FaissVectorStore implements IVectorStoreService {
         return loadVectorStore;
     };
 
-    similaritySearch = async (tenantId: string, userQuery: string) => {
+    similaritySearch = async (tenantId: string, userQuery: string, filter: any) => {
         try {
             const vectorDB = await this.loadVectorStore(tenantId, "default");
             const k = 3;
