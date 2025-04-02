@@ -1,12 +1,10 @@
-/* eslint-disable indent */
-
-// import express from 'express';
 import { BaseService } from './base.service';
 import { LlmPrompt } from '../models/llm.prompt/llm.prompts.model';
 import { LlmPromptMapper } from '../mappers/llm.prompt/llm.prompt.mapper';
 import { logger } from '../../logger/logger';
 import { ErrorHandler } from '../../common/handlers/error.handler';
 import { LlmPromptCreateModel, LlmPromptDto, LlmPromptSearchFilters, LlmPromptSearchResults, LlmPromptUpdateModel } from '../../domain.types/llm.prompt/llm.prompt.domain.types';
+import { LlmPromptTemplateService } from './llmprompt.template.service';
 import { Source } from '../database.connector';
 import { Repository } from 'typeorm/repository/Repository';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
@@ -16,23 +14,45 @@ export class LlmpromptService extends BaseService {
 
     _llmPromptRepository: Repository<LlmPrompt> = Source.getRepository(LlmPrompt);
 
-    // create = async (request: express.Request, response: express.Response) => {
+    _templateService: LlmPromptTemplateService = new LlmPromptTemplateService();
+
     public create = async (createModel: LlmPromptCreateModel)
         : Promise<LlmPromptDto> => {
         try {
+            const templates = createModel.Templates;
+            var finalPrompt = "";
+            const variables = [];
+
+            for (const template of templates) {
+                const templateContent = await this._templateService.getById(template.TemplateId);
+                const content = templateContent.Content;
+
+                // let content = template.Content;
+                variables.push(template.Variables);
+                // for (const { VariableName, VariableContent } of template.Variables) {
+                //     const placeholder = new RegExp(`{{${VariableName}}}`, "g");
+                //     content = content.replace(placeholder, VariableContent);
+                // }
+            
+                // Append the processed template to the finalPrompt
+                finalPrompt += content + " ";
+            }
+
             const data = this._llmPromptRepository.create({
-                Name              : createModel.Name,
-                Description       : createModel.Description,
-                UseCaseType       : createModel.UseCaseType,
-                GroupName         : createModel.GroupName,
-                ModelName         : createModel.ModelName,
-                ModelVersion      : createModel.ModelVersion,
-                UserId            : createModel.UserId,
-                Temperature       : createModel.Temperature,
-                FrequencyPenality : createModel.FrequencyPenality,
-                TopP              : createModel.TopP,
-                PresencePenalty   : createModel.PresencePenalty,
-                IsActive          : createModel.IsActive,
+                Name             : createModel.Name,
+                Description      : createModel.Description ?? null,
+                UseCaseType      : createModel.UseCaseType,
+                Group            : createModel.Group,
+                Model            : createModel.Model,
+                Prompt           : finalPrompt,
+                Variables        : JSON.stringify(variables),
+                CreatedByUserId  : createModel.CreatedByUserId,
+                Temperature      : createModel.Temperature,
+                FrequencyPenalty : createModel.FrequencyPenalty,
+                TopP             : createModel.TopP,
+                PresencePenalty  : createModel.PresencePenalty,
+                IsActive         : createModel.IsActive,
+                TenantId         : createModel.TenantId
             });
             var record = await this._llmPromptRepository.save(data);
             return LlmPromptMapper.toResponseDto(record);
@@ -54,40 +74,43 @@ export class LlmpromptService extends BaseService {
             if (!updateData) {
                 ErrorHandler.throwNotFoundError('LLm prompt not found!');
             }
-            if (model.Name != null) {
+            if (model.Name) {
                 updateData.Name = model.Name;
             }
-            if ( model.Description != null) {
+            if ( model.Description) {
                 updateData.Description = model.Description;
             }
-            if ( model.UseCaseType != null) {
+            if ( model.UseCaseType) {
                 updateData.UseCaseType = model.UseCaseType;
             }
-            if ( model.GroupName != null) {
-                updateData.GroupName = model.GroupName;
+            if ( model.Group) {
+                updateData.Group = model.Group;
             }
-            if ( model.ModelName != null) {
-                updateData.ModelName = model.ModelName;
+            if ( model.Model) {
+                updateData.Model = model.Model;
             }
-            if ( model.ModelVersion != null) {
-                updateData.ModelVersion = model.ModelVersion;
+            if ( model.Prompt) {
+                updateData.Prompt = model.Prompt;
             }
-            if (  model.UserId != null) {
-                updateData.UserId = model.UserId;
+            if (model.Variables) {
+                updateData.Variables = model.Variables;
             }
-            if ( model.Temperature != null) {
+            if (  model.CreatedByUserId) {
+                updateData.CreatedByUserId = model.CreatedByUserId;
+            }
+            if ( model.Temperature) {
                 updateData.Temperature = model.Temperature;
             }
-            if ( model.FrequencyPenality != null) {
-                updateData.FrequencyPenality = model.FrequencyPenality;
+            if ( model.FrequencyPenalty) {
+                updateData.FrequencyPenalty = model.FrequencyPenalty;
             }
-            if ( model.TopP != null) {
+            if ( model.TopP) {
                 updateData.TopP = model.TopP;
             }
-            if ( model.PresencePenalty != null) {
+            if ( model.PresencePenalty) {
                 updateData.PresencePenalty  = model.PresencePenalty;
             }
-            if ( model.IsActive != null) {
+            if ( model.IsActive) {
                 updateData.IsActive = model.IsActive;
             }
          
@@ -143,35 +166,19 @@ export class LlmpromptService extends BaseService {
         }
     };
     
-    // public delete = async (id: uuid)=> {
-    //     try {
-    //         var record = await this._llmPromptRepository.findOne({
-    //             where : {
-    //                 id : id
-    //             }
-    //         });
-    //         var result = await this._llmPromptRepository.remove(record);
-    //         result != null;
-    //     } catch (error) {
-    //         logger.error(error.message);
-    //         ErrorHandler.throwInternalServerError(error.message, 500);
-    //     }
-    // };
-
     public delete = async (id: string): Promise<boolean> => {
         try {
-            // const record = await this._llmPromptRepository.findOne();
             var record = await this._llmPromptRepository.findOne({
-                            where : {
-                                id : id
-                            }
-                        });
+                where : {
+                    id : id
+                }
+            });
             if (!record) {
-                return false; // Record not found
+                return false;
             }
-            record.DeletedAt = new Date(); // Soft delete
+            record.DeletedAt = new Date();
             await this._llmPromptRepository.save(record);
-            return true; // Soft delete successful
+            return true;
         } catch (error) {
             logger.error(error.message);
             throw new Error('Unable to delete prompt.');
@@ -209,19 +216,20 @@ export class LlmpromptService extends BaseService {
             where : {
             },
             select : {
-                id                : true,
-                Name              : true,
-                Description       : true,
-                UseCaseType       : true,
-                GroupName         : true,
-                ModelName         : true,
-                ModelVersion      : true,
-                UserId            : true,
-                Temperature       : true,
-                FrequencyPenality : true,
-                TopP              : true,
-                PresencePenalty   : true,
-                IsActive          : true,
+                id               : true,
+                Name             : true,
+                Description      : true,
+                UseCaseType      : true,
+                Group            : true,
+                Model            : true,
+                Prompt           : true,
+                Variables        : true,
+                CreatedByUserId  : true,
+                Temperature      : true,
+                FrequencyPenalty : true,
+                TopP             : true,
+                PresencePenalty  : true,
+                IsActive         : true,
             }
         };
 
@@ -231,23 +239,26 @@ export class LlmpromptService extends BaseService {
         if (filters.UseCaseType) {
             search.where['UseCaseType'] = filters.UseCaseType;
         }
-        if (filters.GroupName) {
-            search.where['GroupName'] = filters.GroupName;
+        if (filters.Group) {
+            search.where['Group'] = filters.Group;
         }
-        if (filters.ModelName) {
-            search.where['ModelName'] = filters.ModelName;
+        if (filters.Model) {
+            search.where['Model'] = filters.Model;
         }
-        if (filters.ModelVersion) {
-            search.where['ModelVersion'] = filters.ModelVersion;
+        if (filters.Prompt) {
+            search.where['Prompt'] = filters.Prompt;
         }
-        if (filters.UserId) {
-            search.where['UserId'] = filters.UserId;
+        if (filters.Variables) {
+            search.where['Variables'] = filters.Variables;
+        }
+        if (filters.CreatedByUserId) {
+            search.where['CreatedByUserId'] = filters.CreatedByUserId;
         }
         if (filters.Temperature) {
             search.where['Temperature'] = filters.Temperature;
         }
-        if (filters.FrequencyPenality) {
-            search.where['FrequencyPenality'] = filters.FrequencyPenality;
+        if (filters.FrequencyPenalty) {
+            search.where['FrequencyPenalty'] = filters.FrequencyPenalty;
         }
         if (filters.TopP) {
             search.where['TopP'] = filters.TopP;

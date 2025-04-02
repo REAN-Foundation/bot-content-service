@@ -1,134 +1,97 @@
-import { QnaDocumentGroup } from '../../models/content/qna.document.groups.model';
-import { logger } from '../../../logger/logger';
-import { ErrorHandler } from '../../../common/handlers/error.handler';
-import { Source } from '../../database.connector';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, Repository } from 'typeorm';
+import { QnaDocumentGroup } from '../../../database/models/content/qna.document.groups.model';
+import { QnaDocument } from '../../../database/models/content/qna.document.model';
 import { BaseService } from '../base.service';
+import { Source } from '../../../database/database.connector';
+import { QnaDocumentGroupCreateModel, QnaDocumentGroupDto, QnaDocumentGroupSearchFilters, QnaDocumentGroupSearchResults, QnaDocumentGroupUpdateModel } from '../../../domain.types/content/qna.document.group.domain.types';
+import { QnaDocumentGroupMapper } from '../../../database/mappers/content/qna.document.group.mapper';
+import { ErrorHandler } from '../../../common/handlers/error.handler';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
-import {
-    QnaDocumentGroupCreateModel,
-    QnaDocumentGroupSearchFilters,
-    QnaDocumentGroupUpdateModel,
-} from '../../../domain.types/content/qna.document.group.domain.types';
-import { QnaDocumentGroupResponseDto } from '../../../domain.types/content/qna.document.group.domain.types';
-import { QnaDocumentGroupsMapper } from '../../mappers/content/qna.document.group.mapper';
-import { QnaDocument } from '../../models/content/qna.document.model';
+import { logger } from '../../../logger/logger';
 
-///////////////////////////////////////////////////////////////////////
+export class QnaDocumentGroupService extends BaseService {
 
-export class QnaDocumentGroupsService extends BaseService {
-
-    _qnaDocumentGroupsRepository: Repository<QnaDocumentGroup> = Source.getRepository(QnaDocumentGroup);
+    _qnaDocumentGroupRepository: Repository<QnaDocumentGroup> = Source.getRepository(QnaDocumentGroup);
 
     _qnaDocumentRepository: Repository<QnaDocument> = Source.getRepository(QnaDocument);
 
-    public create = async (createModel: QnaDocumentGroupCreateModel): Promise<QnaDocumentGroupResponseDto> => {
+    create = async (createModel: QnaDocumentGroupCreateModel): Promise<QnaDocumentGroupDto> => {
         try {
-            const document = await this.getDocumentById(createModel.QnaDocumentId);
-
-            const data = this._qnaDocumentGroupsRepository.create({
-                Name         : createModel.Name,
-                Description  : createModel.Description,
-                QnaDocuments : [document],
+            const data = await this._qnaDocumentGroupRepository.create({
+                Name        : createModel.Name,
+                Description : createModel.Description,
             });
-            var record = await this._qnaDocumentGroupsRepository.save(data);
-            return QnaDocumentGroupsMapper.toResponseDto(record);
+            const record = await this._qnaDocumentGroupRepository.save(data);
+            return QnaDocumentGroupMapper.toResponseDto(record);
         } catch (error) {
-            logger.error(error.message);
             ErrorHandler.throwInternalServerError(error.message, 500);
         }
     };
 
-    public update = async (id: uuid, model: QnaDocumentGroupUpdateModel): Promise<QnaDocumentGroupResponseDto> => {
+    public update = async (id: uuid, model: QnaDocumentGroupUpdateModel)
+    : Promise<QnaDocumentGroupDto> => {
         try {
-            const updateData = await this._qnaDocumentGroupsRepository.findOne({
+            const updateData = await this._qnaDocumentGroupRepository.findOne({
                 where : {
-                    id : id,
-                },
-                relations : {
-                    QnaDocuments : true,
+                    id : id
                 },
             });
-
-            if (model.Name != null) {
+            if (!updateData) {
+                ErrorHandler.throwNotFoundError('Qna document group not found!');
+            }
+            if (model.Name) {
                 updateData.Name = model.Name;
             }
-            if (model.Description != null) {
+            if ( model.Description) {
                 updateData.Description = model.Description;
             }
-
-            var record = await this._qnaDocumentGroupsRepository.save(updateData);
-            return QnaDocumentGroupsMapper.toResponseDto(record);
+            var record = await this._qnaDocumentGroupRepository.save(updateData);
+            return QnaDocumentGroupMapper.toResponseDto(record);
         } catch (error) {
             logger.error(error.message);
             ErrorHandler.throwInternalServerError(error.message, 500);
         }
     };
 
-    private async getDocumentById(id: uuid) {
-        const document = await this._qnaDocumentRepository.findOne({
-            where : {
-                id : id,
-            },
-        });
-        if (!document) {
-            ErrorHandler.throwNotFoundError('Qna document cannot be found');
-        }
-        return document;
-    }
-
-    public getById = async (id: uuid) => {
+    public getById = async (id: uuid): Promise<QnaDocumentGroupDto> => {
         try {
-            var qnaDocumentGroup = await this._qnaDocumentGroupsRepository.findOne({
+            var record = await this._qnaDocumentGroupRepository.findOne({
                 where : {
-                    id : id,
-                },
-                relations : {
-                    QnaDocuments : true,
+                    id : id
                 },
             });
-            return QnaDocumentGroupsMapper.toResponseDto(qnaDocumentGroup);
+            return QnaDocumentGroupMapper.toResponseDto(record);
         } catch (error) {
             logger.error(error.message);
             ErrorHandler.throwInternalServerError(error.message, 500);
         }
     };
 
-    public getAll = async (): Promise<QnaDocumentGroupResponseDto[]> => {
+    public delete = async (id: string): Promise<boolean> => {
         try {
-            const data = [];
-            var documentgroup = await this._qnaDocumentGroupsRepository.find({
-                relations : {
-                    QnaDocuments : true,
+            var record = await this._qnaDocumentGroupRepository.findOne({
+                where : {
+                    id : id
                 },
             });
-            for (var i of documentgroup) {
-                const record = QnaDocumentGroupsMapper.toResponseDto(i);
-                // const record = i;
-                data.push(record);
+            if (!record) {
+                return false; // Record not found
             }
-            return data;
-        } catch (error) {
-            logger.error(error.message);
-            ErrorHandler.throwDbAccessError('DB Error: Unable to get Qna document group record!', error);
-        }
-    };
-
-    public delete = async (id: uuid) => {
-        try {
-            var result = await this._qnaDocumentGroupsRepository.softDelete(id);
-            return result != null;
+            record.DeletedAt = new Date(); // Soft delete
+            await this._qnaDocumentGroupRepository.save(record);
+            return true; // Soft delete successful
         } catch (error) {
             logger.error(error.message);
             ErrorHandler.throwInternalServerError(error.message, 500);
         }
     };
 
-    public search = async (filters: QnaDocumentGroupSearchFilters): Promise<QnaDocumentGroupSearchFilters> => {
+    public search = async (filters: QnaDocumentGroupSearchFilters)
+    : Promise<QnaDocumentGroupSearchResults> => {
         try {
             var search = this.getSearchModel(filters);
             var { search, pageIndex, limit, order, orderByColumn } = this.addSortingAndPagination(search, filters);
-            const [list, count] = await this._qnaDocumentGroupsRepository.findAndCount(search);
+            const [list, count] = await this._qnaDocumentGroupRepository.findAndCount(search);
 
             const searchResults = {
                 TotalCount     : count,
@@ -137,7 +100,7 @@ export class QnaDocumentGroupsService extends BaseService {
                 ItemsPerPage   : limit,
                 Order          : order === 'DESC' ? 'descending' : 'ascending',
                 OrderedBy      : orderByColumn,
-                Items          : list.map((x) => QnaDocumentGroupsMapper.toResponseDto(x)),
+                Items          : list.map(x => QnaDocumentGroupMapper.toResponseDto(x)),
             };
             return searchResults;
         } catch (error) {
@@ -147,21 +110,17 @@ export class QnaDocumentGroupsService extends BaseService {
     };
 
     private getSearchModel = (filters: QnaDocumentGroupSearchFilters) => {
-        var search: FindManyOptions<QnaDocumentGroup> = {
+
+        var search : FindManyOptions<QnaDocumentGroup> = {
             relations : {},
             where     : {},
-            select    : {
-                id          : true,
-                Name        : true,
-                Description : true,
-            },
         };
 
         if (filters.Name) {
-            search.where['Name'] = Like(`%${filters.Name}%`);
+            search.where['Name'] = filters.Name;
         }
-
         return search;
     };
-    
+
 }
+

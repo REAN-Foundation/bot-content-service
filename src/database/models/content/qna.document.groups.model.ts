@@ -4,13 +4,11 @@ import {
     CreateDateColumn,
     DeleteDateColumn,
     Entity,
-    ManyToMany,
     PrimaryGeneratedColumn,
     UpdateDateColumn,
 } from 'typeorm';
-import { QnaDocument } from './qna.document.model';
 
-@Entity({ name: 'qna_document_group' })
+@Entity({ name: 'qna_document_groups' })
 export class QnaDocumentGroup extends BaseEntity {
 
     @PrimaryGeneratedColumn('uuid')
@@ -30,8 +28,5 @@ export class QnaDocumentGroup extends BaseEntity {
 
     @DeleteDateColumn()
     DeletedAt: Date;
-
-    @ManyToMany(() => QnaDocument, (qnaDocument) => qnaDocument.QnaDocumentGroups)
-    QnaDocuments: QnaDocument[];
     
 }

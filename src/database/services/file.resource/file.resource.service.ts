@@ -64,6 +64,7 @@ export class FileResourceService {
             fileResource.Size             = createModel.Size;
             fileResource.StorageKey       = createModel.StorageKey;
             fileResource.Tags             = createModel.Tags;
+            fileResource.TenantId         = createModel.TenantId;
             // fileResource.DocumentId       = document;
 
             var record = await this._fileResourceRepository.save(fileResource);
@@ -109,6 +110,15 @@ export class FileResourceService {
             return FileResourceMapper.toResponseDto(record);
         } catch (error) {
             ErrorHandler.throwDbAccessError('DB Error: Unable to retrieve file resource!', error);
+        }
+    };
+
+    getByTenantId = async (tenantId: string): Promise<FileResourceResponseDto[]> => {
+        try {
+            const record = await this._fileResourceRepository.find({ where: { TenantId: tenantId } } );
+            return record.map(FileResourceMapper.toResponseDto);
+        } catch (error) {
+            ErrorHandler.throwDbAccessError("DB Error: Unable to return files for tenant!", error);
         }
     };
 
@@ -159,6 +169,7 @@ export class FileResourceService {
                     Size             : true,
                     StorageKey       : true,
                     Tags             : true,
+                    TenantId         : true,
                     // UploadedBy       : {
                     //     id     : true,
                     //     Client : {

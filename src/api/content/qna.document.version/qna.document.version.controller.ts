@@ -10,12 +10,18 @@ import {
     QnaDocumentVersionSearchFilters,
 } from '../../../domain.types/content/qna.document.version.domain.types';
 import { QnaDocumentVersionUpdateModel } from '../../../domain.types/content/qna.document.version.domain.types';
+import { QnaDocumentService } from '../../../database/services/content/qna.document.service';
+import { FileResourceService } from '../../../database/services/file.resource/file.resource.service';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class QnaDocumentVersionController {
     
-    public _service: QnaDocumentVersionService;
+    private _service: QnaDocumentVersionService;
+
+    private _documentService: QnaDocumentService = new QnaDocumentService();
+
+    private _fileResourceService: FileResourceService = new FileResourceService();
 
     _validator: QnaDocumentVersionValidator = new QnaDocumentVersionValidator();
 
@@ -26,6 +32,19 @@ export class QnaDocumentVersionController {
     create = async (request: express.Request, response: express.Response) => {
         try {
             var model: QnaDocumentVersionCreateModel = await this._validator.validateCreateRequest(request);
+            const isDocumentExist = await this._documentService.getById(model.QnaDocumentId);
+            if (!isDocumentExist) {
+                ErrorHandler.throwNotFoundError('Document cannot be found!');
+            }
+            const isFileResourceExist = await this._fileResourceService.getById(model.ResourceId);
+            if (!isFileResourceExist) {
+                ErrorHandler.throwNotFoundError('File resource cannot be found!');
+            }
+            
+            const promptVersionModel = await this._service.getLatestDocumentVersionByDocumentId(model.QnaDocumentId);
+            
+            model.Version = promptVersionModel ? promptVersionModel.Version + 1 : 1;
+
             const record = await this._service.create(model);
             if (record === null) {
                 ErrorHandler.throwInternalServerError('Unable to add qna document version!');
@@ -41,6 +60,10 @@ export class QnaDocumentVersionController {
         try {
             const id = await this._validator.validateParamAsUUID(request, 'id');
             var model: QnaDocumentVersionUpdateModel = await this._validator.validateUpdateRequest(request);
+            const isDocumentVersionExist = await this._service.getById(id);
+            if (!isDocumentVersionExist) {
+                ErrorHandler.throwNotFoundError('Document version can not be found!');
+            }
             const updatedRecord = await this._service.update(id, model);
             const message = 'Qna Document Version updated successfully';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
@@ -65,16 +88,6 @@ export class QnaDocumentVersionController {
         }
     };
 
-    getAll = async (request: express.Request, response: express.Response) => {
-        try {
-            const record = await this._service.getAll();
-            const message = 'Qna Document version retrieved successfully!';
-            return ResponseHandler.success(request, response, message, 200, record);
-        } catch (error) {
-            ResponseHandler.handleError(request, response, error);
-        }
-    };
-
     delete = async (request: express.Request, response: express.Response): Promise<void> => {
         var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
         const record = await this._service.getById(id);
@@ -89,6 +102,20 @@ export class QnaDocumentVersionController {
         } else {
             const message = 'Qna Document Version Not found ';
             ResponseHandler.failure(request, response, message, 404);
+        }
+    };
+
+    getLatestDocumentVersionByDocumentId = async (request: express.Request, response: express.Response) => {
+        try {
+            const documentId: string = request.params.documentId;
+            const records = await this._service.getLatestDocumentVersionByDocumentId(documentId);
+            if (!records) {
+                ErrorHandler.throwNotFoundError('Qna document version record not found');
+            }
+            const message = 'Qna document with latest version retrived successfully!';
+            return ResponseHandler.success(request, response, message, 200, records);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
         }
     };
 

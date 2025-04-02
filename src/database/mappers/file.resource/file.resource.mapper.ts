@@ -1,11 +1,7 @@
-/* eslint-disable max-len */
 import { FileResource } from '../../models/file.resource/file.resource.model';
 import {
     FileResourceResponseDto,
 } from '../../../domain.types/general/file.resource.domain.types';
-// import { FileResourceMetadata } from '../../../domain.types/general/file.resource/file.resource.types';
-// import { ConfigurationManager } from '../../../config/configuration.manager';
-// import { FileResourceVersion } from '../../../database/models/general/file.resource.version.model';
 
 ///////////////////////////////////////////////////////////////////////////////////
 
@@ -24,37 +20,11 @@ export class FileResourceMapper {
             Public           : fileResource.Public,
             Size             : fileResource.Size,
             Tags             : fileResource.Tags,
+            TenantId         : fileResource.TenantId,
             CreatedAt        : fileResource.CreatedAt,
             UpdatedAt        : fileResource.UpdatedAt,
         };
         return dto;
     };
-
-    // static toFileVersionDto = (fileVersion ?: FileResourceVersion, sanitize = false): FileResourceMetadata => {
-
-    //     if (fileVersion == null){
-    //         return null;
-    //     }
-
-    //     var url = ConfigurationManager.BaseUrl + '/file-resources/' + fileVersion.ResourceId + '/download-by-version-name/' + fileVersion.Version;
-
-    //     var v: FileResourceMetadata = {
-    //         VersionId    : fileVersion.id,
-    //         ResourceId   : fileVersion.ResourceId,
-    //         Version      : fileVersion.Version,
-    //         FileName     : fileVersion.FileName,
-    //         MimeType     : fileVersion.MimeType,
-    //         OriginalName : fileVersion.OriginalFileName,
-    //         Size         : fileVersion.SizeInKB,
-    //         StorageKey   : fileVersion.StorageKey,
-    //         Url          : url
-    //     };
-
-    //     if (sanitize) {
-    //         v.StorageKey = null;
-    //     }
-
-    //     return v;
-    // };
 
 }

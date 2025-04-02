@@ -1,37 +1,40 @@
+
+import { ErrorHandler } from "../../../common/handlers/error.handler";
+import { ResponseHandler } from "../../../common/handlers/response.handler";
 import express from 'express';
-import { ResponseHandler } from '../../../common/handlers/response.handler';
-import { QnaDocumentGroupsValidator } from './qna.document.group.validator';
-import { QnaDocumentGroupsService } from '../../../database/services/content/qna.document.group.service';
-import { ErrorHandler } from '../../../common/handlers/error.handler';
-import {
-    QnaDocumentGroupCreateModel,
-    QnaDocumentGroupSearchFilters,
-    QnaDocumentGroupUpdateModel,
-} from '../../../domain.types/content/qna.document.group.domain.types';
-import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { uuid } from "../../../domain.types/miscellaneous/system.types";
+import { QnaDocumentGroupService } from "../../../database/services/content/qna.document.group.service";
+import { QnaDocumentGroupValidator } from "./qna.document.group.validator";
+import { QnaDocumentService } from "../../../database/services/content/qna.document.service";
+import { QnaDocumentGroupCreateModel, QnaDocumentGroupDto, QnaDocumentGroupSearchFilters, QnaDocumentGroupUpdateModel } from "../../../domain.types/content/qna.document.group.domain.types";
 
-///////////////////////////////////////////////////////////////////////////////////////
+export class QnaDocumentGroupController {
 
-export class QnaDocumentsGroupController {
+    //#region member variables and constructors
 
-    public _service: QnaDocumentGroupsService;
+    _service: QnaDocumentGroupService = new QnaDocumentGroupService();
 
-    _validator: QnaDocumentGroupsValidator = new QnaDocumentGroupsValidator();
+    _validator: QnaDocumentGroupValidator = new QnaDocumentGroupValidator();
 
-    constructor() {
-        this._service = new QnaDocumentGroupsService();
-    }
+    _qnaDocumentRepository: QnaDocumentService = new QnaDocumentService();
 
     create = async (request: express.Request, response: express.Response) => {
         try {
             var model: QnaDocumentGroupCreateModel = await this._validator.validateCreateRequest(request);
+            const searchResults = await this._service.search({
+                Name : model.Name
+            });
+            if (searchResults.TotalCount) {
+                ErrorHandler.throwDuplicateUserError("Qna document group is already exists");
+            }
             const record = await this._service.create(model);
             if (record === null) {
-                ErrorHandler.throwInternalServerError('Unable to add qna documents group!');
+                ErrorHandler.throwInternalServerError('Error in creating qna document group!');
             }
-            const message = 'Qna Document Group added successfully!';
+            const message = ' Qna document group created successfully!';
             return ResponseHandler.success(request, response, message, 201, record);
-        } catch (error) {
+        }
+        catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
@@ -39,68 +42,65 @@ export class QnaDocumentsGroupController {
     update = async (request: express.Request, response: express.Response) => {
         try {
             const id = await this._validator.validateParamAsUUID(request, 'id');
+            const record = await this._service.getById(id);
+            if (!record) {
+                ErrorHandler.throwNotFoundError('Qna document group cannot be found!');
+            }
             var model: QnaDocumentGroupUpdateModel = await this._validator.validateUpdateRequest(request);
             const updatedRecord = await this._service.update(id, model);
-            const message = 'Qna Document Group updated successfully!';
+            const message = 'Qna document updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-
+    
     getById = async (request: express.Request, response: express.Response) => {
         try {
             var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
             const record = await this._service.getById(id);
-            if (record != null) {
-                const message = 'Qna Document Group retrieved successfully!';
+            if (record === null)
+            {
+                const message = 'Qna Document Group cannot be found!';
+                ErrorHandler.throwNotFoundError(message);
+            }
+            else {
+                const message = 'Qna document retrieved successfully!';
                 return ResponseHandler.success(request, response, message, 200, record);
-            } else {
-                const message = 'Qna Document Group Not found';
-                return ResponseHandler.failure(request, response, message, 404);
             }
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
 
-    getAll = async (request: express.Request, response: express.Response) => {
+    delete = async (request: express.Request, response: express.Response) => {
         try {
-            const record = await this._service.getAll();
-            const message = 'Qna Document Group retrieved successfully!';
-            return ResponseHandler.success(request, response, message, 200, record);
+            const id = await this._validator.validateParamAsUUID(request, 'id');
+            const record: QnaDocumentGroupDto = await this._service.getById(id);
+            if (!record) {
+                ErrorHandler.throwNotFoundError('Document Group not found!');
+            }
+            const userDeleted = await this._service.delete(id);
+            const result = {
+                Deleted : userDeleted
+            };
+            const message = 'Document Group deleted successfully!';
+            ResponseHandler.success(request, response, message, 200, result);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
-        }
-    };
-
-    delete = async (request: express.Request, response: express.Response): Promise<void> => {
-        var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
-        const record = await this._service.getById(id);
-
-        if (record != null) {
-            try {
-                const result = await this._service.delete(id);
-                const message = 'Qna Document Group deleted successfully!';
-                ResponseHandler.success(request, response, message, 200, result);
-            } catch (error) {
-                ResponseHandler.handleError(request, response, error);
-            }
-        } else {
-            const message = 'Qna Document Group not found!';
-            ResponseHandler.failure(request, response, message, 404);
         }
     };
 
     search = async (request: express.Request, response: express.Response) => {
         try {
+           
             var filters: QnaDocumentGroupSearchFilters = await this._validator.validateSearchRequest(request);
             const searchResults = await this._service.search(filters);
-            const message = 'Qna Document Version records retrieved successfully!';
+            const message = 'Qna document group records retrieved successfully!';
             ResponseHandler.success(request, response, message, 200, searchResults);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
     };
-    
+
 }

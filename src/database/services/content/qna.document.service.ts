@@ -11,8 +11,9 @@ import {
     QnaDocumentSearchResults,
     QnaDocumentUpdateModel,
 } from '../../../domain.types/content/qna.document.domain.types';
-import { QnaDocumentResponseDto } from '../../../domain.types/content/qna.document.domain.types';
+import { QnaDocumentDto } from '../../../domain.types/content/qna.document.domain.types';
 import { QnaDocumentMapper } from '../../mappers/content/qna.document.mapper';
+import { FileResource } from '../../models/file.resource/file.resource.model';
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -20,78 +21,83 @@ export class QnaDocumentService extends BaseService {
 
     _qnaDocumentRepository: Repository<QnaDocument> = Source.getRepository(QnaDocument);
 
-    public create = async (createModel: QnaDocumentCreateModel): Promise<QnaDocumentResponseDto> => {
+    _fileResourceRepository : Repository<FileResource> = Source.getRepository(FileResource);
+
+    public create = async (createModel: QnaDocumentCreateModel): Promise<QnaDocumentDto> => {
         try {
             const document = this._qnaDocumentRepository.create({
-                Name                  : createModel.Name,
-                Description           : createModel.Description,
-                FileName              : createModel.FileName,
-                Source                : createModel.Source,
-                ParentDocument        : createModel.ParentDocument,
-                ParentDocumentVersion : createModel.ParentDocumentVersion,
-                ChunkingStrategy      : createModel.ChunkingStrategy,
-                ChunkingLenght        : createModel.ChunkingLenght,
-                ChunkOverlap          : createModel.ChunkOverlap,
-                Splitter              : createModel.Splitter,
-                IsActive              : createModel.IsActive,
-                CreatedBy             : createModel.CreatedBy,
+                Name                     : createModel.Name,
+                Description              : createModel.Description,
+                Keyword                  : createModel.Keyword,
+                ChunkingStrategy         : createModel.ChunkingStrategy,
+                ChunkingLength           : createModel.ChunkingLength,
+                ChunkOverlap             : createModel.ChunkOverlap,
+                Splitter                 : createModel.Splitter,
+                IsActive                 : createModel.IsActive,
+                DocumentType             : createModel.DocumentType,
+                ParentDocumentResourceId : createModel.ParentDocumentResourceId,
+                CreatedByUserId          : createModel.CreatedByUserId,
+                FileResource             : {
+                    id : createModel.ResourceId
+                }
             });
+
             var record = await this._qnaDocumentRepository.save(document);
             return QnaDocumentMapper.toResponseDto(record);
+
         } catch (error) {
             logger.error(error.message);
             ErrorHandler.throwInternalServerError(error.message, 500);
         }
     };
 
-    public update = async (id: uuid, model: QnaDocumentUpdateModel): Promise<QnaDocumentResponseDto> => {
+    public update = async (id: uuid, model: QnaDocumentUpdateModel): Promise<QnaDocumentDto> => {
         try {
             const document = await this._qnaDocumentRepository.findOne({
                 where : {
                     id : id,
                 },
+                relations : {
+                    FileResource : true,
+                }
             });
             if (!document) {
                 ErrorHandler.throwNotFoundError('Document not found!');
             }
 
-            if (model.Name != null) {
+            if (model.Name) {
                 document.Name = model.Name;
             }
-            if (model.Description != null) {
+            if (model.Description) {
                 document.Description = model.Description;
             }
-            if (model.FileName != null) {
-                document.FileName = model.FileName;
+            if (model.ResourceId) {
+                document.FileResource.id = model.ResourceId;
             }
-            if (model.Source != null) {
-                document.Source = model.Source;
+            if (model.Keyword) {
+                document.Keyword = model.Keyword;
             }
-            if (model.ParentDocument != null) {
-                document.ParentDocument = model.ParentDocument;
-            }
-            if (model.ParentDocumentVersion != null) {
-                document.ParentDocumentVersion = model.ParentDocumentVersion;
-            }
-            if (model.ChunkingStrategy != null) {
+            if (model.ChunkingStrategy) {
                 document.ChunkingStrategy = model.ChunkingStrategy;
             }
-            if (model.ChunkingLenght != null) {
-                document.ChunkingLenght = model.ChunkingLenght;
+            if (model.ChunkingLength) {
+                document.ChunkingLength = model.ChunkingLength;
             }
-            if (model.ChunkOverlap != null) {
+            if (model.ChunkOverlap) {
                 document.ChunkOverlap = model.ChunkOverlap;
             }
-            if (model.Splitter != null) {
+            if (model.Splitter) {
                 document.Splitter = model.Splitter;
             }
-            if (model.IsActive != null) {
+            if (model.IsActive) {
                 document.IsActive = model.IsActive;
             }
-            if (model.CreatedBy != null) {
-                document.CreatedBy = model.CreatedBy;
+            if (model.DocumentType) {
+                document.DocumentType = model.DocumentType;
             }
+
             var record = await this._qnaDocumentRepository.save(document);
+            
             return QnaDocumentMapper.toResponseDto(record);
         } catch (error) {
             logger.error(error.message);
@@ -99,38 +105,17 @@ export class QnaDocumentService extends BaseService {
         }
     };
 
-    public getById = async (id: uuid): Promise<QnaDocumentResponseDto> => {
+    public getById = async (id: uuid): Promise<QnaDocumentDto> => {
         try {
             var document = await this._qnaDocumentRepository.findOne({
                 where : {
                     id : id,
                 },
+                relations : {
+                    FileResource : true
+                }
             });
             return QnaDocumentMapper.toResponseDto(document);
-        } catch (error) {
-            logger.error(error.message);
-            ErrorHandler.throwInternalServerError(error.message, 500);
-        }
-    };
-
-    public getByStatus = async (status: boolean) => {
-        try {
-            var document = await this._qnaDocumentRepository.find({
-                where : {
-                    IsActive : status,
-                },
-            });
-            return QnaDocumentMapper.toArrayDto(document);
-        } catch (error) {
-            logger.error(error.message);
-            ErrorHandler.throwInternalServerError(error.message, 500);
-        }
-    };
-
-    public getAll = async (): Promise<QnaDocumentResponseDto[]> => {
-        try {
-            var document = await this._qnaDocumentRepository.find();
-            return QnaDocumentMapper.toArrayDto(document);
         } catch (error) {
             logger.error(error.message);
             ErrorHandler.throwInternalServerError(error.message, 500);
@@ -171,47 +156,34 @@ export class QnaDocumentService extends BaseService {
 
     private getSearchModel = (filters: QnaDocumentSearchFilters) => {
         var search: FindManyOptions<QnaDocument> = {
-            relations : {},
-            where     : {},
-            select    : {
-                Name                  : true,
-                Description           : true,
-                FileName              : true,
-                Source                : true,
-                ParentDocument        : true,
-                ParentDocumentVersion : true,
-                ChunkingStrategy      : true,
-                ChunkingLenght        : true,
-                ChunkOverlap          : true,
-                Splitter              : true,
-                IsActive              : true,
-                CreatedBy             : true,
+            relations : {
+                FileResource : true
             },
+            where : {},
         };
 
         if (filters.Name) {
             search.where['Name'] = Like(`%${filters.Name}%`);
         }
-        if (filters.Description) {
-            search.where['Description'] = filters.Description;
+        if (filters.Keyword) {
+            search.where['Keyword'] = Like(`%${filters.Keyword}%`);
         }
-        if (filters.FileName) {
-            search.where['FileName'] = filters.FileName;
+        if (filters.ResourceId) {
+            search.where['FileResource'] = {
+                id : filters.ResourceId
+            };
         }
-        if (filters.Source) {
-            search.where['Source'] = filters.Source;
+        if (filters.DocumentType) {
+            search.where['DocumentType'] = filters.DocumentType;
         }
-        if (filters.ParentDocument) {
-            search.where['ParentDocument'] = filters.ParentDocument;
-        }
-        if (filters.ParentDocumentVersion) {
-            search.where['ParentDocumentVersion'] = filters.ParentDocumentVersion;
+        if (filters.ParentDocumentResourceId) {
+            search.where['ParentDocumentResourceId'] = filters.ParentDocumentResourceId;
         }
         if (filters.ChunkingStrategy) {
             search.where['ChunkingStrategy'] = filters.ChunkingStrategy;
         }
-        if (filters.ChunkingLenght) {
-            search.where['ChunkingLenght'] = filters.ChunkingLenght;
+        if (filters.ChunkingLength) {
+            search.where['ChunkingLength'] = filters.ChunkingLength;
         }
         if (filters.ChunkOverlap) {
             search.where['ChunkOverlap'] = filters.ChunkOverlap;
@@ -222,8 +194,8 @@ export class QnaDocumentService extends BaseService {
         if (filters.IsActive) {
             search.where['IsActive'] = filters.IsActive;
         }
-        if (filters.CreatedBy) {
-            search.where['CreatedBy'] = filters.CreatedBy;
+        if (filters.CreatedByUserId) {
+            search.where['CreatedByUserId'] = filters.CreatedByUserId;
         }
         return search;
     };

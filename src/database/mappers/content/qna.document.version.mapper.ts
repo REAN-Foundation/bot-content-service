@@ -1,39 +1,32 @@
-import { QnaDocumentVersionResponseDto } from '../../../domain.types/content/qna.document.version.domain.types';
+import { DocumentSource } from '../../../domain.types/content/qna.document.domain.types';
+import { QnaDocumentVersionDto } from '../../../domain.types/content/qna.document.version.domain.types';
 
 import { QnaDocumentVersion } from '../../models/content/qna.document.version.model';
 
 export class QnaDocumentVersionMapper {
 
-    static toResponseDto = (qnaDocumentVersion: QnaDocumentVersion): QnaDocumentVersionResponseDto => {
+    static toResponseDto = (qnaDocumentVersion: QnaDocumentVersion): QnaDocumentVersionDto => {
         if (qnaDocumentVersion == null) {
             return null;
         }
-        const dto: QnaDocumentVersionResponseDto = {
-            id             : qnaDocumentVersion.id,
-            VersionNumber  : qnaDocumentVersion.VersionNumber,
-            StorageUrl     : qnaDocumentVersion.StorageUrl,
-            DownloadUrl    : qnaDocumentVersion.DownloadUrl,
-            FileResourceId : qnaDocumentVersion.FileResourceId,
-            Keywords       : qnaDocumentVersion.Keywords,
-            CreatedAt      : qnaDocumentVersion.CreatedAt,
-            UpdatedAt      : qnaDocumentVersion.UpdatedAt,
-            QnaDocumentId  : qnaDocumentVersion.Qna_Documents
-                ? {
-                    id                    : qnaDocumentVersion.Qna_Documents.id,
-                    Name                  : qnaDocumentVersion.Qna_Documents.Name,
-                    Description           : qnaDocumentVersion.Qna_Documents.Description,
-                    FileName              : qnaDocumentVersion.Qna_Documents.FileName,
-                    Source                : qnaDocumentVersion.Qna_Documents.Source,
-                    CreatedBy             : qnaDocumentVersion.Qna_Documents.CreatedBy,
-                    ParentDocument        : qnaDocumentVersion.Qna_Documents.ParentDocument,
-                    ParentDocumentVersion : qnaDocumentVersion.Qna_Documents.ParentDocumentVersion,
-                    ChunkingStrategy      : qnaDocumentVersion.Qna_Documents.ChunkingStrategy,
-                    ChunkingLenght        : qnaDocumentVersion.Qna_Documents.ChunkingLenght,
-                    ChunkOverlap          : qnaDocumentVersion.Qna_Documents.ChunkOverlap,
-                    Splitter              : qnaDocumentVersion.Qna_Documents.Splitter,
-                    IsActive              : qnaDocumentVersion.Qna_Documents.IsActive,
-                }
-                : null,
+
+        const dto: QnaDocumentVersionDto = {
+            id                       : qnaDocumentVersion.id,
+            Version                  : qnaDocumentVersion.Version,
+            Name                     : qnaDocumentVersion.Name,
+            Description              : qnaDocumentVersion.Description,
+            Keyword                  : qnaDocumentVersion.Keyword,
+            ChunkingStrategy         : qnaDocumentVersion.ChunkingStrategy,
+            ChunkingLength           : qnaDocumentVersion.ChunkingLength,
+            ChunkOverlap             : qnaDocumentVersion.ChunkOverlap,
+            Splitter                 : qnaDocumentVersion.Splitter,
+            IsActive                 : qnaDocumentVersion.IsActive,
+            DocumentType             : qnaDocumentVersion.DocumentType,
+            DocumentSource           : qnaDocumentVersion.DocumentSource as DocumentSource,
+            ParentDocumentResourceId : qnaDocumentVersion.ParentDocumentResourceId,
+            CreatedByUserId          : qnaDocumentVersion.CreatedByUserId,
+            ResourceId               : qnaDocumentVersion.ResourceId,
+            QnaDocumentId            : qnaDocumentVersion.QnaDocument.id
         };
         return dto;
     };

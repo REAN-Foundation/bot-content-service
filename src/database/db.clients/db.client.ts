@@ -1,5 +1,4 @@
 import { MysqlClient } from './mysql.client';
-// import { PostgresqlClient } from './postgresql.client';
 import { logger } from '../../logger/logger';
 import { execSync } from 'child_process';
 import IDbClient from './db.client.interface';

@@ -1,23 +1,20 @@
 import {
-    QnaDocumentGroupResponseDto,
+    QnaDocumentGroupDto,
     QnaDocumentGroupSearchResponseDto,
 } from '../../../domain.types/content/qna.document.group.domain.types';
 import { QnaDocumentGroup } from '../../models/content/qna.document.groups.model';
 import { QnaDocumentMapper } from './qna.document.mapper';
 
-export class QnaDocumentGroupsMapper {
+export class QnaDocumentGroupMapper {
 
-    static toResponseDto = (qnaDocumentGroups: QnaDocumentGroup): QnaDocumentGroupResponseDto => {
+    static toResponseDto = (qnaDocumentGroups: QnaDocumentGroup): QnaDocumentGroupDto => {
         if (qnaDocumentGroups == null) {
             return null;
         }
-        const dto: QnaDocumentGroupResponseDto = {
+        const dto: QnaDocumentGroupDto = {
             id          : qnaDocumentGroups.id,
             Name        : qnaDocumentGroups.Name,
             Description : qnaDocumentGroups.Description,
-            QnaDocument : QnaDocumentMapper.toResponseDto(
-                qnaDocumentGroups.QnaDocuments?.length > 0 ? qnaDocumentGroups.QnaDocuments[0] : null
-            ),
         };
         return dto;
     };

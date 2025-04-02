@@ -1,7 +1,5 @@
 import express from 'express';
-
 import { ErrorHandler } from '../common/handlers/error.handler';
-// import { Loader } from '../startup/loader';
 
 ///////////////////////////////////////////////////////////////////////////////////////
 

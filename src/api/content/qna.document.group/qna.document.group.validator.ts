@@ -1,25 +1,21 @@
-import joi from 'joi';
 import express from 'express';
+import joi from 'joi';
 import { ErrorHandler } from '../../../common/handlers/error.handler';
 import BaseValidator from '../../base.validator';
-import {
-    QnaDocumentGroupCreateModel,
-    QnaDocumentGroupSearchFilters,
-    QnaDocumentGroupUpdateModel,
-} from '../../../domain.types/content/qna.document.group.domain.types';
+import { LlmPromptGroupSearchFilters } from '../../../domain.types/llm.prompt/llm.prompt.group.domain.types';
+import { QnaDocumentGroupCreateModel, QnaDocumentGroupSearchFilters } from '../../../domain.types/content/qna.document.group.domain.types';
+import { QnaDocumentGroupUpdateModel } from '../../../domain.types/content/qna.document.group.domain.types';
 
-///////////////////////////////////////////////////////////////////////////////////////////////
+export class QnaDocumentGroupValidator extends BaseValidator {
 
-export class QnaDocumentGroupsValidator extends BaseValidator {
-
-    public validateCreateRequest = async (request: express.Request): Promise<QnaDocumentGroupCreateModel> => {
+    public validateCreateRequest = async (request: express.Request) => {
         try {
             const schema = joi.object({
-                Name          : joi.string().required(),
-                Description   : joi.string(),
-                QnaDocumentId : joi.string().uuid().required(),
+                Name        : joi.string(),
+                Description : joi.string().optional(),
             });
-            return await schema.validateAsync(request.body);
+            await schema.validateAsync(request.body);
+            return this.getQnaDocumentGroupCreateModel(request);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
@@ -29,6 +25,7 @@ export class QnaDocumentGroupsValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 id : joi.string().required(),
+              
             });
             return await schema.validateAsync(request.query);
         } catch (error) {
@@ -36,28 +33,27 @@ export class QnaDocumentGroupsValidator extends BaseValidator {
         }
     };
 
-    public validateUpdateRequest = async (
-        request: express.Request
-    ): Promise<QnaDocumentGroupUpdateModel | undefined> => {
+    public validateUpdateRequest = async (request: express.Request) => {
         try {
             const schema = joi.object({
                 Name        : joi.string().optional(),
                 Description : joi.string().optional(),
+               
             });
-            return await schema.validateAsync(request.body);
+            await schema.validateAsync(request.body);
+            return this.getQnaDocumentGroupUpdateModel(request);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
     };
-
-    public validateSearchRequest = async (request: express.Request): Promise<QnaDocumentGroupSearchFilters> => {
+    
+    public validateSearchRequest = async (request: express.Request): Promise<LlmPromptGroupSearchFilters> => {
         try {
             const schema = joi.object({
-                Name : joi.string().optional(),
+                name : joi.string().optional(),
             });
-
+               
             await schema.validateAsync(request.query);
-
             const filters = this.getSearchFilters(request.query);
             return filters;
         } catch (error) {
@@ -66,25 +62,30 @@ export class QnaDocumentGroupsValidator extends BaseValidator {
     };
 
     private getSearchFilters = (query): QnaDocumentGroupSearchFilters => {
-        var filters = {};
 
-        var Name = query.Name ? query.Name : null;
-        if (Name != null) {
-            filters['Name'] = Name;
-        }
-        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : 25;
-        if (itemsPerPage != null) {
-            filters['ItemsPerPage'] = itemsPerPage;
-        }
-        var orderBy = query.orderBy ? query.orderBy : 'CreatedAt';
-        if (orderBy != null) {
-            filters['OrderBy'] = orderBy;
-        }
-        var order = query.order ? query.order : 'ASC';
-        if (order != null) {
-            filters['Order'] = order;
+        const filters = {};
+    
+        const name = query.name ? query.name : null;
+        if (name) {
+            filters['Name'] = name;
         }
         return filters;
     };
+
+    private getQnaDocumentGroupCreateModel(request: express.Request): QnaDocumentGroupCreateModel {
+        const model: QnaDocumentGroupCreateModel = {
+            Name        : request.body.Name,
+            Description : request.body.Description ? request.body.Description : null,
+        };
+        return model;
+    }
+
+    private getQnaDocumentGroupUpdateModel(request: express.Request): QnaDocumentGroupUpdateModel {
+        const model: QnaDocumentGroupUpdateModel = {
+            Name        : request.body.Name ? request.body.Name : null,
+            Description : request.body.Description ? request.body.Description : null,
+        };
+        return model;
+    }
 
 }

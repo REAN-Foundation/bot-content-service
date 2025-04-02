@@ -1,68 +1,71 @@
-import { decimal } from "../../../domain.types/miscellaneous/system.types";
 import { Entity,BaseEntity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, ManyToMany, JoinTable } from "typeorm";
-// import { LlmPromptGroup } from "./llm.prompt.groups.model";
 import { LlmPromptVersion } from "./llm.prompt.versions.model";
 import { PromptUsecase } from "../../../domain.types/usecase.domain.types";
 import { PromptGroup } from "../../../domain.types/promptgroup.domain.types";
-import { LlmPromptGroup } from "./llm.prompt.groups.model";
 
 @Entity('llm_prompts')
 export class LlmPrompt extends BaseEntity{
 
-@PrimaryGeneratedColumn('uuid')
-id: string;
-  
-@Column(({ type: 'varchar', length: 256, nullable: false }))
-Name: string;
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
+    
+    @Column(({ type: 'varchar', length: 256, nullable: false }))
+    Name: string;
 
-@Column({ type: 'varchar', length: 256, nullable: true })
-Description: string;
+    @Column({ type: 'varchar', length: 256, nullable: true })
+    Description: string;
 
-@Column({ type: "enum", enum: PromptUsecase })
-UseCaseType: string;
+    @Column({ type: "enum", enum: PromptUsecase })
+    UseCaseType: string;
 
-@Column(({ type: "enum", enum: PromptGroup }))
-GroupName: string;
+    @Column(({ type: "enum", enum: PromptGroup }))
+    Group: string;
 
-@Column(({ type: 'varchar', length: 256, nullable: false }))
-ModelName: string;
+    @Column(({ type: 'varchar', length: 256, nullable: false }))
+    Model: string;
 
-@Column(({ nullable: false }))
-ModelVersion: string;
+    @Column(({ type: 'varchar', length: 5120, nullable: false }))
+    Prompt : string;
 
-@Column(({ nullable: false }))
-UserId: string;
+    @Column(({ type: 'varchar', length: 2048, nullable: true }))
+    Variables : string;
 
-@Column(({ nullable: false }))
-Temperature: decimal;
+    @Column(({ nullable: false }))
+    CreatedByUserId: string;
 
-@Column()
-FrequencyPenality: decimal;
+    @Column('decimal', { precision: 3, scale: 2 })
+    Temperature: number;
 
-@Column()
-TopP: decimal;
+    @Column('decimal', { precision: 3, scale: 2 })
+    FrequencyPenalty: number;
 
-@Column()
-PresencePenalty: decimal;
+    @Column('decimal', { precision: 3, scale: 2 })
+    TopP: number;
 
-@Column()
-IsActive: boolean;
+    @Column('decimal', { precision: 3, scale: 2 })
+    PresencePenalty: number;
 
-@CreateDateColumn()
-CreatedAt: Date;
+    @Column()
+    IsActive: boolean;
 
-@UpdateDateColumn()
-UpdatedAt: Date;
+    @Column(({ type: 'varchar', length: 256, nullable: true}))
+    TenantId: string;
 
-@DeleteDateColumn()
-DeletedAt: Date;
+    @CreateDateColumn()
+    CreatedAt: Date;
 
-@ManyToMany(() => LlmPromptGroup, (llmpromptgroup) => llmpromptgroup.LlmPrompts)
-    @JoinTable()
-    LlmPromptGroups: LlmPromptGroup[];
+    @UpdateDateColumn()
+    UpdatedAt: Date;
 
-@OneToMany(() => LlmPromptVersion,
-    llm_prompt_versions => llm_prompt_versions.llm_prompts)
-        llm_prompt_versions: LlmPromptVersion[];
+    @DeleteDateColumn()
+    DeletedAt: Date;
+
+    // @OneToMany(() => LlmPromptVersion,
+    //     llm_prompt_versions => llm_prompt_versions.LlmPrompts)
+    //         llm_prompt_versions: LlmPromptVersion[];
+
+    @OneToMany(() => LlmPromptVersion, (llmPromptVersion) => llmPromptVersion.LlmPrompt)
+                
+    LlmPromptVersions: LlmPromptVersion[];
 
 }

@@ -1,6 +1,3 @@
-/* eslint-disable key-spacing */
-/* eslint-disable no-multiple-empty-lines */
-/* eslint-disable no-trailing-spaces */
 import express from 'express';
 import fs from 'fs';
 import { ResponseHandler } from '../../common/handlers/response.handler';
@@ -10,18 +7,20 @@ import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { ApiError, ErrorHandler } from '../../common/handlers/error.handler';
 import BaseValidator from '../base.validator';
 import * as mime from 'mime-types';
-import { FileResourceCreateModel } from '../../domain.types/general/file.resource.domain.types';
+import { FileResourceCreateModel, FileResourceUpdateModel } from '../../domain.types/general/file.resource.domain.types';
 import { FileUtils } from '../../common/utilities/file.utils';
-// import { Loader } from '../../startup/loader';
 import { StorageService } from '../../modules/storage/storage.service';
-// import { FileResourceMetadata } from '../../domain.types/general/file.resource/file.resource.types';
-// import { Authenticator } from '../../../auth/authenticator';
 import path from 'path';
 import { Helper } from '../../common/helper';
-import { DownloadDisposition, FileResourceMetadata } from '../../domain.types/general/file.resource/file.resource.types';
+import { DownloadDisposition } from '../../domain.types/general/file.resource/file.resource.types';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { Loader } from '../../startup/loader';
-
+import { FileResourceValidator } from './file.resource.validator';
+import { UploadedFile } from 'express-fileupload';
+import { S3Client } from "@aws-sdk/client-s3";
+import { Upload } from "@aws-sdk/lib-storage";
+import { Readable } from "stream";
+import { StreamReader } from "./stream.reader";
 ///////////////////////////////////////////////////////////////////////////////////////
 
 export class FileResourceController extends BaseController {
@@ -29,30 +28,23 @@ export class FileResourceController extends BaseController {
     //#region member variables and constructors
     _service: FileResourceService = null;
 
-    // _storageService: StorageService = new StorageService();
     _storageService: StorageService =  Loader.Container.resolve(StorageService);
 
-    _validator: BaseValidator = new BaseValidator();
-
-    // _authenticator: Authenticator = null;
-
+    _validator: FileResourceValidator = new FileResourceValidator();
 
     constructor() {
         super();
         this._service = new FileResourceService();
-        // this._authenticator = Loader.Authenticator;
-
     }
 
     //#endregion
 
     upload = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            // await this.authorize('FileResource.Upload', request, response);
+
             var dateFolder = new Date().toISOString().split('T')[0];
-            var originalFilename: string = request.headers['filename'] as string;
-            // var contentLength = request.headers['Content-length'];
-            var contentLength = Array.isArray(request.headers['Content-Length']) ? request.headers['content-length'][0] : request.headers['content-length'];
+            var originalFilename: string = request.headers['x-file-name'] as string;
+            var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
             var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
             var publicResource = request.headers['public'] === 'true' ? true : false;
 
@@ -63,7 +55,20 @@ export class FileResourceController extends BaseController {
             filename = filename + '_' + timestamp + '.' + ext;
             var storageKey = 'uploaded/' + dateFolder + '/' + filename;
 
-            var key = await this._storageService.upload(storageKey, request);
+            let contentType = "application/octet-stream";
+            const tenantId = request.body.TenantId ?? request.headers['tenantid'];
+            if (request.headers["content-type"]) {
+                if (request.headers["content-type"] === "application/json") {
+                    contentType = "application/octet-stream";
+                } else {
+                    contentType = request.headers["content-type"];
+                }
+            }
+            // const contentType = request.headers["content-type"] || "application/octet-stream";
+
+            const reader = new StreamReader(request);
+            var key = await this._storageService.uploadStream(storageKey, reader.getStream(), contentType);
+
             if (!key) {
                 ErrorHandler.throwInternalServerError(`Unable to upload the file!`);
             }
@@ -74,12 +79,12 @@ export class FileResourceController extends BaseController {
                 OriginalFilename : originalFilename,
                 Tags             : request.body.Tags ? request.body.Tags : [],
                 Size             : contentLength ? parseInt(contentLength) : null,
-                // UserId           : request.currentUser ? request.currentUser.UserId : null,
+                TenantId         : tenantId
             };
             var record = await this._service.create(model);
             if (record === null) {
                 ErrorHandler.throwInternalServerError('Unable to create file resource!', 400);
-            }            
+            }
 
             const message = 'File resource uploaded successfully!';
             ResponseHandler.success(request, response, message, 201, record);
@@ -89,17 +94,21 @@ export class FileResourceController extends BaseController {
         }
     };
 
+    uploadBinary = async ( request: express.Request, response: express.Response ): Promise< void > => {
+        try {
+            //
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     download = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
             var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
             const record = await this._service.getById(id);
-            // if (!record.Public) {
-            //     // var verified = await Loader.Authenticator.verifyUser(request);
-            //     // if (!verified) {
-            //     //     ErrorHandler.throwUnauthorizedUserError('User is not authorized to download the resource!');
-            //     // }
-            //     // await this.authorize('FileResource.Download', request, response);
-            // }
+            if (!record) {
+                ErrorHandler.throwNotFoundError('File resource cannot be found!');
+            }
             var disposition = request.query.disposition as string;
             if (!disposition) {
                 disposition = 'inline';
@@ -113,16 +122,17 @@ export class FileResourceController extends BaseController {
             this.setResponseHeaders(response, originalFilename, disposition);
             var downloadFolderPath = await this.generateDownloadFolderPath();
             var localFilePath = path.join(downloadFolderPath, originalFilename);
-            var localDestination = await this._storageService.download(storageKey, localFilePath);
+            var localDestination = await this._storageService.downloadStream(storageKey);
             
             if (!localDestination) {
                 ErrorHandler.throwInternalServerError(`Unable to download the file!`);
             }
 
-            this.streamToResponse(localDestination, response, {
-                MimeType : mimeType,
+            this.streamToResponse(localFilePath, response, {
+                MimeType    : mimeType,
                 Disposition : disposition
-            });
+            }, localDestination);
+            // ResponseHandler.success(request, localDestination.pipe(response), '', 200, '');
 
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -131,7 +141,6 @@ export class FileResourceController extends BaseController {
 
     getById = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
-            // await this.authorize('FileResource.GetById', request, response);
             var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
             const record = await this._service.getById(id);
             if (record === null) {
@@ -144,11 +153,29 @@ export class FileResourceController extends BaseController {
         }
     };
 
+    updateData = async (request: express.Request, response: express.Response): Promise <void> => {
+        try {
+            var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
+            var model: FileResourceUpdateModel = await this._validator.validateUpdateRequest(request);
+            const record = await this._service.getById(id);
+            if (!record) {
+                ErrorHandler.throwNotFoundError("File details not found with the provided id");
+            }
+            const updatedRecord = await this._service.update(id, model);
+            const message = "File details updated in the DB";
+            ResponseHandler.success(request, response, message, 200, updatedRecord);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     delete = async (request: express.Request, response: express.Response): Promise < void > => {
         try {
-            // await this.authorize('FileResource.Delete', request, response);
             var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
             const record = await this._service.getById(id);
+            if (!record) {
+                ErrorHandler.throwNotFoundError('File resource cannot be found!');
+            }
             var success = await this._storageService.delete(record.StorageKey);
 
             if (!success) {
@@ -160,7 +187,7 @@ export class FileResourceController extends BaseController {
             }
             const message = 'File resource deleted successfully!';
             ResponseHandler.success(request, response, message, 200, {
-                Deleted: success
+                Deleted : success
             });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -180,7 +207,7 @@ export class FileResourceController extends BaseController {
     private streamToResponse(
         localDestination: string,
         response: express.Response<any, Record<string, any>>,
-        metadata) {
+        metadata, stream?) {
 
         if (localDestination == null) {
             throw new ApiError(404, 'File resource not found.');
@@ -194,8 +221,12 @@ export class FileResourceController extends BaseController {
 
         this.setDownloadResponseHeaders(response, metadata.Disposition, mimetype, filename);
 
-        var filestream = fs.createReadStream(localDestination);
-        filestream.pipe(response);
+        if (stream) {
+            stream.pipe(response);
+        } else {
+            var filestream = fs.createReadStream(localDestination);
+            filestream.pipe(response);
+        }
     }
 
     private setDownloadResponseHeaders(

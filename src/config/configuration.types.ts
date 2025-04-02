@@ -6,6 +6,7 @@ export type EHRSpecification = 'FHIR'| 'OpenEHR' | 'Mock';
 export type FHIRProvider = 'GCP-FHIR' | 'Azure-FHIR' | 'AWS-HealthLake' | 'Hapi-FHIR';
 export type OpenEHRProvider = 'OpenEHRBase';
 export type FileStorageProvider = 'AWS-S3' | 'GCP-FileStore' | 'Custom';
+export type VectorstoreProvider = 'FAISS' | 'MILVUS' | 'PGVECTOR' | 'PINECONE';
 export type SMSServiceProvider = 'Twilio' | 'Mock';
 export type EmailServiceProvider = 'SendGrid' | 'Mock';
 export type InAppNotificationServiceProvider = 'Firebase' | 'Mock';
@@ -41,6 +42,10 @@ export interface FileStorageConfig {
     Provider: FileStorageProvider;
 }
 
+export interface VectorstoreConfig {
+    Provider: VectorstoreProvider;
+}
+
 export interface CommunicationConfig {
     SMSProvider              : SMSServiceProvider,
     EmailProvider            : EmailServiceProvider
@@ -72,6 +77,7 @@ export interface Configurations {
     Auth                : AuthConfig;
     Processor          : Processor;
     FileStorage         : FileStorageConfig;
+    Vectorstore         : VectorstoreConfig;
     TemporaryFolders    : TemporaryFoldersConfig;
     MaxUploadFileSize   : number;
     JwtExpiresIn        : number;

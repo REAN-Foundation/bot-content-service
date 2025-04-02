@@ -9,7 +9,6 @@ export class MysqlClient {
 
     public createDb = async () => {
         try {
-            //var query = `CREATE DATABASE ${config.database} CHARACTER SET utf8 COLLATE utf8_general_ci;`;
             const query = `CREATE DATABASE ${Config.database}`;
             await this.executeQuery(query);
             logger.info(`Database ${Config.database} created successfully!`);
@@ -44,7 +43,6 @@ export class MysqlClient {
                         reject(err);
                     }
 
-                    //logger.log('Connected!');
                     connection.query(query, function (err, result) {
                         if (err) {
                             logger.error(err.message);

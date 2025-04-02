@@ -1,57 +1,56 @@
-import { QnaDocumentResponseDto } from '../../../domain.types/content/qna.document.domain.types';
+import { QnaDocumentDto } from '../../../domain.types/content/qna.document.domain.types';
 import { QnaDocument } from '../../models/content/qna.document.model';
 
 export class QnaDocumentMapper {
 
-    static toResponseDto = (qnaDocument: QnaDocument): QnaDocumentResponseDto => {
-        if (qnaDocument === null) {
+    static toResponseDto = (document: QnaDocument): QnaDocumentDto => {
+        if (document === null) {
             return null;
         }
-        const dto: QnaDocumentResponseDto = {
-            id                    : qnaDocument.id,
-            Name                  : qnaDocument.Name,
-            Description           : qnaDocument.Description,
-            FileName              : qnaDocument.FileName,
-            Source                : qnaDocument.Source,
-            ParentDocument        : qnaDocument.ParentDocument,
-            ParentDocumentVersion : qnaDocument.ParentDocumentVersion,
-            ChunkingStrategy      : qnaDocument.ChunkingStrategy,
-            ChunkingLenght        : qnaDocument.ChunkingLenght,
-            ChunkOverlap          : qnaDocument.ChunkOverlap,
-            Splitter              : qnaDocument.Splitter,
-            IsActive              : qnaDocument.IsActive,
-            CreatedBy             : qnaDocument.CreatedBy,
-           
+        const dto: QnaDocumentDto = {
+            id                       : document.id,
+            Name                     : document.Name,
+            Description              : document.Description,
+            ResourceId               : document.FileResource.id,
+            Keyword                  : document.Keyword,
+            ChunkingStrategy         : document.ChunkingStrategy,
+            ChunkingLength           : document.ChunkingLength,
+            ChunkOverlap             : document.ChunkOverlap,
+            Splitter                 : document.Splitter,
+            DocumentType             : document.DocumentType,
+            ParentDocumentResourceId : document.ParentDocumentResourceId,
+            IsActive                 : document.IsActive,
+            CreatedByUserId          : document.CreatedByUserId
         };
         return dto;
     };
 
-    static toArrayDto(qnaDocument: QnaDocument[]): QnaDocumentResponseDto[] {
-        if (qnaDocument === null) {
-            return null;
-        }
+    // static toArrayDto(qnaDocument: QnaDocument[]): QnaDocumentDto[] {
+    //     if (qnaDocument === null) {
+    //         return null;
+    //     }
 
-        const dto: QnaDocumentResponseDto[] = [];
+    //     const dto: QnaDocumentDto[] = [];
 
-        qnaDocument.forEach((element) => {
-            dto.push({
-                id                    : element.id,
-                Name                  : element.Name,
-                Description           : element.Description,
-                FileName              : element.FileName,
-                Source                : element.Source,
-                ParentDocument        : element.ParentDocument,
-                ParentDocumentVersion : element.ParentDocumentVersion,
-                ChunkingStrategy      : element.ChunkingStrategy,
-                ChunkingLenght        : element.ChunkingLenght,
-                ChunkOverlap          : element.ChunkOverlap,
-                Splitter              : element.Splitter,
-                IsActive              : element.IsActive,
-                CreatedBy             : element.CreatedBy,
-                // ResourceId? :string;
-            });
-        });
-        return dto;
-    }
+    //     qnaDocument.forEach((element) => {
+    //         dto.push({
+    //             id                    : element.id,
+    //             Name                  : element.Name,
+    //             Description           : element.Description,
+    //             FileName              : element.FileName,
+    //             Source                : element.Source,
+    //             ParentDocument        : element.ParentDocument,
+    //             ParentDocumentVersion : element.ParentDocumentVersion,
+    //             ChunkingStrategy      : element.ChunkingStrategy,
+    //             ChunkingLength        : element.ChunkingLength,
+    //             ChunkOverlap          : element.ChunkOverlap,
+    //             Splitter              : element.Splitter,
+    //             IsActive              : element.IsActive,
+    //             CreatedBy             : element.CreatedBy,
+    //             ResourceId            : element.ResourceId
+    //         });
+    //     });
+    //     return dto;
+    // }
 
 }

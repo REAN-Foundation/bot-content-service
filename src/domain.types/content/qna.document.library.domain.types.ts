@@ -1,16 +1,25 @@
+import { BaseSearchFilters, BaseSearchResults } from '../miscellaneous/base.search.types';
 import { uuid } from '../miscellaneous/system.types';
 
 //////////////////////////////////////////////////////////////
 
 export interface QnaDocumentLibraryCreateModel {
-    DocumentId: uuid;
+    DocumentVersionId: uuid;
 }
 
 export interface QnaDocumentLibraryUpdateModel {
-    DocumentId?: uuid;
+    DocumentVersionId?: uuid;
 }
 
-export interface QnaDocumentLibraryResponseDto {
-    id: uuid;
-    DocumentId: uuid;
+export interface QnaDocumentLibraryDto {
+    id?: uuid;
+    DocumentVersionId?: uuid;
+}
+
+export interface QnaDocumentLibrarySearchFilters extends BaseSearchFilters {
+    DocumentVersionId?: uuid;
+}
+
+export interface QnaDocumentLibrarySearchResults extends BaseSearchResults {
+    Items: QnaDocumentLibraryDto[];
 }

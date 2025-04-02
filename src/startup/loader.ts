@@ -30,9 +30,9 @@ export class Loader {
     //     return Loader._authorizer;
     // }
 
-    // public static get Scheduler() {
-    //     return Loader._scheduler;
-    // }
+    public static get Scheduler() {
+        return Loader._scheduler;
+    }
 
     public static get Container() {
         return Loader._container;
