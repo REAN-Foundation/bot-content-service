@@ -24,7 +24,6 @@ export interface FileResourceResponseDto {
     DownloadCount   : number;
     TenantId        : string;
     Tags            : string[];
-    UploadedBy      : uuid;
     CreatedAt       : Date;
     UpdatedAt       : Date;
 }

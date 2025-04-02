@@ -39,10 +39,6 @@ export class Seeder {
 
     _fileResourceService: FileResourceService = null;
 
-    // _badgeStockImageService: BadgeStockImageService = new BadgeStockImageService();
-
-    // _badgeService: BadgeService = new BadgeService();
-
     constructor () {
 
         this._fileResourceService = Loader.Container.resolve(FileResourceService);
@@ -307,5 +303,4 @@ export class Seeder {
 
     //     }
     // };
-
 }

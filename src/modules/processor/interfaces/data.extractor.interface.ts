@@ -4,8 +4,8 @@ import { DataExtractionInputParams, OutputParams, ProcessorResult } from '../../
 export interface IDataExtractor {
 
     extractData(
-        contextId: uuid, 
-        inputParams: DataExtractionInputParams, 
+        contextId: uuid,
+        inputParams: DataExtractionInputParams,
         outputParams: OutputParams): Promise<ProcessorResult>;
 
 }
