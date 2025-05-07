@@ -74,9 +74,28 @@ export class LlmPromptTemplateValidator extends BaseValidator {
                 IsActive        : joi.string().optional(),
                 CreatedByUserId : joi.string().optional()
             });
-            return await schema.validateAsync(request.body);
+            await schema.validateAsync(request.body);
+
+            return await this.getFilters(request);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
     };
+
+    getFilters = async (request): Promise<LlmPromptTemplateSearchFilters> => {
+        const filters: LlmPromptTemplateSearchFilters = {
+            Name            : request.query.name ?? null,
+            Description     : request.query.description ?? null,
+            Content         : request.query.content ?? null,
+            Version         : request.query.version ?? null,
+            TenantId        : request.query.tenantId ?? null,
+            Type            : request.query.type ?? null,
+            Category        : request.query.category ?? null,
+            SubGroup        : request.query.subGroup ?? null,
+            IsActive        : request.query.isActive ?? null,
+            CreatedByUserId : request.query.createdByUserId ?? null,
+        };
+        return this.updateBaseSearchFilters(request, filters);
+    };
+
 }

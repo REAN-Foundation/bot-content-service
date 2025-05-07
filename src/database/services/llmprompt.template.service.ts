@@ -138,8 +138,65 @@ export class LlmPromptTemplateService extends BaseService {
     public search = async(filters: LlmPromptTemplateSearchFilters)
     : Promise<LlmPromptTemplateSearchResults> => {
         try {
-            var search = this.getSearchModel(filters);
-            var { search, pageIndex, limit, order, orderByColumn } = this.addSortingAndPagination(search, filters);
+            const search: any = {
+                where : {},
+                order : {},
+            };
+            
+            if (filters.Name) {
+                search.where.Name = Like(`%${filters.Name}%`);
+            }
+            if (filters.Description) {
+                search.where.Description = Like(`%${filters.Description}%`);
+            }
+            if (filters.Content) {
+                search.where.Content = Like(`%${filters.Content}%`);
+            }
+            if (filters.Version) {
+                search.where.Version = filters.Version;
+            }
+            if (filters.TenantId) {
+                search.where.TenantId = filters.TenantId;
+            }
+            if (filters.Type) {
+                search.where.Type = filters.Type;
+            }
+            if (filters.Category) {
+                search.where.Category = filters.Category;
+            }
+            if (filters.SubGroup) {
+                search.where.SubGroup = filters.SubGroup;
+            }
+            if (filters.IsActive !== null || filters.IsActive !== undefined) {
+                search.where.IsActive = filters.IsActive;
+            }
+            if (filters.CreatedByUserId) {
+                search.where.CreatedByUserId = filters.CreatedByUserId;
+            }
+
+            let orderByColum = 'CreatedAt';
+            if (filters.OrderBy) {
+                orderByColum = filters.OrderBy;
+            }
+            let order = 'ASC';
+            if (filters.Order === 'descending') {
+                order = 'DESC';
+            }
+            search.order[orderByColum] = order;
+
+            let limit = 25;
+            if (filters.ItemsPerPage) {
+                limit = filters.ItemsPerPage;
+            }
+            let offset = 0;
+            let pageIndex = 0;
+            if (filters.PageIndex) {
+                pageIndex = filters.PageIndex < 0 ? 0 : filters.PageIndex;
+                offset = pageIndex * limit;
+            }
+            search['take'] = limit;
+            search['skip'] = offset;
+
             const [list, count] = await this._llmPromptTemplateRepository.findAndCount(search);
 
             const searchResults = {
@@ -148,7 +205,7 @@ export class LlmPromptTemplateService extends BaseService {
                 PageIndex      : pageIndex,
                 ItemsPerPage   : limit,
                 Order          : order === 'DESC' ? 'descending' : 'ascending',
-                OrderedBy      : orderByColumn,
+                OrderedBy      : orderByColum,
                 Items          : list
             };
 
@@ -232,4 +289,5 @@ export class LlmPromptTemplateService extends BaseService {
         
         return search;
     };
+
 }
