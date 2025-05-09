@@ -72,9 +72,15 @@ export class LlmPromptTemplateValidator extends BaseValidator {
                 Category        : joi.string().optional(),
                 SubGroup        : joi.string().optional(),
                 IsActive        : joi.string().optional(),
-                CreatedByUserId : joi.string().optional()
+                CreatedByUserId : joi.string().optional(),
+                createdDateFrom : joi.date().optional(),
+                createdDateTo   : joi.date().optional(),
+                itemsPerPage    : joi.number().optional(),
+                pageIndex       : joi.number().optional(),
+                order           : joi.string().optional(),
+                orderBy         : joi.string().optional(),
             });
-            await schema.validateAsync(request.body);
+            await schema.validateAsync(request.query);
 
             return await this.getFilters(request);
         } catch (error) {
