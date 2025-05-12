@@ -41,25 +41,29 @@ export class QnaDocumentLibraryValidator extends BaseValidator {
     public validateSearchRequest = async (request: express.Request): Promise<QnaDocumentLibrarySearchFilters> => {
         try {
             const schema = joi.object({
-                documentVersionId : joi.string().optional()
+                documentVersionId : joi.string().optional(),
+                createdDateFrom   : joi.date().optional(),
+                createdDateTo     : joi.date().optional(),
+                itemsPerPage      : joi.number().optional(),
+                pageIndex         : joi.number().optional(),
+                order             : joi.string().optional(),
+                orderBy           : joi.string().optional(),
             });
 
             await schema.validateAsync(request.query);
-            const filters = this.getSearchFilters(request.query);
+            const filters = this.getSearchFilters(request);
             return filters;
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
     };
 
-    private getSearchFilters = (query): QnaDocumentLibrarySearchFilters => {
-        const filters = {};
+    private getSearchFilters = (request): QnaDocumentLibrarySearchFilters => {
+        const filters: QnaDocumentLibrarySearchFilters = {
+            DocumentVersionId : request.query.documentVersionId ?? null,
+        };
 
-        const documentVersionId = query.documentVersionId ? query.documentVersionId : null;
-        if (documentVersionId) {
-            filters['DocumentVersionId'] = documentVersionId;
-        }
-        return filters;
+        return this.updateBaseSearchFilters(request, filters);
     };
 
     private getDocumentLibraryCreateModel(request): QnaDocumentLibraryCreateModel {
