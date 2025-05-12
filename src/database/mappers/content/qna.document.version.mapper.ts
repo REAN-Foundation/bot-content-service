@@ -2,6 +2,7 @@ import { DocumentSource } from '../../../domain.types/content/qna.document.domai
 import { QnaDocumentVersionDto } from '../../../domain.types/content/qna.document.version.domain.types';
 
 import { QnaDocumentVersion } from '../../models/content/qna.document.version.model';
+import { QnaDocumentMapper } from './qna.document.mapper';
 
 export class QnaDocumentVersionMapper {
 
@@ -26,7 +27,8 @@ export class QnaDocumentVersionMapper {
             ParentDocumentResourceId : qnaDocumentVersion.ParentDocumentResourceId,
             CreatedByUserId          : qnaDocumentVersion.CreatedByUserId,
             ResourceId               : qnaDocumentVersion.ResourceId,
-            QnaDocumentId            : qnaDocumentVersion.QnaDocument.id
+            QnaDocument              : qnaDocumentVersion.QnaDocument ?
+                QnaDocumentMapper.toResponseDto(qnaDocumentVersion.QnaDocument) : null,
         };
         return dto;
     };

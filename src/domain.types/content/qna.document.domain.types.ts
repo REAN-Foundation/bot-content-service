@@ -1,4 +1,6 @@
+import { FileResourceDto } from '../general/file.resource/file.resource.dto';
 import { BaseSearchFilters, BaseSearchResults } from '../miscellaneous/base.search.types';
+import { QnaDocumentVersionDto } from './qna.document.version.domain.types';
 
 //////////////////////////////////////////////////////////////
 export enum QnaDocumentType {
@@ -55,6 +57,8 @@ export interface QnaDocumentDto {
     ParentDocumentResourceId: string;
     IsActive: boolean;
     CreatedByUserId: string;
+    FileResource?: FileResourceDto;
+    DocumentVersion?: QnaDocumentVersionDto[]
 }
 
 export interface QnaDocumentSearchFilters extends BaseSearchFilters {
