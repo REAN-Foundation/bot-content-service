@@ -1,5 +1,5 @@
 import { BaseSearchFilters, BaseSearchResults } from '../miscellaneous/base.search.types';
-import { DocumentSource } from './qna.document.domain.types';
+import { DocumentSource, QnaDocumentDto } from './qna.document.domain.types';
 
 //////////////////////////////////////////////////////////////
 
@@ -51,7 +51,7 @@ export interface QnaDocumentVersionDto {
     ParentDocumentResourceId?: string;
     IsActive?: boolean;
     CreatedByUserId?: string;
-    QnaDocumentId?: string
+    QnaDocument?: QnaDocumentDto;
 }
 
 export interface QnaDocumentVersionSearchFilters extends BaseSearchFilters {

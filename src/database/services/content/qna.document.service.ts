@@ -112,7 +112,8 @@ export class QnaDocumentService extends BaseService {
                     id : id,
                 },
                 relations : {
-                    FileResource : true
+                    FileResource        : true,
+                    QnaDocumentVersions : true,
                 }
             });
             return QnaDocumentMapper.toResponseDto(document);
@@ -157,7 +158,8 @@ export class QnaDocumentService extends BaseService {
     private getSearchModel = (filters: QnaDocumentSearchFilters) => {
         var search: FindManyOptions<QnaDocument> = {
             relations : {
-                FileResource : true
+                FileResource        : true,
+                QnaDocumentVersions : true,
             },
             where : {},
         };
