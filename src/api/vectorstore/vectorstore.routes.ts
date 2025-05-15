@@ -12,6 +12,7 @@ export const register = (app: express.Application): void => {
     router.post('/refresh', controller.refreshAll);
     router.post('/refreshbyid', controller.refreshById);
     router.post('/similarity-search', controller.search);
+    router.post('/:id', controller.createById);
 
     app.use('/api/v1/vectorstore', router);
 };
