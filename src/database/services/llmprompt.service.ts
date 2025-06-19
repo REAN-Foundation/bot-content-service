@@ -230,6 +230,7 @@ export class LlmpromptService extends BaseService {
                 TopP             : true,
                 PresencePenalty  : true,
                 IsActive         : true,
+                TenantId         : true,
             }
         };
 
@@ -264,10 +265,13 @@ export class LlmpromptService extends BaseService {
             search.where['TopP'] = filters.TopP;
         }
         if (filters.PresencePenalty ) {
-            search.where['PresencePenalty'] = filters.PresencePenalty ;
+            search.where['PresencePenalty'] = filters.PresencePenalty;
         }
         if (filters.IsActive ) {
-            search.where['IsActive'] = filters.IsActive ;
+            search.where['IsActive'] = filters.IsActive;
+        }
+        if (filters.TenantId) {
+            search.where['TenantId'] = filters.TenantId;
         }
         return search;
     };
