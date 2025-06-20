@@ -17,7 +17,7 @@ export class LlmPromptValidator extends BaseValidator {
     private templates = joi.object({
         TemplateId : joi.string().required(),
         Category   : joi.string().optional(),
-        TenantId   : joi.number().optional(),
+        TenantId   : joi.string().optional(),
         Version    : joi.number().optional(),
         Content    : joi.string().optional(),
         Variables  : joi.array().items(this.templateVariables).min(1).optional(),
@@ -39,7 +39,7 @@ export class LlmPromptValidator extends BaseValidator {
                 TopP             : joi.number().optional(),
                 PresencePenalty  : joi.number().optional(),
                 IsActive         : joi.boolean(),
-                TenantId         : joi.string().optional,
+                TenantId         : joi.string().optional(),
                 Templates        : joi.array().items(this.templates).optional()
             });
             return await schema.validateAsync(request.body);
@@ -78,6 +78,8 @@ export class LlmPromptValidator extends BaseValidator {
                 PresencePenalty  : joi.number().optional(),
                 IsActive         : joi.boolean().optional(),
                 Templates        : joi.array().items(this.templates),
+                TenantId         : joi.string().optional(),
+                
             });
             return await schema.validateAsync(request.body);
         } catch (error) {
@@ -101,6 +103,7 @@ export class LlmPromptValidator extends BaseValidator {
                 topP             : joi.number().optional(),
                 presencePenalty  : joi.number().optional(),
                 isActive         : joi.boolean().optional(),
+                tenantId         : joi.string().optional(),
             });
                
             await schema.validateAsync(request.query);
@@ -159,9 +162,13 @@ export class LlmPromptValidator extends BaseValidator {
         if (presencePenalty) {
             filters['PresencePenalty'] = presencePenalty;
         }
+        const TenantId = query.tenantId ? query.tenantId : null;
+        if (TenantId) {
+            filters['TenantId'] = query.tenantId;
+        }
         const isActive = query.isActive ? query.isActive : null;
         if (isActive) {
-            filters['IsActive'] = isActive;
+            filters['IsActive'] = isActive === "true" ? 1 : 0;
         }
         var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : 25;
         if (itemsPerPage != null) {

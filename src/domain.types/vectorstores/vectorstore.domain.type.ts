@@ -18,3 +18,9 @@ export interface VectorStoreSearchModel {
     TenantId: string;
     Query: string;
 }
+
+
+export interface TextSplitterConfig {
+    chunkSize?: number;
+    chunkOverlap?: number;
+}
