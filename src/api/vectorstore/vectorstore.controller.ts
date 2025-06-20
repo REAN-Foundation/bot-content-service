@@ -14,6 +14,7 @@ import { FileResourceService } from '../../database/services/file.resource/file.
 import * as mime from 'mime-types';
 import { ConfigurationManager } from '../../config/configuration.manager';
 import { StorageService } from '../../modules/storage/storage.service';
+import { QnaDocumentService } from '../../database/services/content/qna.document.service';
 
 ///////////////////////////////////////////////////////////////////////////////
 
@@ -24,6 +25,8 @@ export class VectorstoreController {
     _keywordsService: KeywordsService = Loader.Container.resolve(KeywordsService);
 
     _fileResourceService: FileResourceService = new FileResourceService();
+
+    _qnaDocumentService: QnaDocumentService = new QnaDocumentService();
 
     _storageService: StorageService = Loader.Container.resolve(StorageService);
 
@@ -43,6 +46,7 @@ export class VectorstoreController {
             }
 
             for ( const record of records ) {
+                const qnaResource = await this._qnaDocumentService.getById(record.id);
                 var storageKey = record.StorageKey;
                 var originalFilename = record.OriginalFilename;
                 var tags = record.Tags;
@@ -53,6 +57,11 @@ export class VectorstoreController {
                 var downloadFolderPath = await this.generateDownloadFolderPath();
                 var localFilePath = path.join(downloadFolderPath, originalFilename);
                 var localDestination = await this._storageService.downloadStream(storageKey);
+
+                await this._documentProcessor.configure({ 
+                    chunkSize    : qnaResource.ChunkingLength,
+                    chunkOverlap : qnaResource.ChunkOverlap
+                });
 
                 const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
                 await this._vectorstoreService.insertData(tenantId, data);

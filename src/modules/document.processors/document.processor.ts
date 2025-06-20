@@ -5,6 +5,7 @@ import { JSONLoader } from "langchain/document_loaders/fs/json";
 import { Document } from "@langchain/core/documents";
 import { S3Loader } from "@langchain/community/document_loaders/web/s3";
 import { logger } from '../../logger/logger';
+import { TextSplitterConfig } from "../../domain.types/vectorstores/vectorstore.domain.type";
 import * as fs from "fs";
 import * as mime from 'mime-types';
 import { Readable } from "stream";
@@ -14,7 +15,7 @@ import pdf from "pdf-parse";
 //////////////////////////////////////////////////////////////////////////
 export class DocumentProcessor {
 
-    private readonly _textSplitter: RecursiveCharacterTextSplitter;
+    private _textSplitter: RecursiveCharacterTextSplitter;
 
     constructor() {
         this._textSplitter = new RecursiveCharacterTextSplitter({
@@ -80,6 +81,13 @@ export class DocumentProcessor {
             return null;
         }
     };
+
+    public async configure(config: TextSplitterConfig): Promise<void> {
+        this._textSplitter = new RecursiveCharacterTextSplitter({
+            chunkSize    : config.chunkSize ?? 750,
+            chunkOverlap : config.chunkOverlap ?? 50,
+        });
+    }
 
     private async processStreamDocuments(stream: Readable, fileName: string): Promise<Document[]> {
         const extension = fileName.split(".").pop()?.toLowerCase();
