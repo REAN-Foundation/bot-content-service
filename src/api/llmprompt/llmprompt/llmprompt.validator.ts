@@ -13,7 +13,6 @@ export class LlmPromptValidator extends BaseValidator {
         VariableContent : joi.string().optional()
     });
 
-
     private templates = joi.object({
         TemplateId : joi.string().required(),
         Category   : joi.string().optional(),
@@ -27,14 +26,14 @@ export class LlmPromptValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string().required(),
-                Description      : joi.string().optional(),
+                Description      : joi.string().allow(null).optional(),
                 UseCaseType      : joi.string().valid(...Object.values(PromptUsecase)).optional(),
                 Group            : joi.string().optional(),
                 Model            : joi.string(),
                 Prompt           : joi.string().required(),
-                Variables        : joi.string().optional(),
+                Variables        : joi.array().items(joi.string()).optional(),
                 CreatedByUserId  : joi.string().uuid(),
-                Temperature      : joi.number(),
+                Temperature      : joi.number().optional(),
                 FrequencyPenalty : joi.number().optional(),
                 TopP             : joi.number().optional(),
                 PresencePenalty  : joi.number().optional(),
@@ -70,7 +69,7 @@ export class LlmPromptValidator extends BaseValidator {
                 Group            : joi.string().valid(...Object.values(PromptGroup)).optional(),
                 Model            : joi.string().optional(),
                 Prompt           : joi.string().optional(),
-                Variables        : joi.string().optional(),
+                Variables        : joi.array().items(joi.string()).optional(),
                 CreatedByUserId  : joi.string().guid().optional(),
                 Temperature      : joi.number().optional(),
                 FrequencyPenalty : joi.number().optional(),

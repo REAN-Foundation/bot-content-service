@@ -30,7 +30,7 @@ export interface  LlmPromptVersionCreateModel {
     Group             : string;
     Model         : string;
     Prompt: string;
-    Variables: string;
+    Variables: string[];
     CreatedByUserId            : string;
     Temperature       : number;
     FrequencyPenalty : number;
