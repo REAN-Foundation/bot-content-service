@@ -43,7 +43,7 @@ export interface LlmPromptDto {
     Group             : string;
     Model             : string;
     Prompt            : string;
-    Variables         : string;
+    Variables         : string[];
     CreatedByUserId   : string;
     Temperature       : decimal;
     FrequencyPenalty  : decimal;

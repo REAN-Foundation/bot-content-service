@@ -40,7 +40,7 @@ export class LlmpromptVersionService extends BaseService {
                 Group            : createModel.Group ?? 'Default',
                 Model            : createModel.Model,
                 Prompt           : createModel.Prompt,
-                Variables        : createModel.Variables,
+                Variables        : createModel.Variables ? JSON.stringify(createModel.Variables) : null,
                 CreatedByUserId  : createModel.CreatedByUserId,
                 Temperature      : createModel.Temperature,
                 FrequencyPenalty : createModel.FrequencyPenalty,
