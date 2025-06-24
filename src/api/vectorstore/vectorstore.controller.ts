@@ -46,7 +46,7 @@ export class VectorstoreController {
             }
 
             for ( const record of records ) {
-                const qnaResource = await this._qnaDocumentService.getById(record.id);
+                const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
                 var storageKey = record.StorageKey;
                 var originalFilename = record.OriginalFilename;
                 var tags = record.Tags;

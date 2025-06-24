@@ -123,6 +123,20 @@ export class QnaDocumentService extends BaseService {
         }
     };
 
+    public getByFileResourceId = async (id: uuid): Promise<QnaDocumentDto> => {
+        try {
+            var document = await this._qnaDocumentRepository.findOne({
+                where : {
+                    ParentDocumentResourceId : id
+                },
+            });
+            return QnaDocumentMapper.toResponseDto(document);
+        } catch (error) {
+            logger.error(error.message);
+            ErrorHandler.throwInternalServerError(error.message, 500);
+        }
+    };
+
     public delete = async (id: string): Promise<boolean> => {
         try {
             var result = await this._qnaDocumentRepository.softDelete(id);
