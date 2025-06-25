@@ -4,6 +4,7 @@ import { IVectorStoreService } from "../interfaces/vectorstore.service.interface
 import { VectorstoreUtils } from "../../../common/utilities/vectorstore.utils";
 import { logger } from "../../../logger/logger";
 import { PoolConfig, Pool } from "pg";
+import OpenAI from "openai";
 import * as pg from 'pg';
 
 export class PgVectorStore implements IVectorStoreService {
@@ -115,7 +116,28 @@ export class PgVectorStore implements IVectorStoreService {
         try {
             this.tenantId = tenantId;
             await this.createConnection();
-            await this._pgConnection.addDocuments(data);
+            try {
+                await this._pgConnection.addDocuments(data);
+            } catch (error) {
+                const batchSize = parseInt(process.env.EMBEDDING_BATCH_SIZE || "100", 10);
+
+                const embeddingArray = [];
+                const texts = data.map(data => data.pageContent);
+                const numCalls = Math.ceil(texts.length / batchSize);
+                console.log(`Will be processing ${texts.length} texts in ${numCalls} OPEN AI EMBEDDINGS CALLS`);
+                const vectors: number[][] =[];
+                const docs: Document[] = [];
+                for (let i = 0; i < texts.length; i += batchSize) {
+                    const batchDocs = data.slice(i, i + batchSize);
+                    const texts = batchDocs.map(data => data.pageContent);
+                    const batchVectors = await this.embedBatch(texts);
+
+                    vectors.push(...batchVectors);
+                    docs.push(...batchDocs);
+                }
+                await this._pgConnection.addVectors(vectors, docs);
+            }
+            
             return "Documents added successfully";
         } catch (error) {
             logger.error(error);
@@ -156,5 +178,15 @@ export class PgVectorStore implements IVectorStoreService {
             logger.error(error);
             throw new Error("Issue while fetching the similar documents");
         }
+    };
+
+    embedBatch = async (batch: string[]): Promise<number[][]> => {
+        const openai = new OpenAI();
+        const response = await openai.embeddings.create({
+            model : "text-embedding-ada-002",
+            input : batch,
+        });
+
+        return response.data.map(item => item.embedding);
     };
 }
