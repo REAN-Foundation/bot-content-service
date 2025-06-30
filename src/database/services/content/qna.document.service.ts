@@ -74,7 +74,7 @@ export class QnaDocumentService extends BaseService {
             if (model.ResourceId) {
                 document.FileResource.id = model.ResourceId;
             }
-            if (model.Keyword) {
+            if (model.Keyword || !model.Keyword) {
                 document.Keyword = model.Keyword;
             }
             if (model.ChunkingStrategy) {
