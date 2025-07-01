@@ -17,9 +17,9 @@ export class QnaDocumentValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string().required(),
-                Description      : joi.string(),
+                Description      : joi.string().allow(null).optional(),
                 ResourceId       : joi.string().uuid().required(),
-                Keyword          : joi.string(),
+                Keyword          : joi.string().allow(null).optional(),
                 ChunkingStrategy : joi
                     .string()
                     .valid(...Object.values(ChunkingStrategy))
@@ -55,9 +55,9 @@ export class QnaDocumentValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string(),
-                Description      : joi.string(),
+                Description      : joi.string().allow(null).optional(),
                 ResourceId       : joi.string().uuid(),
-                Keyword          : joi.string(),
+                Keyword          : joi.string().allow(null).optional(),
                 ChunkingStrategy : joi
                     .string()
                     .valid(...Object.values(ChunkingStrategy)),
