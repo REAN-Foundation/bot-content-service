@@ -190,7 +190,7 @@ export class QnaDocumentService extends BaseService {
             };
         }
         if (filters.DocumentType) {
-            search.where['DocumentType'] = filters.DocumentType;
+            search.where['DocumentType'] = Like(`%${filters.DocumentType}%`);
         }
         if (filters.ParentDocumentResourceId) {
             search.where['ParentDocumentResourceId'] = filters.ParentDocumentResourceId;
