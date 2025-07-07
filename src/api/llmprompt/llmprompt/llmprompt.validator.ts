@@ -64,7 +64,7 @@ export class LlmPromptValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string().optional(),
-                Description      : joi.string().optional(),
+                Description      : joi.string().allow('', null).optional(),
                 UseCaseType      : joi.string().valid(...Object.values(PromptUsecase)).optional(),
                 Group            : joi.string().valid(...Object.values(PromptGroup)).optional(),
                 Model            : joi.string().optional(),
