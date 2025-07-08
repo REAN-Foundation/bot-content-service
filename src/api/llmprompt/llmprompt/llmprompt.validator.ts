@@ -103,6 +103,10 @@ export class LlmPromptValidator extends BaseValidator {
                 presencePenalty  : joi.number().optional(),
                 isActive         : joi.boolean().optional(),
                 tenantId         : joi.string().optional(),
+                itemsPerPage     : joi.number().optional(),
+                pageIndex        : joi.number().optional(),
+                order            : joi.string().optional(),
+                orderBy          : joi.string().optional(),
             });
                
             await schema.validateAsync(request.query);
