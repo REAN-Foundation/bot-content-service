@@ -55,7 +55,7 @@ export class QnaDocumentValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string(),
-                Description      : joi.string().allow(null).optional(),
+                Description      : joi.string().allow('', null).optional(),
                 ResourceId       : joi.string().uuid(),
                 Keyword          : joi.string().allow(null).optional(),
                 ChunkingStrategy : joi
@@ -148,7 +148,7 @@ export class QnaDocumentValidator extends BaseValidator {
     private getQnaDocumentUpdateModel(request: express.Request): QnaDocumentUpdateModel {
         const model: QnaDocumentUpdateModel = {
             Name             : request.body.Name ? request.body.Name : null,
-            Description      : request.body.Description ? request.body.Description : null,
+            Description      : request.body.Description !== undefined ? request.body.Description : null,
             ResourceId       : request.body.ResourceId ? request.body.ResourceId : null,
             Keyword          : request.body.Keyword ? request.body.Keyword : null,
             ChunkingStrategy : request.body.ChunkingStrategy ? request.body.ChunkingStrategy : null,
