@@ -177,6 +177,10 @@ export class LlmPromptValidator extends BaseValidator {
         if (itemsPerPage != null) {
             filters['ItemsPerPage'] = itemsPerPage;
         }
+        var pageIndex = query.pageIndex ? query.pageIndex : 0;
+        if (pageIndex != null) {
+            filters['PageIndex'] = pageIndex;
+        }
         var orderBy = query.orderBy ? query.orderBy : 'CreatedAt';
         if (orderBy != null) {
             filters['OrderBy'] = orderBy;

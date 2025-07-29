@@ -68,7 +68,7 @@ export class QnaDocumentService extends BaseService {
             if (model.Name) {
                 document.Name = model.Name;
             }
-            if (model.Description) {
+            if (model.Description != null) {
                 document.Description = model.Description;
             }
             if (model.ResourceId) {
