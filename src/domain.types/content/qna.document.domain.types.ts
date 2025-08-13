@@ -26,6 +26,8 @@ export interface QnaDocumentCreateModel {
     Splitter: string;
     DocumentType: string;
     ParentDocumentResourceId: string;
+    TenantId?: string;
+    TenantCode?: string;
     IsActive: boolean;
     CreatedByUserId: string;
 }
@@ -71,6 +73,8 @@ export interface QnaDocumentSearchFilters extends BaseSearchFilters {
     Splitter?: string;
     DocumentType?: string;
     ParentDocumentResourceId?: string;
+    TenantId?: string;
+    TenantCode?: string;
     IsActive?: boolean;
     CreatedByUserId?: string;
 }
