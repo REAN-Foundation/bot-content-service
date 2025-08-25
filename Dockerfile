@@ -6,18 +6,14 @@ RUN apk update && \
     apk add --no-cache \
         bash \
         python3 \
-        py3-pip \
-        groff \
-        less \
-        mailcap
+        py3-pip
 
 # Set up a virtual environment
 RUN python3 -m venv /venv
 ENV PATH="/venv/bin:$PATH"
 
 # Upgrade pip and install awscli inside the virtual environment
-RUN /venv/bin/pip install --upgrade pip && \
-    /venv/bin/pip install awscli
+RUN /venv/bin/pip install --upgrade pip
 
 WORKDIR /app
 COPY package*.json /app/
@@ -32,6 +28,7 @@ RUN npm run build
 FROM node:18-alpine3.18
 RUN apk add bash
 RUN apk add --update alpine-sdk
+RUN apk add gcc musl-dev python3-dev libffi-dev openssl-dev cargo make
 RUN apk update && \
     apk add --no-cache \
         bash \
@@ -47,20 +44,18 @@ ENV PATH="/venv/bin:$PATH"
 
 # Upgrade pip and install awscli inside the virtual environment
 RUN /venv/bin/pip install --upgrade pip && \
-    /venv/bin/pip install awscli
+    /venv/bin/pip install azure-cli
 RUN apk update
 RUN apk upgrade
 # ADD . /app
 
 WORKDIR /app
-
 COPY package*.json /app/
 RUN npm install pm2 -g
 RUN npm install sharp
 COPY --from=builder ./app/dist/ .
-
 COPY . .
-
+RUN dos2unix /app/entrypoint.sh
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
 # CMD ["node", "./src/index.js"]

@@ -2,7 +2,7 @@
 #
 
 # Add config/creds copying here..
-aws s3 cp s3://$S3_CONFIG_BUCKET/$S3_CONFIG_PATH/.env /app/.env
+az storage blob download --container-name $CONTAINER_NAME --name env.config --file /app/.env --account-name $ACCOUNT_NAME --account-key $ACCOUNT_KEY
 
 cd /app
 

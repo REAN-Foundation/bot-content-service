@@ -1,4 +1,3 @@
-import { Stream } from "stream";
 import { Readable } from "stream";
 
 export interface IFileStorageService {
