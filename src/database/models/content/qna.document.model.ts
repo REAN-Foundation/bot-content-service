@@ -38,6 +38,12 @@ export class QnaDocument extends BaseEntity {
     @Column({ type: 'varchar', length: 256, nullable: false })
     ParentDocumentResourceId: string;
 
+    @Column({ type: 'varchar', length: 36, nullable: true })
+    TenantId: string;
+
+    @Column({ type: 'varchar', length: 256, nullable: true })
+    TenantCode: string;
+
     @Column({ type: 'varchar', length: 256, nullable: false })
     CreatedByUserId: string;
 

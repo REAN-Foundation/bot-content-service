@@ -30,8 +30,9 @@ export class QnaDocumentValidator extends BaseValidator {
                 IsActive                 : joi.boolean().required(),
                 DocumentType             : joi.string(),
                 ParentDocumentResourceId : joi.string().uuid().optional(),
+                TenantId                 : joi.string().uuid().optional(),
+                TenantCode               : joi.string().optional(),
                 CreatedByUserId          : joi.string().uuid().required(),
-             
             });
             await schema.validateAsync(request.body);
             return this.getQnaDocumentCreateModel(request);
@@ -98,6 +99,8 @@ export class QnaDocumentValidator extends BaseValidator {
                 pageIndex       : joi.number().optional(),
                 order           : joi.string().optional(),
                 orderBy         : joi.string().optional(),
+                tenantId        : joi.string().uuid().optional(),
+                tenantCode      : joi.string().optional(),
             });
 
             await schema.validateAsync(request.query);
@@ -121,6 +124,8 @@ export class QnaDocumentValidator extends BaseValidator {
             Splitter                 : request.query.splitter ?? null,
             IsActive                 : request.query.isActive ?? null,
             CreatedByUserId          : request.query.createdByUserId ?? null,
+            TenantId                 : request.query.tenantId ?? null,
+            TenantCode               : request.query.tenantCode ?? null,
         };
         return this.updateBaseSearchFilters(request, filters);
     };
@@ -140,6 +145,8 @@ export class QnaDocumentValidator extends BaseValidator {
             ParentDocumentResourceId : request.body.ParentDocumentResourceId ?
                 request.body.ParentDocumentResourceId :
                 request.body.ResourceId,
+            TenantId                 : request.body.TenantId ? request.body.TenantId : null,
+            TenantCode               : request.body.TenantCode ? request.body.TenantCode : null,
             CreatedByUserId : request.body.CreatedByUserId
         };
         return model;

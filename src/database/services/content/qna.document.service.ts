@@ -36,6 +36,8 @@ export class QnaDocumentService extends BaseService {
                 IsActive                 : createModel.IsActive,
                 DocumentType             : createModel.DocumentType,
                 ParentDocumentResourceId : createModel.ParentDocumentResourceId,
+                TenantId                 : createModel.TenantId,
+                TenantCode               : createModel.TenantCode,
                 CreatedByUserId          : createModel.CreatedByUserId,
                 FileResource             : {
                     id : createModel.ResourceId
@@ -194,6 +196,12 @@ export class QnaDocumentService extends BaseService {
         }
         if (filters.ParentDocumentResourceId) {
             search.where['ParentDocumentResourceId'] = filters.ParentDocumentResourceId;
+        }
+        if (filters.TenantId) {
+            search.where['TenantId'] = filters.TenantId;
+        }
+        if (filters.TenantCode) {
+            search.where['TenantCode'] = filters.TenantCode;
         }
         if (filters.ChunkingStrategy) {
             search.where['ChunkingStrategy'] = filters.ChunkingStrategy;
