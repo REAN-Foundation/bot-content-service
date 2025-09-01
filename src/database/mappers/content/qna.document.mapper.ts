@@ -12,14 +12,7 @@ export class QnaDocumentMapper {
             Name                     : document.Name,
             Description              : document.Description,
             ResourceId               : document.FileResource.id,
-            Keyword                  : document.Keyword ? (function() {
-                try {
-                    const parsed = JSON.parse(document.Keyword);
-                    return Array.isArray(parsed) ? parsed : [];
-                } catch (error) {
-                    return [];
-                }
-            })() : [],
+            Keyword                  : document.Keyword ? JSON.parse(document.Keyword) : [],
             ChunkingStrategy         : document.ChunkingStrategy,
             ChunkingLength           : document.ChunkingLength,
             ChunkOverlap             : document.ChunkOverlap,

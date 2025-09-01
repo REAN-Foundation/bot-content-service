@@ -2,7 +2,7 @@ import { QnaDocument } from '../../models/content/qna.document.model';
 import { logger } from '../../../logger/logger';
 import { ErrorHandler } from '../../../common/handlers/error.handler';
 import { Source } from '../../database.connector';
-import { FindManyOptions, Like, Repository } from 'typeorm';
+import { FindManyOptions, Like, Repository, Raw, Or } from 'typeorm';
 import { BaseService } from '../base.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
 import {
@@ -30,7 +30,7 @@ export class QnaDocumentService extends BaseService {
                 Description              : createModel.Description,
                 Keyword                  : createModel.Keyword && createModel.Keyword.length > 0 
                                          ? JSON.stringify(createModel.Keyword.filter(k => k.trim().length > 0)) 
-                                         : null,
+                                         : null, 
                 ChunkingStrategy         : createModel.ChunkingStrategy,
                 ChunkingLength           : createModel.ChunkingLength,
                 ChunkOverlap             : createModel.ChunkOverlap,
@@ -170,7 +170,12 @@ export class QnaDocumentService extends BaseService {
             search.where['Name'] = Like(`%${filters.Name}%`);
         }
         if (filters.Keyword) {
-            search.where['Keyword'] = Like(`%${filters.Keyword}%`);
+            // Enhanced search for JSON array keywords
+            const keywords = filters.Keyword.split(',').map(k => k.trim());
+            const conditions = keywords.map(keyword =>
+                Raw(`JSON_SEARCH(Keyword, 'one', '%${keyword}%') IS NOT NULL`)
+            );
+            search.where['Keyword'] = conditions.length > 1 ? Or(...conditions) : conditions[0];
         }
         if (filters.ResourceId) {
             search.where['FileResource'] = {
