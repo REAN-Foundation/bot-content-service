@@ -19,7 +19,7 @@ export class QnaDocumentValidator extends BaseValidator {
                 Name             : joi.string().required(),
                 Description      : joi.string(),
                 ResourceId       : joi.string().uuid().required(),
-                Keyword          : joi.string(),
+                Keyword          : joi.array().items(joi.string()).optional(),
                 ChunkingStrategy : joi
                     .string()
                     .valid(...Object.values(ChunkingStrategy))
@@ -57,7 +57,7 @@ export class QnaDocumentValidator extends BaseValidator {
                 Name             : joi.string(),
                 Description      : joi.string(),
                 ResourceId       : joi.string().uuid(),
-                Keyword          : joi.string(),
+                Keyword          : joi.array().items(joi.string()).optional(),
                 ChunkingStrategy : joi
                     .string()
                     .valid(...Object.values(ChunkingStrategy)),

@@ -28,7 +28,9 @@ export class QnaDocumentService extends BaseService {
             const document = this._qnaDocumentRepository.create({
                 Name                     : createModel.Name,
                 Description              : createModel.Description,
-                Keyword                  : createModel.Keyword,
+                Keyword                  : createModel.Keyword && createModel.Keyword.length > 0 
+                                         ? JSON.stringify(createModel.Keyword.filter(k => k.trim().length > 0)) 
+                                         : null,
                 ChunkingStrategy         : createModel.ChunkingStrategy,
                 ChunkingLength           : createModel.ChunkingLength,
                 ChunkOverlap             : createModel.ChunkOverlap,
@@ -74,8 +76,10 @@ export class QnaDocumentService extends BaseService {
             if (model.ResourceId) {
                 document.FileResource.id = model.ResourceId;
             }
-            if (model.Keyword) {
-                document.Keyword = model.Keyword;
+            if (model.Keyword !== undefined) {
+                document.Keyword = model.Keyword && model.Keyword.length > 0 
+                                   ? JSON.stringify(model.Keyword.filter(k => k.trim().length > 0))
+                                   : '[]';
             }
             if (model.ChunkingStrategy) {
                 document.ChunkingStrategy = model.ChunkingStrategy;

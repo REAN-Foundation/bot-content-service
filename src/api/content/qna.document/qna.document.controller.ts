@@ -50,6 +50,7 @@ export class QnaDocumentController {
                 QnaDocumentId  : record.id,
                 DocumentSource : DocumentSource.Custom,
                 ...record,
+                Keyword        : Array.isArray(record.Keyword) ? record.Keyword.join(', ') : record.Keyword,
             };
 
             const documentVersionRecord = await this._documentVersionService.create(documentVersionModel);

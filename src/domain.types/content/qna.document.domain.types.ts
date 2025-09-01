@@ -17,7 +17,7 @@ export interface QnaDocumentCreateModel {
     Name: string;
     Description?: string;
     ResourceId :string;
-    Keyword?: string;
+    Keyword?: string[];
     ChunkingStrategy: string;
     ChunkingLength: number;
     ChunkOverlap: number;
@@ -32,7 +32,7 @@ export interface QnaDocumentUpdateModel {
     Name?: string;
     Description?: string;
     ResourceId? :string;
-    Keyword?: string;
+    Keyword?: string[];
     ChunkingStrategy?: string;
     ChunkingLength?: number;
     ChunkOverlap?: number;
@@ -60,7 +60,7 @@ export interface QnaDocumentDto {
 export interface QnaDocumentSearchFilters extends BaseSearchFilters {
     Name?: string;
     ResourceId? :string;
-    Keyword?: string;
+    Keyword?: string[];
     ChunkingStrategy?: string;
     ChunkingLength?: number;
     ChunkOverlap?: number;
