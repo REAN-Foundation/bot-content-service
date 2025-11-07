@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
@@ -44,9 +45,14 @@ export class VectorstoreController {
             if (!records || records.length === 0) {
                 ErrorHandler.throwNotFoundError('Files do not exist to create vectorstore.');
             }
+            let message = "Data inserted into Vectorstore.";
 
             for ( const record of records ) {
                 const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
+                if (!qnaResource) {
+                    message += `but skipped file ${record.OriginalFilename}`;
+                    continue;
+                }
                 var storageKey = record.StorageKey;
                 var originalFilename = record.OriginalFilename;
                 var tags = record.Tags;
@@ -71,7 +77,7 @@ export class VectorstoreController {
                     this.cleanupFiles(localDestination);
                 }
             }
-            const message = "Data inserted into Vectorstore.";
+
             ResponseHandler.success(request, response, message, 200, '');
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -125,7 +131,14 @@ export class VectorstoreController {
                 ErrorHandler.throwNotFoundError('Files do not exist to create vectorstore.');
             }
 
+            let message = "Data updated in Vectorstore.";
+
             for ( const record of records ) {
+                const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
+                if (!qnaResource) {
+                    message += `but skipped file ${record.OriginalFilename}`;
+                    continue;
+                }
                 var storageKey = record.StorageKey;
                 var originalFilename = record.OriginalFilename;
                 var tags = record.Tags;
@@ -134,10 +147,14 @@ export class VectorstoreController {
 
                 var localDestination = await this._storageService.downloadStream(storageKey);
 
+                await this._documentProcessor.configure({ 
+                    chunkSize    : qnaResource.ChunkingLength,
+                    chunkOverlap : qnaResource.ChunkOverlap
+                });
+
                 const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
                 await this._vectorstoreService.insertData(tenantId, data);
             }
-            const message = "Data updated in Vectorstore.";
             ResponseHandler.success(request, response, message, 200, '');
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
