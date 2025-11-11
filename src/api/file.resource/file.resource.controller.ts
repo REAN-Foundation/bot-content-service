@@ -195,8 +195,7 @@ export class FileResourceController extends BaseController {
         }
     };
 
-    //#region Privates
-
+   
     setResponseHeaders = (response: express.Response, filename: string, disposition = 'inline') => {
         if (disposition === 'inline') {
             response.setHeader('Content-disposition', 'inline');
@@ -265,7 +264,5 @@ export class FileResourceController extends BaseController {
 
         return downloadFolderPath;
     };
-
-    //#endregion
 
 }

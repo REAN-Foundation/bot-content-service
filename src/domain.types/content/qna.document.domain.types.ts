@@ -1,4 +1,6 @@
+import { FileResourceDto } from '../general/file.resource/file.resource.dto';
 import { BaseSearchFilters, BaseSearchResults } from '../miscellaneous/base.search.types';
+import { QnaDocumentVersionDto } from './qna.document.version.domain.types';
 
 //////////////////////////////////////////////////////////////
 export enum QnaDocumentType {
@@ -24,6 +26,8 @@ export interface QnaDocumentCreateModel {
     Splitter: string;
     DocumentType: string;
     ParentDocumentResourceId: string;
+    TenantId?: string;
+    TenantCode?: string;
     IsActive: boolean;
     CreatedByUserId: string;
 }
@@ -55,6 +59,8 @@ export interface QnaDocumentDto {
     ParentDocumentResourceId: string;
     IsActive: boolean;
     CreatedByUserId: string;
+    FileResource?: FileResourceDto;
+    DocumentVersion?: QnaDocumentVersionDto[]
 }
 
 export interface QnaDocumentSearchFilters extends BaseSearchFilters {
@@ -67,6 +73,8 @@ export interface QnaDocumentSearchFilters extends BaseSearchFilters {
     Splitter?: string;
     DocumentType?: string;
     ParentDocumentResourceId?: string;
+    TenantId?: string;
+    TenantCode?: string;
     IsActive?: boolean;
     CreatedByUserId?: string;
 }

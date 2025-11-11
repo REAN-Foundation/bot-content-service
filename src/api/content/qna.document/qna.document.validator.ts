@@ -17,9 +17,9 @@ export class QnaDocumentValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string().required(),
-                Description      : joi.string(),
+                Description      : joi.string().allow(null).optional(),
                 ResourceId       : joi.string().uuid().required(),
-                Keyword          : joi.string(),
+                Keyword          : joi.string().allow(null).optional(),
                 ChunkingStrategy : joi
                     .string()
                     .valid(...Object.values(ChunkingStrategy))
@@ -30,8 +30,9 @@ export class QnaDocumentValidator extends BaseValidator {
                 IsActive                 : joi.boolean().required(),
                 DocumentType             : joi.string(),
                 ParentDocumentResourceId : joi.string().uuid().optional(),
+                TenantId                 : joi.string().uuid().optional(),
+                TenantCode               : joi.string().optional(),
                 CreatedByUserId          : joi.string().uuid().required(),
-             
             });
             await schema.validateAsync(request.body);
             return this.getQnaDocumentCreateModel(request);
@@ -55,9 +56,9 @@ export class QnaDocumentValidator extends BaseValidator {
         try {
             const schema = joi.object({
                 Name             : joi.string(),
-                Description      : joi.string(),
+                Description      : joi.string().allow('', null).optional(),
                 ResourceId       : joi.string().uuid(),
-                Keyword          : joi.string(),
+                Keyword          : joi.string().allow(null).optional(),
                 ChunkingStrategy : joi
                     .string()
                     .valid(...Object.values(ChunkingStrategy)),
@@ -92,77 +93,41 @@ export class QnaDocumentValidator extends BaseValidator {
                 splitter        : joi.number().optional(),
                 isActive        : joi.boolean().optional(),
                 createdByUserId : joi.string().optional(),
+                createdDateFrom : joi.date().optional(),
+                createdDateTo   : joi.date().optional(),
+                itemsPerPage    : joi.number().optional(),
+                pageIndex       : joi.number().optional(),
+                order           : joi.string().optional(),
+                orderBy         : joi.string().optional(),
+                tenantId        : joi.string().uuid().optional(),
+                tenantCode      : joi.string().optional(),
             });
 
             await schema.validateAsync(request.query);
-            const filters = this.getSearchFilters(request.query);
+            const filters = this.getSearchFilters(request);
             return filters;
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
     };
 
-    private getSearchFilters = (query): QnaDocumentSearchFilters => {
-        const filters = {};
-
-        const name = query.name ? query.name : null;
-        if (name) {
-            filters['Name'] = name;
-        }
-        const resourceId = query.resourceId ? query.resourceId : null;
-        if (resourceId) {
-            filters['ResourceId'] = resourceId;
-        }
-        const keyword = query.keyword ? query.keyword : null;
-        if (keyword) {
-            filters['Keyword'] = keyword;
-        }
-        const documentType = query.documentType ? query.documentType : null;
-        if (documentType) {
-            filters['DocumentType'] = documentType;
-        }
-        const parentDocumentResourceId = query.parentDocumentResourceId ? query.parentDocumentResourceId : null;
-        if (parentDocumentResourceId) {
-            filters['ParentDocumentResourceId'] = parentDocumentResourceId;
-        }
-        const chunkingStrategy = query.chunkingStrategy ? query.chunkingStrategy : null;
-        if (chunkingStrategy) {
-            filters['ChunkingStrategy'] = chunkingStrategy;
-        }
-        const chunkingLength = query.chunkingLength ? query.chunkingLength : null;
-        if (chunkingLength) {
-            filters['ChunkingLength'] = chunkingLength;
-        }
-        const chunkOverlap = query.chunkOverlap ? query.chunkOverlap : null;
-        if (chunkOverlap) {
-            filters['ChunkOverlap'] = chunkOverlap;
-        }
-        
-        const splitter = query.splitter ? query.splitter : null;
-        if (splitter) {
-            filters['Splitter'] = splitter;
-        }
-        var isActive = query.isActive ? query.isActive : null;
-        if (isActive != null) {
-            filters['isActive'] = isActive;
-        }
-        var createdByUserId = query.createdByUserId ? query.createdByUserId : null;
-        if (createdByUserId != null) {
-            filters['CreatedByUserId'] = createdByUserId;
-        }
-        var itemsPerPage = query.itemsPerPage ? query.itemsPerPage : 25;
-        if (itemsPerPage) {
-            filters['ItemsPerPage'] = itemsPerPage;
-        }
-        var orderBy = query.orderBy ? query.orderBy : 'CreatedAt';
-        if (orderBy) {
-            filters['OrderBy'] = orderBy;
-        }
-        var order = query.order ? query.order : 'ASC';
-        if (order) {
-            filters['Order'] = order;
-        }
-        return filters;
+    private getSearchFilters = (request): QnaDocumentSearchFilters => {
+        const filters: QnaDocumentSearchFilters = {
+            Name                     : request.query.name ?? null,
+            ResourceId               : request.query.resourceId ?? null,
+            Keyword                  : request.query.keyword ?? null,
+            DocumentType             : request.query.documentType ?? null,
+            ParentDocumentResourceId : request.query.parentDocumentResourceId ?? null,
+            ChunkingStrategy         : request.query.chunkingStrategy ?? null,
+            ChunkingLength           : request.query.chunkingLength ?? null,
+            ChunkOverlap             : request.query.chunkOverlap ?? null,
+            Splitter                 : request.query.splitter ?? null,
+            IsActive                 : request.query.isActive ?? null,
+            CreatedByUserId          : request.query.createdByUserId ?? null,
+            TenantId                 : request.query.tenantId ?? null,
+            TenantCode               : request.query.tenantCode ?? null,
+        };
+        return this.updateBaseSearchFilters(request, filters);
     };
 
     private getQnaDocumentCreateModel(request: express.Request): QnaDocumentCreateModel {
@@ -180,6 +145,8 @@ export class QnaDocumentValidator extends BaseValidator {
             ParentDocumentResourceId : request.body.ParentDocumentResourceId ?
                 request.body.ParentDocumentResourceId :
                 request.body.ResourceId,
+            TenantId        : request.body.TenantId ? request.body.TenantId : null,
+            TenantCode      : request.body.TenantCode ? request.body.TenantCode : null,
             CreatedByUserId : request.body.CreatedByUserId
         };
         return model;
@@ -188,7 +155,7 @@ export class QnaDocumentValidator extends BaseValidator {
     private getQnaDocumentUpdateModel(request: express.Request): QnaDocumentUpdateModel {
         const model: QnaDocumentUpdateModel = {
             Name             : request.body.Name ? request.body.Name : null,
-            Description      : request.body.Description ? request.body.Description : null,
+            Description      : request.body.Description !== undefined ? request.body.Description : null,
             ResourceId       : request.body.ResourceId ? request.body.ResourceId : null,
             Keyword          : request.body.Keyword ? request.body.Keyword : null,
             ChunkingStrategy : request.body.ChunkingStrategy ? request.body.ChunkingStrategy : null,

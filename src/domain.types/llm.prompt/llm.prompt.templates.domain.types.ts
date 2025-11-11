@@ -71,7 +71,7 @@ export interface LlmPromptTemplateSearchFilters extends BaseSearchFilters {
     Category?: string;
     SubGroup?: string;
     IsActive?: boolean;
-    CreatedByUserId: string;
+    CreatedByUserId?: string;
 }
 
 export interface LlmPromptTemplateSearchResults extends BaseSearchResults {

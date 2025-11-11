@@ -9,6 +9,7 @@ import { Source } from '../database.connector';
 import { Repository } from 'typeorm/repository/Repository';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { FindManyOptions, Like } from 'typeorm';
+import { PromptGroup } from '../../domain.types/promptgroup.domain.types';
 
 export class LlmpromptService extends BaseService {
 
@@ -19,7 +20,7 @@ export class LlmpromptService extends BaseService {
     public create = async (createModel: LlmPromptCreateModel)
         : Promise<LlmPromptDto> => {
         try {
-            const templates = createModel.Templates;
+            const templates = createModel.Templates || [];
             var finalPrompt = "";
             const variables = [];
 
@@ -42,10 +43,10 @@ export class LlmpromptService extends BaseService {
                 Name             : createModel.Name,
                 Description      : createModel.Description ?? null,
                 UseCaseType      : createModel.UseCaseType,
-                Group            : createModel.Group,
+                Group            : createModel.Group as PromptGroup || PromptGroup.generic,
                 Model            : createModel.Model,
-                Prompt           : finalPrompt,
-                Variables        : JSON.stringify(variables),
+                Prompt           : createModel.Prompt,
+                Variables        : JSON.stringify(createModel.Variables || []),
                 CreatedByUserId  : createModel.CreatedByUserId,
                 Temperature      : createModel.Temperature,
                 FrequencyPenalty : createModel.FrequencyPenalty,
@@ -93,7 +94,7 @@ export class LlmpromptService extends BaseService {
                 updateData.Prompt = model.Prompt;
             }
             if (model.Variables) {
-                updateData.Variables = model.Variables;
+                updateData.Variables = JSON.stringify(model.Variables);
             }
             if (  model.CreatedByUserId) {
                 updateData.CreatedByUserId = model.CreatedByUserId;
@@ -230,6 +231,7 @@ export class LlmpromptService extends BaseService {
                 TopP             : true,
                 PresencePenalty  : true,
                 IsActive         : true,
+                TenantId         : true,
             }
         };
 
@@ -264,10 +266,13 @@ export class LlmpromptService extends BaseService {
             search.where['TopP'] = filters.TopP;
         }
         if (filters.PresencePenalty ) {
-            search.where['PresencePenalty'] = filters.PresencePenalty ;
+            search.where['PresencePenalty'] = filters.PresencePenalty;
         }
         if (filters.IsActive ) {
-            search.where['IsActive'] = filters.IsActive ;
+            search.where['IsActive'] = filters.IsActive;
+        }
+        if (filters.TenantId) {
+            search.where['TenantId'] = filters.TenantId;
         }
         return search;
     };

@@ -36,6 +36,8 @@ export class QnaDocumentService extends BaseService {
                 IsActive                 : createModel.IsActive,
                 DocumentType             : createModel.DocumentType,
                 ParentDocumentResourceId : createModel.ParentDocumentResourceId,
+                TenantId                 : createModel.TenantId,
+                TenantCode               : createModel.TenantCode,
                 CreatedByUserId          : createModel.CreatedByUserId,
                 FileResource             : {
                     id : createModel.ResourceId
@@ -74,7 +76,7 @@ export class QnaDocumentService extends BaseService {
             if (model.ResourceId) {
                 document.FileResource.id = model.ResourceId;
             }
-            if (model.Keyword) {
+            if (model.Keyword || !model.Keyword) {
                 document.Keyword = model.Keyword;
             }
             if (model.ChunkingStrategy) {
@@ -112,8 +114,23 @@ export class QnaDocumentService extends BaseService {
                     id : id,
                 },
                 relations : {
-                    FileResource : true
+                    FileResource        : true,
+                    QnaDocumentVersions : true,
                 }
+            });
+            return QnaDocumentMapper.toResponseDto(document);
+        } catch (error) {
+            logger.error(error.message);
+            ErrorHandler.throwInternalServerError(error.message, 500);
+        }
+    };
+
+    public getByFileResourceId = async (id: uuid): Promise<QnaDocumentDto> => {
+        try {
+            var document = await this._qnaDocumentRepository.findOne({
+                where : {
+                    ParentDocumentResourceId : id
+                },
             });
             return QnaDocumentMapper.toResponseDto(document);
         } catch (error) {
@@ -157,7 +174,8 @@ export class QnaDocumentService extends BaseService {
     private getSearchModel = (filters: QnaDocumentSearchFilters) => {
         var search: FindManyOptions<QnaDocument> = {
             relations : {
-                FileResource : true
+                FileResource        : true,
+                QnaDocumentVersions : true,
             },
             where : {},
         };
@@ -174,10 +192,16 @@ export class QnaDocumentService extends BaseService {
             };
         }
         if (filters.DocumentType) {
-            search.where['DocumentType'] = filters.DocumentType;
+            search.where['DocumentType'] = Like(`%${filters.DocumentType}%`);
         }
         if (filters.ParentDocumentResourceId) {
             search.where['ParentDocumentResourceId'] = filters.ParentDocumentResourceId;
+        }
+        if (filters.TenantId) {
+            search.where['TenantId'] = filters.TenantId;
+        }
+        if (filters.TenantCode) {
+            search.where['TenantCode'] = filters.TenantCode;
         }
         if (filters.ChunkingStrategy) {
             search.where['ChunkingStrategy'] = filters.ChunkingStrategy;

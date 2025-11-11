@@ -1,5 +1,7 @@
 import { QnaDocumentDto } from '../../../domain.types/content/qna.document.domain.types';
 import { QnaDocument } from '../../models/content/qna.document.model';
+import { FileResourceMapper } from '../file.resource/file.resource.mapper';
+import { QnaDocumentVersionMapper } from './qna.document.version.mapper';
 
 export class QnaDocumentMapper {
 
@@ -11,7 +13,7 @@ export class QnaDocumentMapper {
             id                       : document.id,
             Name                     : document.Name,
             Description              : document.Description,
-            ResourceId               : document.FileResource.id,
+            ResourceId               : document.FileResource?.id,
             Keyword                  : document.Keyword,
             ChunkingStrategy         : document.ChunkingStrategy,
             ChunkingLength           : document.ChunkingLength,
@@ -20,7 +22,12 @@ export class QnaDocumentMapper {
             DocumentType             : document.DocumentType,
             ParentDocumentResourceId : document.ParentDocumentResourceId,
             IsActive                 : document.IsActive,
-            CreatedByUserId          : document.CreatedByUserId
+            CreatedByUserId          : document.CreatedByUserId,
+            FileResource             : document?.FileResource ?
+                FileResourceMapper.toResponseDto(document?.FileResource) : null,
+            DocumentVersion : document?.QnaDocumentVersions ? document.QnaDocumentVersions?.map(
+                (x) => QnaDocumentVersionMapper.toResponseDto(x)) : null,
+
         };
         return dto;
     };

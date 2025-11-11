@@ -5,16 +5,19 @@ import { JSONLoader } from "langchain/document_loaders/fs/json";
 import { Document } from "@langchain/core/documents";
 import { S3Loader } from "@langchain/community/document_loaders/web/s3";
 import { logger } from '../../logger/logger';
+import { TextSplitterConfig } from "../../domain.types/vectorstores/vectorstore.domain.type";
 import * as fs from "fs";
 import * as mime from 'mime-types';
 import { Readable } from "stream";
 import csvParser from "csv-parser";
 import pdf from "pdf-parse";
+import * as XLSX from "xlsx";
+import { XLSXLoader } from "./document.loaders/xlsx.loader";
 
 //////////////////////////////////////////////////////////////////////////
 export class DocumentProcessor {
 
-    private readonly _textSplitter: RecursiveCharacterTextSplitter;
+    private _textSplitter: RecursiveCharacterTextSplitter;
 
     constructor() {
         this._textSplitter = new RecursiveCharacterTextSplitter({
@@ -45,6 +48,14 @@ export class DocumentProcessor {
                     docs = docs.map((doc) => ({
                         ...doc,
                         metadata : { ...doc.metadata, source: originalFilename }
+                    }));
+                    return docs;
+                } else if (extension === "xlsx" || extension === "XLSX") {
+                    const loader = new XLSXLoader(filePath);
+                    let docs = await loader.load();
+                    docs = docs.map((doc) => ({
+                        ...doc,
+                        metadata : { ...doc.metadata, source: originalFilename },
                     }));
                     return docs;
                 } else if (extension === "pdf") {
@@ -81,6 +92,13 @@ export class DocumentProcessor {
         }
     };
 
+    public async configure(config: TextSplitterConfig): Promise<void> {
+        this._textSplitter = new RecursiveCharacterTextSplitter({
+            chunkSize    : config.chunkSize ?? 750,
+            chunkOverlap : config.chunkOverlap ?? 50,
+        });
+    }
+
     private async processStreamDocuments(stream: Readable, fileName: string): Promise<Document[]> {
         const extension = fileName.split(".").pop()?.toLowerCase();
 
@@ -93,9 +111,50 @@ export class DocumentProcessor {
                 return this.processPDFStream(stream, fileName);
             case "txt":
                 return this.processTXTStream(stream, fileName);
+            case "xlsx":
+                return this.processXLSXStream(stream, fileName);
             default:
                 throw new Error("Unsupported file type: {extension}");
         }
+    }
+
+    private async processXLSXStream(stream: Readable, fileName: string): Promise<Document[]>{
+        const documents: Document[] = [];
+
+        return new Promise<Document[]>(( resolve, reject ) => {
+            const chunks: Buffer[] = [];
+
+            stream.on("data", (chunk) => chunks.push(chunk));
+            stream.on("end", () => {
+                try {
+                    const buffer = Buffer.concat(chunks);
+                    const workbook = XLSX.read(buffer, { type: "buffer"});
+
+                    workbook.SheetNames.forEach((sheetName) => {
+                        const sheet = workbook.Sheets[sheetName];
+                        const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1});
+
+                        jsonData.forEach((row) => {
+                            documents.push(
+                                new Document({
+                                    pageContent : JSON.stringify(row),
+                                    metadata    : {
+                                        source : fileName,
+                                        sheetName,
+                                    },
+                                })
+                            );
+                        });
+                    });
+
+                    resolve(documents);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+
+            stream.on("error", reject);
+        });
     }
 
     private async processCSVStream(stream: Readable, fileName: string): Promise<Document[]> {

@@ -41,7 +41,7 @@ export class LlmPromptController {
                 ErrorHandler.throwInternalServerError('Unable to create Llm prompt version!');
             }
 
-            const message = ' Llm prompt & llm prompt version created successfully!';
+            const message = 'Prompt created successfully!';
             return ResponseHandler.success(request, response, message, 201, record);
         }
         catch (error) {
@@ -58,7 +58,7 @@ export class LlmPromptController {
                 ErrorHandler.throwNotFoundError("Llm prompt record not found.");
             }
             const updatedRecord = await this._service.update(id, model);
-            const message = 'Llm prompt updated successfully!';
+            const message = 'Prompt updated successfully!';
             ResponseHandler.success(request, response, message, 200, updatedRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
@@ -75,9 +75,7 @@ export class LlmPromptController {
                 ErrorHandler.throwNotFoundError(message);
             }
             else {
-                const promptContent = await this.getFinalPrompt(record);
-                record["PromptContent"] = promptContent;
-                const message = 'LLm prompt retrieved successfully!';
+                const message = 'Prompt retrieved successfully!';
                 return ResponseHandler.success(request, response, message, 200, record);
             }
         } catch (error) {

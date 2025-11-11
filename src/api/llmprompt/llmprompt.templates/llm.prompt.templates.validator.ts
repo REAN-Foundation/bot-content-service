@@ -15,7 +15,7 @@ export class LlmPromptTemplateValidator extends BaseValidator {
                 Content         : joi.string().required(),
                 Variables       : joi.array().optional(),
                 Version         : joi.number().required(),
-                TenantId        : joi.number().optional(),
+                TenantId        : joi.string().optional(),
                 Type            : joi.string().optional(),
                 Category        : joi.string().optional(),
                 SubGroup        : joi.string().optional(),
@@ -47,7 +47,7 @@ export class LlmPromptTemplateValidator extends BaseValidator {
                 Content         : joi.string().optional(),
                 Variables       : joi.array().optional(),
                 Version         : joi.number().optional(),
-                TenantId        : joi.number().optional(),
+                TenantId        : joi.string().optional(),
                 Type            : joi.string().optional(),
                 Category        : joi.string().optional(),
                 SubGroup        : joi.string().optional(),
@@ -67,16 +67,41 @@ export class LlmPromptTemplateValidator extends BaseValidator {
                 Description     : joi.string().optional(),
                 Content         : joi.string().optional(),
                 Version         : joi.number().optional(),
-                TenantId        : joi.number().optional(),
+                TenantId        : joi.string().optional(),
                 Type            : joi.string().optional(),
                 Category        : joi.string().optional(),
                 SubGroup        : joi.string().optional(),
                 IsActive        : joi.string().optional(),
-                CreatedByUserId : joi.string().optional()
+                CreatedByUserId : joi.string().optional(),
+                createdDateFrom : joi.date().optional(),
+                createdDateTo   : joi.date().optional(),
+                itemsPerPage    : joi.number().optional(),
+                pageIndex       : joi.number().optional(),
+                order           : joi.string().optional(),
+                orderBy         : joi.string().optional(),
             });
-            return await schema.validateAsync(request.body);
+            await schema.validateAsync(request.query);
+
+            return await this.getFilters(request);
         } catch (error) {
             ErrorHandler.handleValidationError(error);
         }
     };
+
+    getFilters = async (request): Promise<LlmPromptTemplateSearchFilters> => {
+        const filters: LlmPromptTemplateSearchFilters = {
+            Name            : request.query.name ?? null,
+            Description     : request.query.description ?? null,
+            Content         : request.query.content ?? null,
+            Version         : request.query.version ?? null,
+            TenantId        : request.query.tenantId ?? null,
+            Type            : request.query.type ?? null,
+            Category        : request.query.category ?? null,
+            SubGroup        : request.query.subGroup ?? null,
+            IsActive        : request.query.isActive ?? null,
+            CreatedByUserId : request.query.createdByUserId ?? null,
+        };
+        return this.updateBaseSearchFilters(request, filters);
+    };
+
 }

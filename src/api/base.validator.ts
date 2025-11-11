@@ -51,4 +51,22 @@ export default class BaseValidator {
         return disposition;
     }
 
+    updateBaseSearchFilters = (request: express.Request, filters: any): any => {
+
+        const pageIndex: number = request.query.pageIndex !== 'undefined' ?
+            parseInt(request.query.pageIndex as string, 10) : 0;
+
+        const itemsPerPage: number = request.query.itemsPerPage !== 'undefined' ?
+            parseInt(request.query.itemsPerPage as string, 10) : 25;
+
+        filters['CreatedDateFrom'] = request.query.createdDateFrom ? new Date(request.query.createdDateFrom as string) : null;
+        filters['CreatedDateTo']   = request.query.createdDateTo ? new Date(request.query.createdDateTo as string) : null;
+        filters['OrderBy']         = request.query.orderBy as string ?? 'CreatedAt';
+        filters['Order']           = request.query.order as string ?? 'descending';
+        filters['PageIndex']       = pageIndex;
+        filters['ItemsPerPage']    = itemsPerPage;
+
+        return filters;
+    };
+
 }
