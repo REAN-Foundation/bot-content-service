@@ -5,7 +5,10 @@
         "Authorization": "Custom"
     },
     "FileStorage" : {
-        "Provider": "Custom"
+        "Provider": "AWS-S3"
+    },
+    "Vectorstore": {
+        "Provider": "PGVECTOR"
     },
     "Vectorstore": {
         "Provider": "PGVECTOR"

@@ -145,8 +145,8 @@ export class QnaDocumentValidator extends BaseValidator {
             ParentDocumentResourceId : request.body.ParentDocumentResourceId ?
                 request.body.ParentDocumentResourceId :
                 request.body.ResourceId,
-            TenantId                 : request.body.TenantId ? request.body.TenantId : null,
-            TenantCode               : request.body.TenantCode ? request.body.TenantCode : null,
+            TenantId        : request.body.TenantId ? request.body.TenantId : null,
+            TenantCode      : request.body.TenantCode ? request.body.TenantCode : null,
             CreatedByUserId : request.body.CreatedByUserId
         };
         return model;

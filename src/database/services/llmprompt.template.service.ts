@@ -289,5 +289,4 @@ export class LlmPromptTemplateService extends BaseService {
         
         return search;
     };
-
 }
