@@ -99,6 +99,8 @@ export class QnaDocumentController {
         const record = await this._service.getById(id);
         if (record != null) {
             try {
+                const fileResource = await this._fileResourceService.getById(record.ParentDocumentResourceId);
+                await this._fileResourceService.delete(fileResource.id);
                 const result = await this._service.delete(id);
                 const message = 'Qna-Document deleted successfully!';
                 ResponseHandler.success(request, response, message, 200, result);

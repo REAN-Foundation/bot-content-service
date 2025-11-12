@@ -14,6 +14,7 @@ import {
 import { QnaDocumentDto } from '../../../domain.types/content/qna.document.domain.types';
 import { QnaDocumentMapper } from '../../mappers/content/qna.document.mapper';
 import { FileResource } from '../../models/file.resource/file.resource.model';
+import { Not, IsNull } from "typeorm";
 
 ///////////////////////////////////////////////////////////////////////
 
@@ -129,7 +130,8 @@ export class QnaDocumentService extends BaseService {
         try {
             var document = await this._qnaDocumentRepository.findOne({
                 where : {
-                    ParentDocumentResourceId : id
+                    ParentDocumentResourceId : id,
+                    DeletedAt                : Not(IsNull())
                 },
             });
             return QnaDocumentMapper.toResponseDto(document);
