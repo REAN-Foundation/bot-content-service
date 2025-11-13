@@ -117,8 +117,7 @@ export class FileResourceService {
         try {
             const record = await this._fileResourceRepository.find({
                 where : { 
-                    TenantId  : tenantId,
-                    DeletedAt : Not(IsNull())
+                    TenantId : tenantId,
                 } 
             } );
             return record.map(FileResourceMapper.toResponseDto);

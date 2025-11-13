@@ -131,7 +131,6 @@ export class QnaDocumentService extends BaseService {
             var document = await this._qnaDocumentRepository.findOne({
                 where : {
                     ParentDocumentResourceId : id,
-                    DeletedAt                : Not(IsNull())
                 },
             });
             return QnaDocumentMapper.toResponseDto(document);
