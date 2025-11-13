@@ -14,7 +14,6 @@ import {
 import { QnaDocumentDto } from '../../../domain.types/content/qna.document.domain.types';
 import { QnaDocumentMapper } from '../../mappers/content/qna.document.mapper';
 import { FileResource } from '../../models/file.resource/file.resource.model';
-import { Not, IsNull } from "typeorm";
 
 ///////////////////////////////////////////////////////////////////////
 
