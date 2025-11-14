@@ -57,7 +57,10 @@ jobs:
 
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
+        uses: docker/setup-buildx-action@v3
+        with:
+          install: true
+          driver: docker
 
       - name: Cache Docker layers
         uses: actions/cache@v3
@@ -85,6 +88,8 @@ jobs:
           file: ./Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: false
-          tags: reancare/services:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache
+          tags: bot-content:${{ steps.vars.outputs.branch }}_${{ steps.vars.outputs.sha_short }}
+          # cache-from: type=local,src=/tmp/.buildx-cache
+          # cache-to: type=local,dest=/tmp/.buildx-cache
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
