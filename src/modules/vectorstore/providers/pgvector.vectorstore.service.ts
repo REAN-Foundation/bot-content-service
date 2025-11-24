@@ -34,7 +34,7 @@ export class PgVectorStore implements IVectorStoreService {
                 port     : process.env.PG_PORT,
                 user     : process.env.PG_USER,
                 password : process.env.PG_PASSWORD,
-                databse  : process.env.PG_DATABASE
+                database : process.env.PG_DATABASE
             } as PoolConfig,
             tableName : this.tenantId + '_' + process.env.NODE_ENV,
             columns   : {
