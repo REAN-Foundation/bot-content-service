@@ -38,6 +38,7 @@ export class PgKeywordsService implements IKeywordsService {
         };
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
+        logger.info(`THE KEYWORD VECTORSTORE CONFIG IS ${JSON.stringify(postgresConnectionOptions)}`);
         this.pool = new pg.Pool(postgresConnectionOptions);
         await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {

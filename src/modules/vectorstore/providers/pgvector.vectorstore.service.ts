@@ -48,6 +48,7 @@ export class PgVectorStore implements IVectorStoreService {
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
         this.tableName = tableName;
+        logger.info(`THE VECTORSTORE CONFIG IS ${JSON.stringify(postgresConnectionOptions)}`);
         this.pool = new pg.Pool(postgresConnectionOptions);
         await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {
