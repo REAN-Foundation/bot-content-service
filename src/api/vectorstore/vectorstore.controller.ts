@@ -2,6 +2,7 @@
 import express from 'express';
 import fs from 'fs';
 import path from 'path';
+import * as asyncLib from 'async';
 import { ResponseHandler } from '../../common/handlers/response.handler';
 import { ErrorHandler } from '../../common/handlers/error.handler';
 import { VectorstoreService } from '../../modules/vectorstore/vectorstore.service';
@@ -19,6 +20,18 @@ import { QnaDocumentService } from '../../database/services/content/qna.document
 
 ///////////////////////////////////////////////////////////////////////////////
 
+interface PublishTask {
+    tenantId: string;
+    records: any[];
+}
+
+interface RefreshTask {
+    tenantId: string;
+}
+
+const PUBLISH_QUEUE_CONCURRENCY = 2;
+const REFRESH_QUEUE_CONCURRENCY = 2;
+
 export class VectorstoreController {
 
     _vectorstoreService: VectorstoreService = Loader.Container.resolve(VectorstoreService);
@@ -35,50 +48,45 @@ export class VectorstoreController {
 
     private _documentProcessor = new DocumentProcessor();
 
+    private _publishQueue = asyncLib.queue((task: PublishTask, onCompleted) => {
+        (async () => {
+            try {
+                await this.processPublishAll(task.tenantId, task.records);
+            } catch (error) {
+                console.error(`Error in publish queue for tenant ${task.tenantId}:`, error);
+            } finally {
+                onCompleted();
+            }
+        })();
+    }, PUBLISH_QUEUE_CONCURRENCY);
+
+    private _refreshQueue = asyncLib.queue((task: RefreshTask, onCompleted) => {
+        (async () => {
+            try {
+                await this.processRefreshAll(task.tenantId);
+            } catch (error) {
+                console.error(`Error in refresh queue for tenant ${task.tenantId}:`, error);
+            } finally {
+                onCompleted();
+            }
+        })();
+    }, REFRESH_QUEUE_CONCURRENCY);
 
     create = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
             const model: VectorStoreCreateModel = await this._validator.validateCreateRequest(request);
-            // const record = await this._fileResourceService.getById(model.id);
             const tenantId = model.TenantId;
             const records = await this._fileResourceService.getByTenantId(tenantId);
             if (!records || records.length === 0) {
                 ErrorHandler.throwNotFoundError('Files do not exist to create vectorstore.');
             }
-            let message = "Data inserted into Vectorstore.";
 
-            for ( const record of records ) {
-                const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
-                if (!qnaResource) {
-                    message += `but skipped file ${record.OriginalFilename}`;
-                    continue;
-                }
-                var storageKey = record.StorageKey;
-                var originalFilename = record.OriginalFilename;
-                var tags = record.Tags;
-                var mimeType = mime.lookup(originalFilename);
+            ResponseHandler.success(request, response, 'Your document is publishing. This may take a few moments.', 200, '');
 
-                await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
-
-                var downloadFolderPath = await this.generateDownloadFolderPath();
-                var localFilePath = path.join(downloadFolderPath, originalFilename);
-                var localDestination = await this._storageService.downloadStream(storageKey);
-
-                await this._documentProcessor.configure({ 
-                    chunkSize    : qnaResource.ChunkingLength,
-                    chunkOverlap : qnaResource.ChunkOverlap
-                });
-
-                const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
-                await this._vectorstoreService.insertData(tenantId, data);
-
-                // THIS is temporary and needs to be switched to a more robust logic
-                if (typeof(localDestination) === "string") {
-                    this.cleanupFiles(localDestination);
-                }
-            }
-
-            ResponseHandler.success(request, response, message, 200, '');
+            this.enqueuePublishTask({
+                tenantId,
+                records
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -89,9 +97,8 @@ export class VectorstoreController {
             const model: VectorStoreCreateModel = await this._validator.validateCreateRequest(request);
             const record = await this._fileResourceService.getById(model.id);
             const tenantId = model.TenantId;
-            const records = await this._fileResourceService.getById(model.id);
 
-            if (!records) {
+            if (!record) {
                 ErrorHandler.throwNotFoundError("File does not exist with the provided id");
             }
 
@@ -116,46 +123,13 @@ export class VectorstoreController {
 
     refreshAll = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-
             const tenantId = request.body["TenantId"];
 
-            // const data = await this._documentProcessor.processDocument(filepath);
-            const dataDeleted = await this._vectorstoreService.deleteCollection(tenantId);
+            ResponseHandler.success(request, response, 'Your documents are being refreshed. This may take a few moments.', 200, '');
 
-            if (dataDeleted !== "deleted") {
-                ErrorHandler.throwFailedPreconditionError("Vector store was not deleted successfully");
-            }
-
-            const records = await this._fileResourceService.getByTenantId(tenantId);
-            if (!records || records.length === 0) {
-                ErrorHandler.throwNotFoundError('Files do not exist to create vectorstore.');
-            }
-
-            let message = "Data updated in Vectorstore.";
-
-            for ( const record of records ) {
-                const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
-                if (!qnaResource) {
-                    message += `but skipped file ${record.OriginalFilename}`;
-                    continue;
-                }
-                var storageKey = record.StorageKey;
-                var originalFilename = record.OriginalFilename;
-                var tags = record.Tags;
-
-                await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
-
-                var localDestination = await this._storageService.downloadStream(storageKey);
-
-                await this._documentProcessor.configure({ 
-                    chunkSize    : qnaResource.ChunkingLength,
-                    chunkOverlap : qnaResource.ChunkOverlap
-                });
-
-                const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
-                await this._vectorstoreService.insertData(tenantId, data);
-            }
-            ResponseHandler.success(request, response, message, 200, '');
+            this.enqueueRefreshTask({
+                tenantId
+            });
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }
@@ -163,7 +137,6 @@ export class VectorstoreController {
 
     refreshById = async (request: express.Request, response: express.Response): Promise<void> => {
         try {
-            
             const tenantId = request.body["TenantId"];
             const record = await this._fileResourceService.getById(request.body["id"]);
             const originalFilename = record.OriginalFilename;
@@ -235,5 +208,120 @@ export class VectorstoreController {
             ErrorHandler.throwInternalServerError('Unable to delete downloaded file', error);
         }
     };
+
+    //#region Queue Management
+
+    /**
+     * Enqueues a publish task to the publish queue
+     */
+    private enqueuePublishTask = (task: PublishTask): void => {
+        this._publishQueue.push(task, (error) => {
+            if (error) {
+                console.error(`Error in publish queue for tenant ${task.tenantId}:`, error);
+            } else {
+                console.log(`Publish task completed for tenant ${task.tenantId}`);
+            }
+        });
+    };
+
+    /**
+     * Enqueues a refresh task to the refresh queue
+     */
+    private enqueueRefreshTask = (task: RefreshTask): void => {
+        this._refreshQueue.push(task, (error) => {
+            if (error) {
+                console.error(`Error in refresh queue for tenant ${task.tenantId}:`, error);
+            } else {
+                console.log(`Refresh task completed for tenant ${task.tenantId}`);
+            }
+        });
+    };
+
+    //#endregion
+
+    private processPublishAll = async (tenantId: string, records: any[]): Promise<void> => {
+        let message = "Data inserted into Vectorstore.";
+
+        for ( const record of records ) {
+            const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
+            if (!qnaResource) {
+                message += `but skipped file ${record.OriginalFilename}`;
+                continue;
+            }
+            var storageKey = record.StorageKey;
+            var originalFilename = record.OriginalFilename;
+            var tags = record.Tags;
+            var mimeType = mime.lookup(originalFilename);
+
+            await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
+
+            var downloadFolderPath = await this.generateDownloadFolderPath();
+            var localFilePath = path.join(downloadFolderPath, originalFilename);
+            var localDestination = await this._storageService.downloadStream(storageKey);
+
+            await this._documentProcessor.configure({
+                chunkSize    : qnaResource.ChunkingLength,
+                chunkOverlap : qnaResource.ChunkOverlap
+            });
+
+            const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
+            await this._vectorstoreService.insertData(tenantId, data);
+
+            // THIS is temporary and needs to be switched to a more robust logic
+            if (typeof(localDestination) === "string") {
+                this.cleanupFiles(localDestination);
+            }
+        }
+        console.log(`Publishing completed for tenant ${tenantId}: ${message}`);
+    };
+
+    /**
+     * Processes refresh for all records
+     */
+    private processRefreshAll = async (tenantId: string, records?: any[]): Promise<void> => {
+        const dataDeleted = await this._vectorstoreService.deleteCollection(tenantId);
+
+        if (dataDeleted !== "deleted") {
+            console.error(`Vector store was not deleted successfully for tenant ${tenantId}`);
+            return;
+        }
+
+        if (!records) {
+            records = await this._fileResourceService.getByTenantId(tenantId);
+        }
+
+        if (!records || records.length === 0) {
+            console.error(`Files do not exist to create vectorstore for tenant ${tenantId}`);
+            return;
+        }
+
+        let message = "Data updated in Vectorstore.";
+
+        for ( const record of records ) {
+            const qnaResource = await this._qnaDocumentService.getByFileResourceId(record.id);
+            if (!qnaResource) {
+                message += `but skipped file ${record.OriginalFilename}`;
+                continue;
+            }
+            var storageKey = record.StorageKey;
+            var originalFilename = record.OriginalFilename;
+            var tags = record.Tags;
+
+            await this._keywordsService.addKeywords(tenantId, tags, originalFilename);
+
+            var localDestination = await this._storageService.downloadStream(storageKey);
+
+            await this._documentProcessor.configure({
+                chunkSize    : qnaResource.ChunkingLength,
+                chunkOverlap : qnaResource.ChunkOverlap
+            });
+
+            const data = await this._documentProcessor.processDocument(localDestination, '', originalFilename);
+            await this._vectorstoreService.insertData(tenantId, data);
+        }
+        console.log(`Refresh completed for tenant ${tenantId}: ${message}`);
+    };
+
+    //#endregion
 
 }
