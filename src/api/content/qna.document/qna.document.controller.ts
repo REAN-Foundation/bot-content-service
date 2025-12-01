@@ -41,6 +41,10 @@ export class QnaDocumentController {
                 ErrorHandler.throwNotFoundError('File resource cannot be found!');
             }
 
+            if (model.ChunkOverlap >= model.ChunkingLength) {
+                ErrorHandler.throwInternalServerError('Chunking Overlap Should be less than Chunking Length.');
+            }
+
             const record = await this._service.create(model);
             if (record === null) {
                 ErrorHandler.throwInternalServerError('Unable to add qna document!');

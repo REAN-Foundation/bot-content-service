@@ -15,6 +15,8 @@ export class PgKeywordsService implements IKeywordsService {
 
     private _pgConnection;
 
+    private tableName;
+
     connectKeywordVectorStore = async () => {
         const embeddings = new OpenAIEmbeddings({model: "text-embedding-ada-002"});
 
