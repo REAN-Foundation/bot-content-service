@@ -126,7 +126,6 @@ export class VectorstoreController {
             const tenantId = request.body["TenantId"];
 
             ResponseHandler.success(request, response, 'Your documents are being refreshed. This may take a few moments.', 200, '');
-
             this.enqueueRefreshTask({
                 tenantId
             });
