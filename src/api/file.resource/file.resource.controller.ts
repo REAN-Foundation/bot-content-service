@@ -45,6 +45,7 @@ export class FileResourceController extends BaseController {
             var dateFolder = new Date().toISOString().split('T')[0];
             var originalFilename: string = request.headers['x-file-name'] as string;
             var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
+
             var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
             var publicResource = request.headers['public'] === 'true' ? true : false;
 
