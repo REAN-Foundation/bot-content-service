@@ -8,7 +8,7 @@ import {
     FileResourceSearchResults
 } from '../../../domain.types/general/file.resource.domain.types';
 import { Source } from '../../../database/database.connector';
-import { FindManyOptions, Like} from 'typeorm';
+import { FindManyOptions, Like } from 'typeorm';
 import { Repository } from 'typeorm/repository/Repository';
 import { FileResourceMapper } from '../../mappers/file.resource/file.resource.mapper';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
@@ -115,7 +115,11 @@ export class FileResourceService {
 
     getByTenantId = async (tenantId: string): Promise<FileResourceResponseDto[]> => {
         try {
-            const record = await this._fileResourceRepository.find({ where: { TenantId: tenantId } } );
+            const record = await this._fileResourceRepository.find({
+                where : {
+                    TenantId : tenantId,
+                }
+            } );
             return record.map(FileResourceMapper.toResponseDto);
         } catch (error) {
             ErrorHandler.throwDbAccessError("DB Error: Unable to return files for tenant!", error);

@@ -15,6 +15,8 @@ export class PgKeywordsService implements IKeywordsService {
 
     private _pgConnection;
 
+    private tableName;
+
     connectKeywordVectorStore = async () => {
         const embeddings = new OpenAIEmbeddings({model: "text-embedding-ada-002"});
 
@@ -38,6 +40,7 @@ export class PgKeywordsService implements IKeywordsService {
         };
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
+        logger.info(`THE KEYWORD VECTORSTORE CONFIG IS ${JSON.stringify(postgresConnectionOptions)}`);
         this.pool = new pg.Pool(postgresConnectionOptions);
         await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {

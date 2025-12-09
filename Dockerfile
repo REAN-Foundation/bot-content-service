@@ -1,4 +1,4 @@
-FROM node:18-alpine3.18 AS builder
+FROM node:24-alpine3.22 AS builder
 ADD . /app
 RUN apk add bash
 RUN apk add --update alpine-sdk
@@ -29,7 +29,7 @@ RUN npm run build
 
 # RUN npm run build
 
-FROM node:18-alpine3.18
+FROM node:24-alpine3.22
 RUN apk add bash
 RUN apk add --update alpine-sdk
 RUN apk update && \
@@ -62,5 +62,7 @@ COPY --from=builder ./app/dist/ .
 COPY . .
 
 RUN chmod +x /app/entrypoint.sh
+
+EXPOSE 2345
 ENTRYPOINT ["/bin/bash", "-c", "/app/entrypoint.sh"]
 # CMD ["node", "./src/index.js"]

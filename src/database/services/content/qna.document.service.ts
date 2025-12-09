@@ -129,7 +129,7 @@ export class QnaDocumentService extends BaseService {
         try {
             var document = await this._qnaDocumentRepository.findOne({
                 where : {
-                    ParentDocumentResourceId : id
+                    ParentDocumentResourceId : id,
                 },
             });
             return QnaDocumentMapper.toResponseDto(document);

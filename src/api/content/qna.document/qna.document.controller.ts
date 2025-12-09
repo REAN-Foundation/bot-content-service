@@ -41,6 +41,10 @@ export class QnaDocumentController {
                 ErrorHandler.throwNotFoundError('File resource cannot be found!');
             }
 
+            if (model.ChunkOverlap >= model.ChunkingLength) {
+                ErrorHandler.throwInternalServerError('Chunking Overlap Should be less than Chunking Length.');
+            }
+
             const record = await this._service.create(model);
             if (record === null) {
                 ErrorHandler.throwInternalServerError('Unable to add qna document!');
@@ -99,6 +103,8 @@ export class QnaDocumentController {
         const record = await this._service.getById(id);
         if (record != null) {
             try {
+                const fileResource = await this._fileResourceService.getById(record.ParentDocumentResourceId);
+                await this._fileResourceService.delete(fileResource.id);
                 const result = await this._service.delete(id);
                 const message = 'Qna-Document deleted successfully!';
                 ResponseHandler.success(request, response, message, 200, result);

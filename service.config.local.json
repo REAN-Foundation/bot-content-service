@@ -13,6 +13,9 @@
     "Vectorstore": {
         "Provider": "PGVECTOR"
     },
+    "Vectorstore": {
+        "Provider": "PGVECTOR"
+    },
     "Communication" : {
         "SMS": {
             "Provider": "Mock"
