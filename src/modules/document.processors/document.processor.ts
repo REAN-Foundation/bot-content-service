@@ -184,13 +184,47 @@ export class DocumentProcessor {
                 .on("data", (chunk) => (rawData += chunk.toString()))
                 .on("end", () => {
                     try {
+                        // OLD CODE
+                        // const jsonData = JSON.parse(rawData);
+                        // const documents = jsonData.map((obj: any) => 
+                        //     new Document({
+                        //         pageContent : JSON.stringify(obj),
+                        //         metadata    : { source: fileName }
+                        //     })
+                        // );
+                        // resolve(documents);
+                        // NEW CODE
                         const jsonData = JSON.parse(rawData);
-                        const documents = jsonData.map((obj: any) => 
-                            new Document({
-                                pageContent : JSON.stringify(obj),
-                                metadata    : { source: fileName }
-                            })
-                        );
+                        const documents: Document[] = [];
+
+                        // Check if jsonData is an array
+                        if (Array.isArray(jsonData)) {
+                            // Handle array of items
+                            jsonData.forEach((obj: any) => {
+                                documents.push(
+                                    new Document({
+                                        pageContent : JSON.stringify(obj),
+                                        metadata    : {source: fileName}
+                                    })
+                                );
+                            });
+                        } else if (typeof jsonData === 'object' && jsonData !== null) {
+                            // Handle single object
+                            documents.push(
+                                new Document({
+                                    pageContent : JSON.stringify(jsonData),
+                                    metadata    : {source: fileName}
+                                })
+                            );
+                        } else {
+                            // Handle primitive values (string, number, boolean)
+                            documents.push(
+                                new Document({
+                                    pageContent : String(jsonData),
+                                    metadata    : { source: fileName }
+                                })
+                            );
+                        }
                         resolve(documents);
                     } catch (error) {
                         reject(error);
