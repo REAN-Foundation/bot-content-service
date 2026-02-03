@@ -47,6 +47,9 @@ export class FileResourceController extends BaseController {
             var contentLength = Array.isArray(request.headers['content-length']) ? request.headers['content-length'][0] : request.headers['content-length'];
 
             var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
+
+            // Validate the request
+            this._validator.validateFileType(originalFilename, mimeType as string);
             var publicResource = request.headers['public'] === 'true' ? true : false;
 
             var timestamp = new Date().getTime().toString();
@@ -157,14 +160,84 @@ export class FileResourceController extends BaseController {
     updateData = async (request: express.Request, response: express.Response): Promise <void> => {
         try {
             var id: uuid = await this._validator.validateParamAsUUID(request, 'id');
-            var model: FileResourceUpdateModel = await this._validator.validateUpdateRequest(request);
-            const record = await this._service.getById(id);
-            if (!record) {
-                ErrorHandler.throwNotFoundError("File details not found with the provided id");
+
+            // Get existing record
+            const existingRecord = await this._service.getById(id);
+            if (!existingRecord) {
+                ErrorHandler.throwNotFoundError("File details not found with the provided file id.");
             }
-            const updatedRecord = await this._service.update(id, model);
-            const message = "File details updated in the DB";
-            ResponseHandler.success(request, response, message, 200, updatedRecord);
+
+            // Check if file is being uploaded (file update)
+            const isFileUpdate = request.headers['x-file-name'] ? true : false;
+
+            let model: FileResourceUpdateModel;
+
+            if (isFileUpdate) {
+                // File is being replaced - Handle file upload
+                await this._validator.validateFileUpdateRequest(request);
+
+                var dateFolder = new Date().toISOString().split('T')[0];
+                var originalFilename: string = request.headers['x-file-name'] as string;
+                var contentLength = Array.isArray(request.headers['content-length'])
+                    ? request.headers['content-length'][0]
+                    : request.headers['content-length'];
+                var mimeType = request.headers['mime-type'] ?? mime.lookup(originalFilename);
+
+                // Validate the file and mime types
+                this._validator.validateFileType(originalFilename, mimeType as string);
+                var publicResource = request.headers['public'] === 'true' ? true : false;
+
+                var timestamp = new Date().getTime().toString();
+                var ext = FileUtils.getFileExtension(originalFilename);
+                var filename = originalFilename.replace('.' + ext, "");
+                filename = filename.replace(' ', "_");
+                filename = filename + '_' + timestamp + '.' + ext;
+                var newStorageKey = 'uploaded/' + dateFolder + '/' + filename;
+
+                let contentType = "application/octet-stream";
+                const tenantId = request.body.TenantId ?? request.headers['tenantid'];
+                if (request.headers["content-type"]) {
+                    if (request.headers["content-type"] === 'application/json') {
+                        contentType = "application/octet-stream";
+                    } else {
+                        contentType = request.headers["content-type"];
+                    }
+                }
+
+                // Upload new file to storage
+                const reader = new StreamReader(request);
+                var key = await this._storageService.uploadStream(newStorageKey, reader.getStream(), contentType);
+
+                if (!key) {
+                    ErrorHandler.throwInternalServerError('Unable to upload the new file!');
+                }
+
+                // Delete old file from storage
+                var deleteSuccess = await this._storageService.delete(existingRecord.StorageKey);
+                if (!deleteSuccess) {
+                    console.warn(`Warning: Could not delete old file with storage key: ${existingRecord.StorageKey}`);
+                }
+
+                // Prepare update model with new file info
+                model = {
+                    StorageKey       : newStorageKey,
+                    MimeType         : mimeType as string,
+                    Public           : publicResource,
+                    OriginalFilename : originalFilename,
+                    Size             : contentLength ? parseInt(contentLength) : null,
+                    Tags             : request.body.Tags ? request.body.Tags : existingRecord.Tags,
+                };
+            } else {
+                // only metadata update - no file upload
+                model = await this._validator.validateUpdateRequest(request);
+            }
+
+            // update database record
+            const updateRecord = await this._service.update(id, model);
+            const message = isFileUpdate
+                ? "File and metadata updated successfully"
+                : "File metadata updated successfully";
+            ResponseHandler.success(request, response, message, 200, updateRecord);
         } catch (error) {
             ResponseHandler.handleError(request, response, error);
         }

@@ -44,4 +44,7 @@ export interface FileResourceUpdateModel {
     Metadata         ?: any;
     Public           ?: boolean;
     Tags             ?: string[];
+    StorageKey       ?: string;
+    Size             ?: number;
+    OriginalFilename ?: string;
 }
