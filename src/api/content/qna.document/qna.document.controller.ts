@@ -117,6 +117,24 @@ export class QnaDocumentController {
         }
     };
 
+    getByQnaCode = async (request: express.Request, response: express.Response) => {
+        try {
+            const qnaCode: string = request.params.qnaCode;
+            if (!qnaCode) {
+                ErrorHandler.throwInputValidationError('QnaCode is required');
+            }
+            const record = await this._service.getByQnaCode(qnaCode);
+            if (!record) {
+                const message = 'Qna document cannot be found!';
+                return ResponseHandler.failure(request, response, message, 404);
+            }
+            const message = 'Qna document retrieved successfully!';
+            return ResponseHandler.success(request, response, message, 200, record);
+        } catch (error) {
+            ResponseHandler.handleError(request, response, error);
+        }
+    };
+
     search = async (request: express.Request, response: express.Response) => {
         try {
             var filters: QnaDocumentSearchFilters = await this._validator.validateSearchRequest(request);
