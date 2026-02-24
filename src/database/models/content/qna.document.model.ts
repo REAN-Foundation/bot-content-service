@@ -47,6 +47,9 @@ export class QnaDocument extends BaseEntity {
     @Column({ type: 'varchar', length: 256, nullable: false })
     CreatedByUserId: string;
 
+    @Column({ type: 'varchar', length: 16, nullable: true })
+    QnaCode: string;
+
     @Column({ type: 'enum', enum: ChunkingStrategy, nullable: false })
     ChunkingStrategy: string;
 
