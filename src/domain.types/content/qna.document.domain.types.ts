@@ -30,6 +30,7 @@ export interface QnaDocumentCreateModel {
     TenantCode?: string;
     IsActive: boolean;
     CreatedByUserId: string;
+    QnaCode?: string;
 }
 
 export interface QnaDocumentUpdateModel {
@@ -59,6 +60,7 @@ export interface QnaDocumentDto {
     ParentDocumentResourceId: string;
     IsActive: boolean;
     CreatedByUserId: string;
+    QnaCode?: string;
     FileResource?: FileResourceDto;
     DocumentVersion?: QnaDocumentVersionDto[]
 }
@@ -77,6 +79,7 @@ export interface QnaDocumentSearchFilters extends BaseSearchFilters {
     TenantCode?: string;
     IsActive?: boolean;
     CreatedByUserId?: string;
+    QnaCode?: string;
 }
 export interface QnaDocumentSearchResults extends BaseSearchResults {
     Items: QnaDocumentDto[];

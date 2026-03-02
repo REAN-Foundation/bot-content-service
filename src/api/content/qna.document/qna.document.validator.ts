@@ -93,6 +93,7 @@ export class QnaDocumentValidator extends BaseValidator {
                 splitter        : joi.number().optional(),
                 isActive        : joi.boolean().optional(),
                 createdByUserId : joi.string().optional(),
+                qnaCode         : joi.string().max(16).optional(),
                 createdDateFrom : joi.date().optional(),
                 createdDateTo   : joi.date().optional(),
                 itemsPerPage    : joi.number().optional(),
@@ -124,6 +125,7 @@ export class QnaDocumentValidator extends BaseValidator {
             Splitter                 : request.query.splitter ?? null,
             IsActive                 : request.query.isActive ?? null,
             CreatedByUserId          : request.query.createdByUserId ?? null,
+            QnaCode                  : request.query.qnaCode ?? null,
             TenantId                 : request.query.tenantId ?? null,
             TenantCode               : request.query.tenantCode ?? null,
         };

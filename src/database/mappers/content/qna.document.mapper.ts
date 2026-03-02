@@ -23,6 +23,7 @@ export class QnaDocumentMapper {
             ParentDocumentResourceId : document.ParentDocumentResourceId,
             IsActive                 : document.IsActive,
             CreatedByUserId          : document.CreatedByUserId,
+            QnaCode                  : document.QnaCode,
             FileResource             : document?.FileResource ?
                 FileResourceMapper.toResponseDto(document?.FileResource) : null,
             DocumentVersion : document?.QnaDocumentVersions ? document.QnaDocumentVersions?.map(

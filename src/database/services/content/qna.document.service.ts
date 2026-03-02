@@ -5,6 +5,7 @@ import { Source } from '../../database.connector';
 import { FindManyOptions, Like, Repository } from 'typeorm';
 import { BaseService } from '../base.service';
 import { uuid } from '../../../domain.types/miscellaneous/system.types';
+import { StringUtils } from '../../../common/utilities/string.utils';
 import {
     QnaDocumentCreateModel,
     QnaDocumentSearchFilters,
@@ -39,6 +40,7 @@ export class QnaDocumentService extends BaseService {
                 TenantId                 : createModel.TenantId,
                 TenantCode               : createModel.TenantCode,
                 CreatedByUserId          : createModel.CreatedByUserId,
+                QnaCode                  : await this.generateUniqueQnaCode(),
                 FileResource             : {
                     id : createModel.ResourceId
                 }
@@ -112,6 +114,24 @@ export class QnaDocumentService extends BaseService {
             var document = await this._qnaDocumentRepository.findOne({
                 where : {
                     id : id,
+                },
+                relations : {
+                    FileResource        : true,
+                    QnaDocumentVersions : true,
+                }
+            });
+            return QnaDocumentMapper.toResponseDto(document);
+        } catch (error) {
+            logger.error(error.message);
+            ErrorHandler.throwInternalServerError(error.message, 500);
+        }
+    };
+
+    public getByQnaCode = async (qnaCode: string): Promise<QnaDocumentDto> => {
+        try {
+            var document = await this._qnaDocumentRepository.findOne({
+                where : {
+                    QnaCode : qnaCode,
                 },
                 relations : {
                     FileResource        : true,
@@ -221,7 +241,20 @@ export class QnaDocumentService extends BaseService {
         if (filters.CreatedByUserId) {
             search.where['CreatedByUserId'] = filters.CreatedByUserId;
         }
+        if (filters.QnaCode) {
+            search.where['QnaCode'] = filters.QnaCode;
+        }
         return search;
+    };
+
+    private generateUniqueQnaCode = async (): Promise<string> => {
+        let qnaCode = StringUtils.generateQnaCode();
+        let existing = await this._qnaDocumentRepository.findOne({ where: { QnaCode: qnaCode } });
+        while (existing) {
+            qnaCode = StringUtils.generateQnaCode();
+            existing = await this._qnaDocumentRepository.findOne({ where: { QnaCode: qnaCode } });
+        }
+        return qnaCode;
     };
 
 }
