@@ -19,7 +19,6 @@ export interface VectorStoreSearchModel {
     Query: string;
 }
 
-
 export interface TextSplitterConfig {
     chunkSize?: number;
     chunkOverlap?: number;
