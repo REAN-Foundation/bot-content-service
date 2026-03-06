@@ -66,7 +66,7 @@ export class QnaDocumentPromotionValidator {
             });
 
             const schema = joi.object({
-                TargetEnvironment : joi.string().valid('dev', 'uat', 'prod').required(),
+                TargetEnvironment : joi.string().valid('development', 'uat', 'production').required(),
                 TenantCode        : joi.string().max(256).required(),
                 QnaDocument       : documentSchema.required(),
             });
