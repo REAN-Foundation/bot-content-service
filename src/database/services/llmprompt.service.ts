@@ -10,6 +10,7 @@ import { Repository } from 'typeorm/repository/Repository';
 import { uuid } from '../../domain.types/miscellaneous/system.types';
 import { FindManyOptions, Like } from 'typeorm';
 import { PromptGroup } from '../../domain.types/promptgroup.domain.types';
+import { StringUtils } from '../../common/utilities/string.utils';
 
 export class LlmpromptService extends BaseService {
 
@@ -39,6 +40,8 @@ export class LlmpromptService extends BaseService {
                 finalPrompt += content + " ";
             }
 
+            const promptCode = await this.generateUniquePromptCode();
+
             const data = this._llmPromptRepository.create({
                 Name             : createModel.Name,
                 Description      : createModel.Description ?? null,
@@ -53,7 +56,8 @@ export class LlmpromptService extends BaseService {
                 TopP             : createModel.TopP,
                 PresencePenalty  : createModel.PresencePenalty,
                 IsActive         : createModel.IsActive,
-                TenantId         : createModel.TenantId
+                TenantId         : createModel.TenantId,
+                PromptCode       : promptCode,
             });
             var record = await this._llmPromptRepository.save(data);
             return LlmPromptMapper.toResponseDto(record);
@@ -207,6 +211,16 @@ export class LlmpromptService extends BaseService {
             logger.error(error.message);
             ErrorHandler.throwDbAccessError('DB Error: Unable to search records!', error);
         }
+    };
+
+    private generateUniquePromptCode = async (): Promise<string> => {
+        let promptCode = StringUtils.generatePromptCode();
+        let existing = await this._llmPromptRepository.findOne({ where: { PromptCode: promptCode } });
+        while (existing) {
+            promptCode = StringUtils.generatePromptCode();
+            existing = await this._llmPromptRepository.findOne({ where: { PromptCode: promptCode } });
+        }
+        return promptCode;
     };
 
     private getSearchModel = (filters: LlmPromptSearchFilters) => {

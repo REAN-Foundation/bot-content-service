@@ -51,6 +51,9 @@ export class LlmPrompt extends BaseEntity{
     @Column(({ type: 'varchar', length: 256, nullable: true}))
     TenantId: string;
 
+    @Column({ type: 'varchar', length: 16, nullable: true })
+    PromptCode: string;
+
     @CreateDateColumn()
     CreatedAt: Date;
 
