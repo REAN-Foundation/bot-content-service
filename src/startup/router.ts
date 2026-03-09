@@ -4,6 +4,7 @@ import { register as registerLlmPromptRoutes } from "../api/llmprompt/llmprompt/
 import { register as registerLlmPromptTemplateRoutes } from "../api/llmprompt/llmprompt.templates/llmprompt.templates.routes";
 import { register as registerLlmPromptVersionRoutes } from "../api/llmprompt/llmprompt.version/llmprompt.version.routes";
 import { register as registerLlmPromptGroupRoutes } from "../api/llmprompt/llmprompt.group/llmprompt.group.routes";
+import { register as registerLlmPromptPromotionRoutes } from "../api/llmprompt/llmprompt.promotion/llmprompt.promotion.routes";
 
 import { register as registerQnaDocumentGroup } from '../api/content/qna.document.group/qna.document.group.routes';
 import { register as registerQnaDocument } from '../api/content/qna.document/qna.document.routes';
@@ -37,6 +38,7 @@ export class Router {
                 registerLlmPromptTemplateRoutes(this._app);
                 registerLlmPromptVersionRoutes(this._app);
                 registerLlmPromptGroupRoutes(this._app);
+                registerLlmPromptPromotionRoutes(this._app);
                 registerQnaDocumentGroup(this._app);
                 registerQnaDocument(this._app);
                 registerQnaDocumentVersion(this._app);

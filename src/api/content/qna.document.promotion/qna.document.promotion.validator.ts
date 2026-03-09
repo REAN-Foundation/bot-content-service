@@ -12,7 +12,7 @@ export class QnaDocumentPromotionValidator {
         try {
             const schema = joi.object({
                 TenantCode        : joi.string().max(256).required(),
-                TargetEnvironment : joi.string().valid('dev', 'uat', 'prod').required(),
+                TargetEnvironment : joi.string().valid('development', 'uat', 'production').required(),
             });
             return await schema.validateAsync(requestBody);
         } catch (error) {
