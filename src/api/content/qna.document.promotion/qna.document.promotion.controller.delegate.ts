@@ -37,7 +37,8 @@ export class QnaDocumentPromotionControllerDelegate {
         const { TargetEnvironment, TenantCode, QnaDocument } = requestBody;
 
         const currentEnv = process.env.NODE_ENV;
-        if (TargetEnvironment !== currentEnv) {
+        const normalize = (env: string) => (env === 'prod' ? 'production' : env);
+        if (normalize(TargetEnvironment) !== normalize(currentEnv)) {
             ErrorHandler.throwInputValidationError(
                 `Target environment mismatch. Expected: ${currentEnv}, Received: ${TargetEnvironment}`
             );
