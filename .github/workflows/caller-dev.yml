@@ -1,0 +1,34 @@
+# Disabled for now.
+# Keep this workflow definition for later reuse, but do not trigger it.
+
+# name: Bot Content Service Frontend Reusable Pipeline Caller
+# run-name: Frontend Reusable Pipeline - ${{ github.ref_name }} @ ${{ github.sha }}
+#
+# on:
+#   push:
+#     branches:
+#       - main
+#   workflow_dispatch:
+#
+# permissions:
+#   contents: read
+#   id-token: write
+#
+# concurrency:
+#   group: bot-content-service-frontend-reusable-${{ github.ref }}
+#   cancel-in-progress: true
+#
+# jobs:
+#   call-reusable-frontend-pipeline:
+#     name: Call Reusable Frontend Pipeline
+#     uses: REAN-Foundation/reusable-actions/.github/workflows/ai-nurse-frontend-reusable.yml@main
+#     with:
+#       docker_context: ./
+#       dockerfile_path: ./Dockerfile
+#       image_tag_prefix: main
+#       codeql_languages: javascript-typescript
+#     secrets:
+#       AWS_REGION: ${{ secrets.AWS_REGION }}
+#       AWS_OIDC_ROLE_ARN: ${{ secrets.AWS_OIDC_ROLE_ARN }}
+#       AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+#       ECR_REPOSITORY_NAME: ${{ secrets.ECR_REPOSITORY_NAME }}
