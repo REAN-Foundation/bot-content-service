@@ -60,11 +60,17 @@ export default class Application {
     };
 
     setupDatabaseConnection = async () => {
+        console.log(`[INIT] DB dialect      : ${process.env.DB_DIALECT}`);
+        console.log(`[INIT] DB name         : ${process.env.DB_NAME}`);
+        console.log(`[INIT] DB synchronize  : ${process.env.DB_SYNCHRONIZE === 'true'}`);
         if (process.env.NODE_ENV === 'test') {
             await DbClient.dropDatabase();
         }
+        console.log('[INIT] Ensuring database exists...');
         await DbClient.createDatabase();
+        console.log('[INIT] Initializing data source connection...');
         await DBConnector.initialize();
+        console.log('[INIT] Database setup complete.');
     };
 
     public start = async(): Promise<void> => {
