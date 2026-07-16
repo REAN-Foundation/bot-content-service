@@ -35,7 +35,7 @@ class DatabaseConnector {
         username    : Config.username,
         password    : Config.password,
         database    : Config.database,
-        synchronize : true,
+        synchronize : process.env.DB_SYNCHRONIZE === 'true',
         entities    : [
             QnaDocumentGroup,
             QnaDocumentVersion,
