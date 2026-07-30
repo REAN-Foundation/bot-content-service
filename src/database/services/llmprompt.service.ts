@@ -82,7 +82,7 @@ export class LlmpromptService extends BaseService {
             if (model.Name) {
                 updateData.Name = model.Name;
             }
-            if ( model.Description != null) {
+            if ( model.Description) {
                 updateData.Description = model.Description;
             }
             if ( model.UseCaseType) {
