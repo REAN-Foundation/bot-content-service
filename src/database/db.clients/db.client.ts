@@ -1,12 +1,16 @@
 import { MysqlClient } from './mysql.client';
+import { PostgresqlClient } from './postgresql.client';
 import { logger } from '../../logger/logger';
 import { execSync } from 'child_process';
 import IDbClient from './db.client.interface';
+import { Config } from '../database.config';
 // ////////////////////////////////////////////////////////////////////////
 
 export class DbClient {
 
-    static _client: IDbClient =  new MysqlClient();
+    static _client: IDbClient = Config.dialect === 'postgres'
+        ? new PostgresqlClient()
+        : new MysqlClient();
 
     //Creates DB if does not exist
     public static createDatabase = async () => {

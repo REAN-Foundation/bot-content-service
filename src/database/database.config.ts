@@ -3,7 +3,7 @@ import { logger } from "../logger/logger";
 
 /////////////////////////////////////////////////////////////////////////////
 
-export type databaseDialect = 'mysql';
+export type databaseDialect = 'mysql' | 'postgres';
 
 export interface DatabaseConfig {
     username: string;
