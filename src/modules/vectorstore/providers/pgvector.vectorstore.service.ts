@@ -3,7 +3,7 @@ import { OpenAIEmbeddings } from "@langchain/openai";
 import { IVectorStoreService } from "../interfaces/vectorstore.service.interface";
 import { VectorstoreUtils } from "../../../common/utilities/vectorstore.utils";
 import { logger } from "../../../logger/logger";
-import { PoolConfig, Pool } from "pg";
+import { getVectorStorePoolConfig } from "../vectorstore.config";
 import OpenAI from "openai";
 import * as pg from 'pg';
 
@@ -28,14 +28,7 @@ export class PgVectorStore implements IVectorStoreService {
 
         // Creating the configuration for the pgvector database
         const config = {
-            postgresConnectionOptions : {
-                type     : "postgres",
-                host     : process.env.PG_HOST,
-                port     : process.env.PG_PORT,
-                user     : process.env.PG_USER,
-                password : process.env.PG_PASSWORD,
-                database : process.env.PG_DATABASE
-            } as PoolConfig,
+            postgresConnectionOptions : getVectorStorePoolConfig(),
             tableName : this.tenantId + '_' + process.env.NODE_ENV,
             columns   : {
                 idColumnName       : "id",
@@ -48,7 +41,7 @@ export class PgVectorStore implements IVectorStoreService {
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
         this.tableName = tableName;
-        logger.info(`THE VECTORSTORE CONFIG IS ${JSON.stringify(postgresConnectionOptions)}`);
+        logger.info(`THE VECTORSTORE CONFIG IS ${JSON.stringify({ ...postgresConnectionOptions, password: '***' })}`);
         this.pool = new pg.Pool(postgresConnectionOptions);
         await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {
