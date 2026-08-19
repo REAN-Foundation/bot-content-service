@@ -4,8 +4,8 @@ import { IKeywordsService } from "../interfaces/keywords.service.interface";
 import { VectorstoreUtils } from "../../../common/utilities/vectorstore.utils";
 import { Document } from "@langchain/core/documents";
 import { logger } from "../../../logger/logger";
-import { PoolConfig } from 'pg';
 import * as pg from 'pg';
+import { getVectorStorePoolConfig } from "../vectorstore.config";
 
 export class PgKeywordsService implements IKeywordsService {
 
@@ -21,14 +21,7 @@ export class PgKeywordsService implements IKeywordsService {
         const embeddings = new OpenAIEmbeddings({model: "text-embedding-ada-002"});
 
         const config = {
-            postgresConnectionOptions : {
-                type     : "postgres",
-                host     : process.env.PG_HOST,
-                port     : process.env.PG_PORT,
-                user     : process.env.PG_USER,
-                password : process.env.PG_PASSWORD,
-                database : process.env.PG_DATABASE
-            } as PoolConfig,
+            postgresConnectionOptions : getVectorStorePoolConfig(),
             tableName : this.tenantId + '_keywords_' + process.env.NODE_ENV,
             columns   : {
                 idColumnName       : "id",
@@ -40,7 +33,7 @@ export class PgKeywordsService implements IKeywordsService {
         };
 
         const { postgresConnectionOptions, tableName, columns, distanceStrategy } = config;
-        logger.info(`THE KEYWORD VECTORSTORE CONFIG IS ${JSON.stringify(postgresConnectionOptions)}`);
+        logger.info(`THE KEYWORD VECTORSTORE CONFIG IS ${JSON.stringify({ ...postgresConnectionOptions, password: '***' })}`);
         this.pool = new pg.Pool(postgresConnectionOptions);
         await VectorstoreUtils.ensureDatabaseSchema(this.pool, config);
         const pgVectorConfig = {
